@@ -1388,7 +1388,7 @@
                 {
                   secTitle: "1-1　토공사",
                   items: [
-                    { text: "1-1-1　비탈면 보강공", url: "#1-1" },
+                    { text: "1-1-1　비탈면 보강공", url: "https://study-with-words.blogspot.com/2026/09/blog-post.html" },
                     { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
                     { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
                   ]
@@ -1797,10 +1797,7 @@
         }
 
       }
-    },
-
-
-
+    },  // 표준품셈
 
     group2: {
       title: "글자2 통합 목차",
@@ -1812,6 +1809,7 @@
         sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자2 4파트 글1", url: "#2-4" }] }] }] }
       }
     },
+
     group3: {
       title: "글자3 통합 목차",
       hasSubTabs: true,
@@ -1822,6 +1820,7 @@
         sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자3 4파트 글1", url: "#3-4" }] }] }] }
       }
     },
+
     group4: {
       title: "글자4 통합 목차",
       hasSubTabs: true,
@@ -1832,6 +1831,7 @@
         sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
       }
     },
+
     group5: {
       title: "글자5 통합 목차",
       hasSubTabs: true,
