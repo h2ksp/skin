@@ -1847,17 +1847,25 @@ const menuData = {
 
 
 
+// 깃허브 menu.js 안에는 딱 요것만!
+const menuData = {
+  // ... 네 목차 데이터들 ...
+};
+
 function renderSidebar(groupKey, subKey) {
   if (typeof menuData === "undefined") return;
   const data = menuData[groupKey];
   if (!data) return;
 
-  document.getElementById("sidebar-category-title").textContent = data.title;
+  const titleElem = document.getElementById("sidebar-category-title");
   const subTabsContainer = document.getElementById("sub-tabs-container");
   const ul = document.getElementById("sidebar-dynamic-list");
+  if (!ul) return;
+
+  if (titleElem) titleElem.textContent = data.title;
   ul.innerHTML = "";
 
-  if (data.hasSubTabs) {
+  if (data.hasSubTabs && subTabsContainer) {
     subTabsContainer.style.display = "block";
     subTabsContainer.innerHTML = "";
 
@@ -1912,8 +1920,7 @@ function renderSidebar(groupKey, subKey) {
           a.href = item.url;
           a.textContent = item.text;
 
-          // ★ 핵심: 블로그스팟 스킨의 기본 이벤트(# 해시 앵커)를 강제로 끊고 해당 주소로 이동시킴
-          a.onclick = function (e) {
+          a.onclick = function(e) {
             e.preventDefault();
             e.stopPropagation();
             window.location.href = item.url;
@@ -1930,43 +1937,3 @@ function renderSidebar(groupKey, subKey) {
 
   localStorage.setItem("activeGroup", groupKey);
 }
-
-document.querySelectorAll(".cat-tab").forEach(tab => {
-  tab.addEventListener("click", function () {
-    const target = this.getAttribute("data-target");
-    renderSidebar(target, null);
-  });
-});
-
-// 외부 menu.js가 안전하게 다운로드될 때까지 대기 후 렌더링
-function initSidebar() {
-  if (typeof menuData === "undefined") {
-    setTimeout(initSidebar, 50);
-    return;
-  }
-  const savedGroup = localStorage.getItem("activeGroup") || "group1";
-  const savedSub = localStorage.getItem("activeSubGroup") || "sub1";
-  renderSidebar(savedGroup, savedSub);
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  initSidebar();
-
-  // 관리자 전용 태그(<ItemPageBlogAuthor>) 확인
-  const blogIdElem = document.getElementById("meta-blog-id");
-  const postIdElem = document.getElementById("meta-post-id");
-
-  if (blogIdElem && postIdElem) {
-    const blogId = blogIdElem.textContent.trim();
-    const postId = postIdElem.textContent.trim();
-
-    if (blogId && postId) {
-      const editBtn = document.getElementById("admin-edit-btn");
-      const editLink = document.getElementById("admin-edit-link");
-      if (editBtn && editLink) {
-        editLink.href = "https://www.blogger.com/blog/post/edit/" + blogId + "/" + postId;
-        editBtn.style.display = "block";
-      }
-    }
-  }
-});
