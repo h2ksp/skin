@@ -1846,12 +1846,6 @@ const menuData = {
 
 
 
-
-// 깃허브 menu.js 안에는 딱 요것만!
-const menuData = {
-  // ... 네 목차 데이터들 ...
-};
-
 function renderSidebar(groupKey, subKey) {
   if (typeof menuData === "undefined") return;
   const data = menuData[groupKey];
