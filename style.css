@@ -2,7 +2,7 @@
 @import url('https://cdn.jsdelivr.net/gh/webfontworld/hancom/HCRBatang.css');
 
 /* 전체 컨테이너: 폰트 일괄 통일 */
-#print-content {
+#print-container {
   width: 790px;
   box-sizing: border-box;
   font-family: "HCRBatang", "HCR Batang", "Batang", "바탕", serif;
