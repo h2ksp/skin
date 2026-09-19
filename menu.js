@@ -2747,7 +2747,7 @@ const menuData = {
 
       // 기계경비
       sub7: {
-        name: "건설기계",
+        name: "기계경비",
         categories: [
           {
             catTitle: "제1장　공통",
