@@ -5,10 +5,18 @@
 .container {
   width: 790px;
   box-sizing: border-box;
-  font-family: "HCR Batang", "Batang", "바탕", serif;
+  font-family: "HCRBatang", "HCR Batang", "Batang", "바탕", serif;
   color: #000;
   line-height: 1.45;
   letter-spacing: -0.02em;
+}
+
+/* 표 요소 폰트 상속 강제 추가 */
+.tbl,
+.tbl th,
+.tbl td,
+.tbl-note td {
+  font-family: inherit;
 }
 
 /* 제목 태그 크기 통일 */
@@ -76,5 +84,3 @@
   font-size: 16px;
   margin: 6px 0;
 }
-
- 
