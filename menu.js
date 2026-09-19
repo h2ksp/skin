@@ -2928,13 +2928,85 @@ const menuData = {
 
 
   group2: {
-    title: "글자2 통합 목차",
+    title: "건설공사 표준시장단가 적용공종 및 단가",
     hasSubTabs: true,
     subTabs: {
-      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자2 1파트 글1", url: "#2-1" }] }] }] },
-      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자2 2파트 글1", url: "#2-2" }] }] }] },
-      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자2 3파트 글1", url: "#2-3" }] }] }] },
-      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자2 4파트 글1", url: "#2-4" }] }] }] }
+      sub1: {
+        name: "총칙",
+        categories: [
+          {
+            catTitle: "제1장",
+            sections: [
+              {
+                secTitle: "총 칙",
+                items: [
+                  { text: "1-1  목적", url: "#2-2" },
+                  { text: "1-2  적용범위", url: "#2-2" },
+                  { text: "1-3  적용방법", url: "#2-2" },
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      sub2: {
+        name: "토목공사",
+        categories: [
+          {
+            catTitle: "대분류 A",
+            sections: [{
+              secTitle: "공통공사",
+              items: [
+                { text: "AA21*  마대 쌓기 및 헐기", url: "#2-2" },
+                { text: "AA22*  물푸기", url: "#2-2" },
+
+              ]
+            }
+            ]
+          }
+        ]
+      },
+
+      sub3: { name: "건축", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자2 3파트 글1", url: "#2-3" }] }] }] },
+
+      sub4: { name: "기계설비", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자2 4파트 글1", url: "#2-4" }] }] }] },
+
+      sub5: {
+        name: "BIM 설계",
+        categories: [
+          {
+            catTitle: "대분류 A",
+            sections: [{
+              secTitle: "공통공사",
+              items: [
+                { text: "AA21*  마대 쌓기 및 헐기", url: "#2-2" },
+                { text: "AA22*  물푸기", url: "#2-2" },
+
+              ]
+            }
+            ]
+          }
+        ]
+      },
+
+      sub6: {
+        name: "참고자료",
+        categories: [
+          {
+            catTitle: "대분류 A",
+            sections: [{
+              secTitle: "공통공사",
+              items: [
+                { text: "AA21*  마대 쌓기 및 헐기", url: "#2-2" },
+                { text: "AA22*  물푸기", url: "#2-2" },
+
+              ]
+            }
+            ]
+          }
+        ]
+      },
     }
   },
 
