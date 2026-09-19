@@ -22,10 +22,10 @@ const menuData = {
               {
                 secTitle: "1-2　설계 및 수량",
                 items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
+                  { text: "1-2-1　수량의 계산", url: "https://study-with-words.blogspot.com/2026/09/1-2-1-05-23-1.html" },
+                  { text: "1-2-2　단위표준", url: "https://study-with-words.blogspot.com/2026/09/1-2-2-12-23-1.html" },
+                  { text: "1-2-3　토질", url: "https://study-with-words.blogspot.com/2026/09/1-2-3-99-14-23-1.html" },
+                  { text: "1-2-4　재료 및 자재의 단가", url: "https://study-with-words.blogspot.com/2026/09/1-2-4-05-06-14-12-22-23-1.html" },
                   { text: "1-2-5　인력", url: "#1-2" },
                   { text: "1-2-6　공구 및 경장비", url: "#1-2" },
                   { text: "1-2-7　운반", url: "#1-2" },
@@ -2328,7 +2328,7 @@ const menuData = {
 
       // 유지관리부문
       sub5: {
-        name: "유지관리부문",
+        name: "유지관리",
         categories: [
           {
             catTitle: "제1장　공 통",
@@ -2570,7 +2570,7 @@ const menuData = {
 
       // 삭제항목
       sub6: {
-        name: "건설기계",
+        name: "삭제",
         categories: [
           {
             catTitle: "제1장　공통",
@@ -2746,7 +2746,7 @@ const menuData = {
       },
 
       // 기계경비
-      sub6: {
+      sub7: {
         name: "건설기계",
         categories: [
           {
