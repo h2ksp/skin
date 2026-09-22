@@ -3507,7 +3507,7 @@ function renderSidebar(groupKey, subKey) {
       btn.addEventListener("click", function () {
         const targetDiv = document.getElementById("conditionalDiv");
         if (targetDiv) {
-          if (groupKey === "group1" && sKey === "sub6") {
+          if (groupKey === "group1" && sKey === "sub7") {
             targetDiv.style.display = "block"; // 조건 맞으면 켜기
           } else {
             targetDiv.style.display = "none";  // 아니면 끄기
