@@ -2750,18 +2750,18 @@ const menuData = {
         name: "기계경비",
         categories: [
           {
-            catTitle: "제1장　공통",
+            catTitle: "[00]　토공기계",
             sections: [
               {
-                secTitle: "1-1　토공사",
+                secTitle: "불도저",
                 items: [
-                  { text: "1-1-1　비탈면 보강공", url: "#1-1" },
-                  { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
-                  { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
+                  { text: "시공능력", url: "#1-1" },
+                  { text: "운전경비,기계가격, 기계손료", url: "#1-1" },
+                  { text: "기계가격, 기계손료", url: "#1-1" },
                 ]
               },
               {
-                secTitle: "1-2　조경공사",
+                secTitle: "다짐기계",
                 items: [
                   { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
                   { text: "1-2-2　일반전정", url: "#1-2" },
@@ -2775,10 +2775,10 @@ const menuData = {
                 ]
               },
               {
-                secTitle: "1-3　철근콘크리트공사",
+                secTitle: "굴삭기",
                 items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
+                  { text: "1　시공능력", url: "#1-1" },
+                  { text: "2　노임의 할증", url: "#1-1" },
                 ]
               },
 
@@ -3505,6 +3505,16 @@ function renderSidebar(groupKey, subKey) {
         btn.style.backgroundColor = "#ddd";
       }
       btn.addEventListener("click", function () {
+        const targetDiv = document.getElementById("conditionalDiv");
+        if (targetDiv) {
+          if (groupKey === "group1" && sKey === "sub6") {
+            targetDiv.style.display = "block"; // 조건 맞으면 켜기
+          } else {
+            targetDiv.style.display = "none";  // 아니면 끄기
+          }
+        }
+
+
         renderSidebar(groupKey, sKey);
       });
       subTabsContainer.appendChild(btn);
