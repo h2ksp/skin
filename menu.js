@@ -1,7 +1,7 @@
 const menuData = {
   // 표준품셈
   group1: {
-    title: "2026　표준품셈　",
+    title: "2026　표준품셈",
     hasSubTabs: true,
     subTabs: {
       // 공통부문
@@ -3628,20 +3628,8 @@ const menuData = {
     }
   },
 
-  // 자재
-  group3: {
-    title: "　자재　",
-    hasSubTabs: true,
-    subTabs: {
-      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자3 1파트 글1", url: "#3-1" }] }] }] },
-      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자3 2파트 글1", url: "#3-2" }] }] }] },
-      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자3 3파트 글1", url: "#3-3" }] }] }] },
-      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자3 4파트 글1", url: "#3-4" }] }] }] }
-    }
-  },
-
   // 물량산출
-  group4: {
+  group3: {
     title: "물량산출",
     hasSubTabs: true,
     subTabs: {
@@ -3653,7 +3641,7 @@ const menuData = {
   },
 
   // 공사비샘플
-  group5: {
+  group4: {
     title: "공사비샘플",
     hasSubTabs: true,
     subTabs: {
