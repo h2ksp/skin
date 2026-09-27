@@ -2573,169 +2573,56 @@ const menuData = {
         name: "기계경비",
         categories: [
           {
-            catTitle: "[00]　토공기계",
+            catTitle: "공통요소",
             sections: [
               {
-                secTitle: "불도저",
+                secTitle: "팔레트",
                 items: [
-                  { text: "시공능력", url: "#1-1" },
-                  { text: "운전경비,기계가격, 기계손료", url: "#1-1" },
-                  { text: "기계가격, 기계손료", url: "#1-1" },
+                  { text: "나의 노트", url: "#1-1" },
                 ]
               },
-              {
-                secTitle: "다짐기계",
-                items: [
-                  { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
-                  { text: "1-2-2　일반전정", url: "#1-2" },
-                  { text: "1-2-3　조형전정", url: "#1-2" },
-                  { text: "1-2-4　가로수 전정", url: "#1-2" },
-                  { text: "1-2-5　관목 전정", url: "#1-2" },
-                  { text: "1-2-6　수간보호", url: "#1-2" },
-                  { text: "1-2-7　줄기싸주기", url: "#1-2" },
-                  { text: "1-2-8　인력관수", url: "#1-2" },
-                  { text: "1-2-9　살수차관수", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "굴삭기",
-                items: [
-                  { text: "1　시공능력", url: "#1-1" },
-                  { text: "2　노임의 할증", url: "#1-1" },
-                ]
-              },
-
-
             ]
           },
 
           {
-            catTitle: "제2장　토목",
+            catTitle: "기계경비 산출",
             sections: [
               {
-                secTitle: "2-1　도로포장공사",
+                secTitle: "건설기계 리스트",
                 items: [
-                  { text: "2-1-1　교통통제 및 안전처리", url: "#1-1" },
-                  { text: "2-1-2　포장 절단", url: "#1-1" },
-                  { text: "2-1-3　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
-                  { text: "2-1-4　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
-                  { text: "2-1-5　절삭 후 콘크리트 덧씌우기", url: "#1-1" },
-                  { text: "2-1-6　아스팔트 절삭 및 덧씌우기", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "2-2　궤도공사",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "2-3　교량공사",
-                items: [
-                  { text: "2-3-1　강교보수 바탕처리(인력)", url: "#1-1" },
-                  { text: "2-3-2　강교보수 바탕처리(장비)", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제3장　건 축",
-            sections: [
-              {
-                secTitle: "3-1　구조물 철거공사",
-                items: [
-                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "#1-1" },
-                  { text: "3-1-2　석고보드면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-3　철재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-4　목재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-5　도장 후 퍼티 및 연마", url: "#1-1" },
-                  { text: "3-1-6　비닐 보양", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "11-2　페인트",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　교목",
-                items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제4장　기계설비",
-            sections: [
-              {
-                secTitle: "4-1　일반기계설비 해체",
-                items: [
-                  { text: "4-1-1　배관 해체", url: "#1-1" },
-                  { text: "4-1-2　각형덕트 해체", url: "#1-1" },
-                  { text: "4-1-3　스파이럴덕트 해체", url: "#1-1" },
-                  { text: "4-1-4　배관보온 해체", url: "#1-1" },
-                  { text: "4-1-5　덕트보온 해체", url: "#1-1" },
-                  { text: "4-1-6　펌프 해체", url: "#1-1" },
-                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-2　자동제어설비 해체",
-                items: [
-                  { text: "4-2-1　철거 및 이설", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　수선 및 보수공사",
-                items: [
-                  { text: "4-3-1　유량계 교체", url: "#1-1" },
-                  { text: "4-3-2　관갱생공", url: "#1-1" },
-                  { text: "4-3-3　배관누수 검사", url: "#1-1" },
+                  { text: "1　불도저", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "2　리퍼(유압식)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "3　굴삭기", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "4　트랜처", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "5　로더", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "6　모터 스크레이퍼", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "7　모터 그레이더", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "8　덤프트럭", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "9　롤러", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "10　아스팔트 플랜트", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "11　스테이빌라이저(노상안정기)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "12　크러셔", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "13　대형브레이커", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "14　압쇄기(콘크리트 소활용)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "15　법면다짐기", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "16　골재세척설비", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "17　콘크리트 믹서", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "18　콘크리트 배치플랜트(강제 혼합식)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "19　콘크리트 운반", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "20　기관차", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "21　경운기", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "22　디젤 파일 해머", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "23　유압 파일 해머", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "24　진동파일 해머", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "25　진동파일해머(워터제트 병용 압입공)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "26　유압식 압입 인발기(유압식 압입 인발공)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "27　수중펌프", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "28　터널전단면 굴착기", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "29　펌프식 준설선", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "30　그래브 준설선", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "31　쇄암선(중추식)", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "32　이동식 임목파쇄기", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "33　하천골재채취선", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
                 ]
               },
 
@@ -2750,172 +2637,14 @@ const menuData = {
         name: "삭제",
         categories: [
           {
-            catTitle: "제1장　공통",
+            catTitle: "-",
             sections: [
               {
-                secTitle: "1-1　토공사",
+                secTitle: "-",
                 items: [
-                  { text: "1-1-1　비탈면 보강공", url: "#1-1" },
-                  { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
-                  { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
+                  { text: "-", url: "#1-1" },
                 ]
               },
-              {
-                secTitle: "1-2　조경공사",
-                items: [
-                  { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
-                  { text: "1-2-2　일반전정", url: "#1-2" },
-                  { text: "1-2-3　조형전정", url: "#1-2" },
-                  { text: "1-2-4　가로수 전정", url: "#1-2" },
-                  { text: "1-2-5　관목 전정", url: "#1-2" },
-                  { text: "1-2-6　수간보호", url: "#1-2" },
-                  { text: "1-2-7　줄기싸주기", url: "#1-2" },
-                  { text: "1-2-8　인력관수", url: "#1-2" },
-                  { text: "1-2-9　살수차관수", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "1-3　철근콘크리트공사",
-                items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
-                ]
-              },
-
-
-            ]
-          },
-
-          {
-            catTitle: "제2장　토목",
-            sections: [
-              {
-                secTitle: "2-1　도로포장공사",
-                items: [
-                  { text: "2-1-1　교통통제 및 안전처리", url: "#1-1" },
-                  { text: "2-1-2　포장 절단", url: "#1-1" },
-                  { text: "2-1-3　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
-                  { text: "2-1-4　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
-                  { text: "2-1-5　절삭 후 콘크리트 덧씌우기", url: "#1-1" },
-                  { text: "2-1-6　아스팔트 절삭 및 덧씌우기", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "2-2　궤도공사",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "2-3　교량공사",
-                items: [
-                  { text: "2-3-1　강교보수 바탕처리(인력)", url: "#1-1" },
-                  { text: "2-3-2　강교보수 바탕처리(장비)", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제3장　건 축",
-            sections: [
-              {
-                secTitle: "3-1　구조물 철거공사",
-                items: [
-                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "#1-1" },
-                  { text: "3-1-2　석고보드면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-3　철재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-4　목재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-5　도장 후 퍼티 및 연마", url: "#1-1" },
-                  { text: "3-1-6　비닐 보양", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "11-2　페인트",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　교목",
-                items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제4장　기계설비",
-            sections: [
-              {
-                secTitle: "4-1　일반기계설비 해체",
-                items: [
-                  { text: "4-1-1　배관 해체", url: "#1-1" },
-                  { text: "4-1-2　각형덕트 해체", url: "#1-1" },
-                  { text: "4-1-3　스파이럴덕트 해체", url: "#1-1" },
-                  { text: "4-1-4　배관보온 해체", url: "#1-1" },
-                  { text: "4-1-5　덕트보온 해체", url: "#1-1" },
-                  { text: "4-1-6　펌프 해체", url: "#1-1" },
-                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-2　자동제어설비 해체",
-                items: [
-                  { text: "4-2-1　철거 및 이설", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　수선 및 보수공사",
-                items: [
-                  { text: "4-3-1　유량계 교체", url: "#1-1" },
-                  { text: "4-3-2　관갱생공", url: "#1-1" },
-                  { text: "4-3-3　배관누수 검사", url: "#1-1" },
-                ]
-              },
-
             ]
           },
 
@@ -3633,8 +3362,8 @@ const menuData = {
     title: "물량산출",
     hasSubTabs: true,
     subTabs: {
-      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
-      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
+      sub1: { name: "익스테리어", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
+      sub2: { name: "인테리어", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
       sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자4 3파트 글1", url: "#4-3" }] }] }] },
       sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
     }
@@ -3645,8 +3374,8 @@ const menuData = {
     title: "공사비샘플",
     hasSubTabs: true,
     subTabs: {
-      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
-      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
+      sub1: { name: "익스테ㄴㅇㄹ리어", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
+      sub2: { name: "인ㄴㅇㄹ테리어", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
       sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자4 3파트 글1", url: "#4-3" }] }] }] },
       sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
     }
