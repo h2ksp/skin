@@ -1,7 +1,7 @@
 const menuData = {
   // 표준품셈
   group1: {
-    title: "2026　표준품셈",
+    title: "2026　표준품셈　",
     hasSubTabs: true,
     subTabs: {
       // 공통부문
@@ -2568,185 +2568,8 @@ const menuData = {
         ]
       },
 
-      // 삭제항목
-      sub6: {
-        name: "삭제",
-        categories: [
-          {
-            catTitle: "제1장　공통",
-            sections: [
-              {
-                secTitle: "1-1　토공사",
-                items: [
-                  { text: "1-1-1　비탈면 보강공", url: "#1-1" },
-                  { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
-                  { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "1-2　조경공사",
-                items: [
-                  { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
-                  { text: "1-2-2　일반전정", url: "#1-2" },
-                  { text: "1-2-3　조형전정", url: "#1-2" },
-                  { text: "1-2-4　가로수 전정", url: "#1-2" },
-                  { text: "1-2-5　관목 전정", url: "#1-2" },
-                  { text: "1-2-6　수간보호", url: "#1-2" },
-                  { text: "1-2-7　줄기싸주기", url: "#1-2" },
-                  { text: "1-2-8　인력관수", url: "#1-2" },
-                  { text: "1-2-9　살수차관수", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "1-3　철근콘크리트공사",
-                items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
-                ]
-              },
-
-
-            ]
-          },
-
-          {
-            catTitle: "제2장　토목",
-            sections: [
-              {
-                secTitle: "2-1　도로포장공사",
-                items: [
-                  { text: "2-1-1　교통통제 및 안전처리", url: "#1-1" },
-                  { text: "2-1-2　포장 절단", url: "#1-1" },
-                  { text: "2-1-3　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
-                  { text: "2-1-4　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
-                  { text: "2-1-5　절삭 후 콘크리트 덧씌우기", url: "#1-1" },
-                  { text: "2-1-6　아스팔트 절삭 및 덧씌우기", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "2-2　궤도공사",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "2-3　교량공사",
-                items: [
-                  { text: "2-3-1　강교보수 바탕처리(인력)", url: "#1-1" },
-                  { text: "2-3-2　강교보수 바탕처리(장비)", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제3장　건 축",
-            sections: [
-              {
-                secTitle: "3-1　구조물 철거공사",
-                items: [
-                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "#1-1" },
-                  { text: "3-1-2　석고보드면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-3　철재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-4　목재면 바탕만들기", url: "#1-1" },
-                  { text: "3-1-5　도장 후 퍼티 및 연마", url: "#1-1" },
-                  { text: "3-1-6　비닐 보양", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "11-2　페인트",
-                items: [
-                  { text: "1-2-1　수량의 계산", url: "#1-2" },
-                  { text: "1-2-2　단위표준", url: "#1-2" },
-                  { text: "1-2-3　토질", url: "#1-2" },
-                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
-                  { text: "1-2-5　인력", url: "#1-2" },
-                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
-                  { text: "1-2-7　운반", url: "#1-2" },
-                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
-                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　교목",
-                items: [
-                  { text: "1-3-1　재료의 할증", url: "#1-1" },
-                  { text: "1-3-2　노임의 할증", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-4　조경시설물",
-                items: [
-                  { text: "1-4-1　적용기준", url: "#1-1" },
-                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
-                  { text: "1-4-3　작업지연", url: "#1-1" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" }
-                ]
-              },
-
-            ]
-          },
-
-          {
-            catTitle: "제4장　기계설비",
-            sections: [
-              {
-                secTitle: "4-1　일반기계설비 해체",
-                items: [
-                  { text: "4-1-1　배관 해체", url: "#1-1" },
-                  { text: "4-1-2　각형덕트 해체", url: "#1-1" },
-                  { text: "4-1-3　스파이럴덕트 해체", url: "#1-1" },
-                  { text: "4-1-4　배관보온 해체", url: "#1-1" },
-                  { text: "4-1-5　덕트보온 해체", url: "#1-1" },
-                  { text: "4-1-6　펌프 해체", url: "#1-1" },
-                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "#1-1" },
-                ]
-              },
-              {
-                secTitle: "4-2　자동제어설비 해체",
-                items: [
-                  { text: "4-2-1　철거 및 이설", url: "#1-2" },
-                ]
-              },
-              {
-                secTitle: "4-3　수선 및 보수공사",
-                items: [
-                  { text: "4-3-1　유량계 교체", url: "#1-1" },
-                  { text: "4-3-2　관갱생공", url: "#1-1" },
-                  { text: "4-3-3　배관누수 검사", url: "#1-1" },
-                ]
-              },
-
-            ]
-          },
-
-        ]
-      },
-
       // 기계경비산출
-      sub7: {
+      sub6: {
         name: "기계경비",
         categories: [
           {
@@ -2922,11 +2745,187 @@ const menuData = {
         ]
       },
 
+      // 삭제항목
+      sub7: {
+        name: "삭제",
+        categories: [
+          {
+            catTitle: "제1장　공통",
+            sections: [
+              {
+                secTitle: "1-1　토공사",
+                items: [
+                  { text: "1-1-1　비탈면 보강공", url: "#1-1" },
+                  { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
+                  { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "1-2　조경공사",
+                items: [
+                  { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
+                  { text: "1-2-2　일반전정", url: "#1-2" },
+                  { text: "1-2-3　조형전정", url: "#1-2" },
+                  { text: "1-2-4　가로수 전정", url: "#1-2" },
+                  { text: "1-2-5　관목 전정", url: "#1-2" },
+                  { text: "1-2-6　수간보호", url: "#1-2" },
+                  { text: "1-2-7　줄기싸주기", url: "#1-2" },
+                  { text: "1-2-8　인력관수", url: "#1-2" },
+                  { text: "1-2-9　살수차관수", url: "#1-2" },
+                ]
+              },
+              {
+                secTitle: "1-3　철근콘크리트공사",
+                items: [
+                  { text: "1-3-1　재료의 할증", url: "#1-1" },
+                  { text: "1-3-2　노임의 할증", url: "#1-1" },
+                ]
+              },
+
+
+            ]
+          },
+
+          {
+            catTitle: "제2장　토목",
+            sections: [
+              {
+                secTitle: "2-1　도로포장공사",
+                items: [
+                  { text: "2-1-1　교통통제 및 안전처리", url: "#1-1" },
+                  { text: "2-1-2　포장 절단", url: "#1-1" },
+                  { text: "2-1-3　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
+                  { text: "2-1-4　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
+                  { text: "2-1-5　절삭 후 콘크리트 덧씌우기", url: "#1-1" },
+                  { text: "2-1-6　아스팔트 절삭 및 덧씌우기", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "2-2　궤도공사",
+                items: [
+                  { text: "1-2-1　수량의 계산", url: "#1-2" },
+                  { text: "1-2-2　단위표준", url: "#1-2" },
+                  { text: "1-2-3　토질", url: "#1-2" },
+                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
+                  { text: "1-2-5　인력", url: "#1-2" },
+                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
+                  { text: "1-2-7　운반", url: "#1-2" },
+                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
+                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
+                ]
+              },
+              {
+                secTitle: "2-3　교량공사",
+                items: [
+                  { text: "2-3-1　강교보수 바탕처리(인력)", url: "#1-1" },
+                  { text: "2-3-2　강교보수 바탕처리(장비)", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "4-4　조경시설물",
+                items: [
+                  { text: "1-4-1　적용기준", url: "#1-1" },
+                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
+                  { text: "1-4-3　작업지연", url: "#1-1" },
+                  { text: "1-4-3　지세/지형", url: "#1-1" },
+                  { text: "1-4-5　위험", url: "#1-1" },
+                  { text: "1-4-6　작업제한", url: "#1-1" }
+                ]
+              },
+
+            ]
+          },
+
+          {
+            catTitle: "제3장　건 축",
+            sections: [
+              {
+                secTitle: "3-1　구조물 철거공사",
+                items: [
+                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "#1-1" },
+                  { text: "3-1-2　석고보드면 바탕만들기", url: "#1-1" },
+                  { text: "3-1-3　철재면 바탕만들기", url: "#1-1" },
+                  { text: "3-1-4　목재면 바탕만들기", url: "#1-1" },
+                  { text: "3-1-5　도장 후 퍼티 및 연마", url: "#1-1" },
+                  { text: "3-1-6　비닐 보양", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "11-2　페인트",
+                items: [
+                  { text: "1-2-1　수량의 계산", url: "#1-2" },
+                  { text: "1-2-2　단위표준", url: "#1-2" },
+                  { text: "1-2-3　토질", url: "#1-2" },
+                  { text: "1-2-4　재료 및 자재의 단가", url: "#1-2" },
+                  { text: "1-2-5　인력", url: "#1-2" },
+                  { text: "1-2-6　공구 및 경장비", url: "#1-2" },
+                  { text: "1-2-7　운반", url: "#1-2" },
+                  { text: "1-2-8　작업조 구성 및 적용", url: "#1-2" },
+                  { text: "1-2-9　소규모(작업물량 제한)", url: "#1-2" },
+                ]
+              },
+              {
+                secTitle: "4-3　교목",
+                items: [
+                  { text: "1-3-1　재료의 할증", url: "#1-1" },
+                  { text: "1-3-2　노임의 할증", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "4-4　조경시설물",
+                items: [
+                  { text: "1-4-1　적용기준", url: "#1-1" },
+                  { text: "1-4-2　할증의 중복가산요령", url: "#1-1" },
+                  { text: "1-4-3　작업지연", url: "#1-1" },
+                  { text: "1-4-3　지세/지형", url: "#1-1" },
+                  { text: "1-4-5　위험", url: "#1-1" },
+                  { text: "1-4-6　작업제한", url: "#1-1" }
+                ]
+              },
+
+            ]
+          },
+
+          {
+            catTitle: "제4장　기계설비",
+            sections: [
+              {
+                secTitle: "4-1　일반기계설비 해체",
+                items: [
+                  { text: "4-1-1　배관 해체", url: "#1-1" },
+                  { text: "4-1-2　각형덕트 해체", url: "#1-1" },
+                  { text: "4-1-3　스파이럴덕트 해체", url: "#1-1" },
+                  { text: "4-1-4　배관보온 해체", url: "#1-1" },
+                  { text: "4-1-5　덕트보온 해체", url: "#1-1" },
+                  { text: "4-1-6　펌프 해체", url: "#1-1" },
+                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "#1-1" },
+                ]
+              },
+              {
+                secTitle: "4-2　자동제어설비 해체",
+                items: [
+                  { text: "4-2-1　철거 및 이설", url: "#1-2" },
+                ]
+              },
+              {
+                secTitle: "4-3　수선 및 보수공사",
+                items: [
+                  { text: "4-3-1　유량계 교체", url: "#1-1" },
+                  { text: "4-3-2　관갱생공", url: "#1-1" },
+                  { text: "4-3-3　배관누수 검사", url: "#1-1" },
+                ]
+              },
+
+            ]
+          },
+
+        ]
+      },
+
     }
   },
 
-
-
+  // 표준시장단가
   group2: {
     title: "건설공사 표준시장단가 적용공종 및 단가(2026)",
     hasSubTabs: true,
@@ -3262,182 +3261,376 @@ const menuData = {
               {
                 secTitle: "철근 콘크리트공사",
                 items: [
-                  { text: "AA16*　가설울타리", url: "#2-2" },
-                  { text: "AA27*　낙하물 방지공", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　조립 말비계", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리 / 자재비 제외", url: "#2-2" },
-                  { text: "AC21*　인양장비 / 임대료", url: "#2-2" },
-                  { text: "AD16*　건축물 현장정리", url: "#2-2" },
-                  { text: "AD2**　건축물 보양", url: "#2-2" },
+                  { text: "DA***　합판거푸집", url: "#2-2" },
+                  { text: "DA***　유로폼 거푸집", url: "#2-2" },
+                  { text: "DA***　알루미늄폼 거푸집", url: "#2-2" },
+                  { text: "DA***　갱폼 거푸집", url: "#2-2" },
+                  { text: "DA***　철근가공 및 조립 / 현장가공", url: "#2-2" },
+                  { text: "DB***　철근가공 및 조립 / 공장가공", url: "#2-2" },
+                  { text: "DB***　와이어메시 설치", url: "#2-2" },
+                  { text: "DF***　콘크리트 타설 / 펌프차", url: "#2-2" },
+                  { text: "DF***　콘크리트 양생", url: "#2-2" },
+                  { text: "DR1**　콘크리트면 마무리", url: "#2-2" },
                 ]
               }
             ]
           },
 
           {
-            catTitle: "대분류 A",
+            catTitle: "대분류 E",
             sections: [
               {
-                secTitle: "공통공사",
+                secTitle: "철 골 공 사",
                 items: [
-                  { text: "AA16*　가설울타리", url: "#2-2" },
-                  { text: "AA27*　낙하물 방지공", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　조립 말비계", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리 / 자재비 제외", url: "#2-2" },
-                  { text: "AC21*　인양장비 / 임대료", url: "#2-2" },
-                  { text: "AD16*　건축물 현장정리", url: "#2-2" },
-                  { text: "AD2**　건축물 보양", url: "#2-2" },
+                  { text: "EE12*　철골세우기", url: "#2-2" },
+                  { text: "EE100　고장력볼트 본조임", url: "#2-2" },
+                  { text: "EB000　앵커볼트 설치", url: "#2-2" },
+                  { text: "EB01*　스터드볼트 설치", url: "#2-2" },
+                  { text: "EE000　기둥밑 무수축 고름모르타르", url: "#2-2" },
                 ]
               }
             ]
           },
 
           {
-            catTitle: "대분류 A",
+            catTitle: "대분류 F",
             sections: [
               {
-                secTitle: "공통공사",
+                secTitle: "조 적 공 사",
                 items: [
-                  { text: "AA16*　가설울타리", url: "#2-2" },
-                  { text: "AA27*　낙하물 방지공", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　조립 말비계", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리 / 자재비 제외", url: "#2-2" },
-                  { text: "AC21*　인양장비 / 임대료", url: "#2-2" },
-                  { text: "AD16*　건축물 현장정리", url: "#2-2" },
-                  { text: "AD2**　건축물 보양", url: "#2-2" },
+                  { text: "FA11*　벽돌공사 / 벽돌쌓기 / 재료비 제외", url: "#2-2" },
+                  { text: "FA11*　벽돌 운반", url: "#2-2" },
+                  { text: "FA12*　벽돌공사 / 치장벽돌쌓기 / 재료비 제외", url: "#2-2" },
+                  { text: "FB12*　블록공사 / 콘크리트 블록 보강쌓기 / 재료비 제외", url: "#2-2" },
                 ]
               }
             ]
           },
 
           {
-            catTitle: "대분류 A",
+            catTitle: "대분류 G",
             sections: [
               {
-                secTitle: "공통공사",
+                secTitle: "미 장 공 사",
                 items: [
-                  { text: "AA16*　가설울타리", url: "#2-2" },
-                  { text: "AA27*　낙하물 방지공", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　조립 말비계", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리 / 자재비 제외", url: "#2-2" },
-                  { text: "AC21*　인양장비 / 임대료", url: "#2-2" },
-                  { text: "AD16*　건축물 현장정리", url: "#2-2" },
-                  { text: "AD2**　건축물 보양", url: "#2-2" },
+                  { text: "GA1**　시멘트 모르타르 바름", url: "#2-2" },
+                  { text: "GF21*　모르타르 타설", url: "#2-2" },
+                  { text: "GF21*　표면마무리", url: "#2-2" },
+                  { text: "GH11*　시멘트 모르타르 충전", url: "#2-2" },
+                  { text: "GH12*　우레탄폼 충전", url: "#2-2" },
+                  { text: "GJ00*　비드 설치", url: "#2-2" },
                 ]
               }
             ]
           },
 
           {
-            catTitle: "대분류 A",
+            catTitle: "대분류 H",
             sections: [
               {
-                secTitle: "공통공사",
+                secTitle: "방 수 공 사",
                 items: [
-                  { text: "AA16*　가설울타리", url: "#2-2" },
-                  { text: "AA27*　낙하물 방지공", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　조립 말비계", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리 / 자재비 제외", url: "#2-2" },
-                  { text: "AC21*　인양장비 / 임대료", url: "#2-2" },
-                  { text: "AD16*　건축물 현장정리", url: "#2-2" },
-                  { text: "AD2**　건축물 보양", url: "#2-2" },
+                  { text: "HS11*　방수 바탕처리", url: "#2-2" },
+                  { text: "HS12*　방수 프리이머", url: "#2-2" },
+                  { text: "HS13*　방수층 보호재", url: "#2-2" },
+                  { text: "HS14*　방수층 누름철물", url: "#2-2" },
+                  { text: "HS15*　방수 보호층 / 줄눈절단 및 설치", url: "#2-2" },
+                  { text: "HC00*　도막방수", url: "#2-2" },
+                  { text: "HB00*　시트방수", url: "#2-2" },
+                  { text: "HI00*　시멘트 액체방수", url: "#2-2" },
+                  { text: "HG02*　폴리머 시멘트 모르타르 방수", url: "#2-2" },
+                  { text: "HS50*　벤토나이트 방수", url: "#2-2" },
+                  { text: "HF20*　수밀코킹", url: "#2-2" },
+                  { text: "HF240　발포우레탄 충전", url: "#2-2" },
                 ]
               }
             ]
           },
 
+          {
+            catTitle: "대분류 I",
+            sections: [
+              {
+                secTitle: "목 공 사",
+                items: [
+                  { text: "IA***　구조물공사", url: "#2-2" },
+                  { text: "IB31*　벽체 띠장설치", url: "#2-2" },
+                  { text: "IB40*　먹매김", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 J",
+            sections: [
+              {
+                secTitle: "금속공사",
+                items: [
+                  { text: "JG33*　스텐PD 점검구 설치", url: "#2-2" },
+                  { text: "JG41*　트렌치", url: "#2-2" },
+                  { text: "JI1**　경량철골천장틀", url: "#2-2" },
+                  { text: "JI6**　천장점검구 설치", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 K",
+            sections: [
+              {
+                secTitle: "지붕 및 홈통공사",
+                items: [
+                  { text: "KA***　후레싱 설치", url: "#2-2" },
+                  { text: "KA6**　폴리카보네이트 설치", url: "#2-2" },
+                  { text: "KB1**　선홍통 설치", url: "#2-2" },
+                  { text: "KB4**　처마홈통 설치", url: "#2-2" },
+                  { text: "KC10*　루프드레인 설치", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 L",
+            sections: [
+              {
+                secTitle: "창호 및 유리공사",
+                items: [
+                  { text: "LH***　복층유리", url: "#2-2" },
+                  { text: "LH***　커튼월유리", url: "#2-2" },
+                  { text: "KB4**　목재창호", url: "#2-2" },
+                  { text: "LB5**　합성수지창호", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 M",
+            sections: [
+              {
+                secTitle: "타일 및 돌공사",
+                items: [
+                  { text: "MA***　타일 떠붙이기", url: "#2-2" },
+                  { text: "MA***　타일 압착붙이기", url: "#2-2" },
+                  { text: "MA***　타일 접착붙이기", url: "#2-2" },
+                  { text: "MA***　타일 바탕 고르기", url: "#2-2" },
+                  { text: "MB3**　돌붙이기 / 바닥 / 습식", url: "#2-2" },
+                  { text: "MB3**　돌붙이기 / 바닥 / 습식", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 N",
+            sections: [
+              {
+                secTitle: "도 장 공 사",
+                items: [
+                  { text: "NA01*　녹막이(방청) 페인트", url: "#2-2" },
+                  { text: "NB***　유성(조합) 페인트", url: "#2-2" },
+                  { text: "NC1**　수성 페인트칠", url: "#2-2" },
+                  { text: "NJ00*　에폭시 페인트", url: "#2-2" },
+                  { text: "NM***　오일스테인칠", url: "#2-2" },
+                  { text: "NG2**, NC2**　스프레이", url: "#2-2" },
+                  { text: "NS00*　비닐보양", url: "#2-2" },
+                  { text: "NS***　콘크리트, 모르타르면 바탕만들기", url: "#2-2" },
+                  { text: "NS0**　석고보드면 바탕만들기", url: "#2-2" },
+                  { text: "NS0**　철재면 바탕만들기", url: "#2-2" },
+                  { text: "NS0**　목재면 바탕만들기", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 O",
+            sections: [
+              {
+                secTitle: "수 장 공 사",
+                items: [
+                  { text: "OA11*　합성고분자계 바닥재 설치", url: "#2-2" },
+                  { text: "OA2**　계단 논슬립 설치", url: "#2-2" },
+                  { text: "OA43*　플로어링 마루설치", url: "#2-2" },
+                  { text: "OA44*　이중바닥 설치", url: "#2-2" },
+                  { text: "OA5*　걸레받이 설치", url: "#2-2" },
+                  { text: "OB1**　도배공사 / 도배지바름", url: "#2-2" },
+                  { text: "OC3**　천장텍스설치", url: "#2-2" },
+                  { text: "OC3**　석고판 못붙임", url: "#2-2" },
+                  { text: "OC3**　석고판 본드붙임", url: "#2-2" },
+                  { text: "OD0**　단열재 공간넣기", url: "#2-2" },
+                  { text: "OD0**　단열재 접착제 붙이기", url: "#2-2" },
+                  { text: "OD0**　단열재 격자넣기", url: "#2-2" },
+                  { text: "OD0**　단열재 핀사용 붙이기", url: "#2-2" },
+                  { text: "OD0**　단열재 타정 부착", url: "#2-2" },
+                  { text: "OD0**　단열재 콘크리트타설 부착", url: "#2-2" },
+                  { text: "OD0**　단열재 슬래브위 깔기", url: "#2-2" },
+                  { text: "OG***　조이너 및 몰딩설치", url: "#2-2" },
+                  { text: "OH***　커텐박스 설치", url: "#2-2" },
+                  { text: "OK20*　마루귀틀설치 / 인조대리석", url: "#2-2" },
+                  { text: "OM***　흡음판", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "대분류 P",
+            sections: [
+              {
+                secTitle: "건축물 부대공사",
+                items: [
+                  { text: "PA34*　기존구조물 철거 / 압쇄공법", url: "#2-2" },
+                ]
+              }
+            ]
+          },
         ]
       },
 
       sub4: {
-        name: "기계설비",
+        name: "기계설비공사",
         categories: [
           {
-            catTitle: "대분류 A",
+            catTitle: "대분류 B",
             sections: [
               {
-                secTitle: "공통공사",
+                secTitle: "배 관 공 사",
                 items: [
-                  { text: "AA21*　마대 쌓기 및 헐기", url: "#2-2" },
-                  { text: "AA22*　물푸기", url: "#2-2" },
-                  { text: "AA31*　강관비계", url: "#2-2" },
-                  { text: "AA31*　경사형 가설계단", url: "#2-2" },
-                  { text: "AA31*　타워형 가설계단  /  자재비 제외", url: "#2-2" },
-                  { text: "AA31*　시스템비계  /  자재비 제외", url: "#2-2" },
-                  { text: "AA32*　강관동바리", url: "#2-2" },
-                  { text: "AA32*　시스템 동바리  /  자재비 제외", url: "#2-2" },
-                  { text: "AA13*　방진망", url: "#2-2" },
-                  { text: "AE11*　H파일 항타 및 항발  /  전동식", url: "#2-2" },
-                  { text: "AE11*　H파일 천공 후 근임  /  굴착식", url: "#2-2" },
-                  { text: "AE13*　흙막이판 설치 및 철거", url: "#2-2" },
-                  { text: "AE14*　강널말뚝(쉬트파일) 항타 및 항발  /  전동식", url: "#2-2" },
+                  { text: "BA*****, BB*****　강관", url: "#2-2" },
+                  { text: "BC*****, BD*****　동관", url: "#2-2" },
+                  { text: "BI*****, BJ*****　PVC관", url: "#2-2" },
+                  { text: "BP***, BQ***　관접합", url: "#2-2" },
+                  { text: "BP***, BQ***　관접합", url: "#2-2" },
                 ]
               }
             ]
-          }
+          },
+          {
+            catTitle: "대분류 D",
+            sections: [
+              {
+                secTitle: "보 온 공 사",
+                items: [
+                  { text: "DA***, DB***　관보온", url: "#2-2" },
+                  { text: "DC***, DD***　밸브보온", url: "#2-2" },
+                  { text: "DG*****　발열선 및 분전함 설치", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+          {
+            catTitle: "대분류 F",
+            sections: [
+              {
+                secTitle: "밸 브 설 비",
+                items: [
+                  { text: "FA*****　밸브 설치", url: "#2-2" },
+                  { text: "FC1**　감압밸브 장치 설치", url: "#2-2" },
+                  { text: "FH*****　플렉시블조인트 설치", url: "#2-2" },
+                  { text: "FH*****　익스펜션조인트 설치", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+          {
+            catTitle: "대분류 G",
+            sections: [
+              {
+                secTitle: "측 정 기 기",
+                items: [
+                  { text: "GA****, GC*****　측정기기", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+          {
+            catTitle: "대분류 I",
+            sections: [
+              {
+                secTitle: "공기조화 설비",
+                items: [
+                  { text: "II*****　온수분배기", url: "#2-2" },
+                ]
+              }
+            ]
+          },
+          {
+            catTitle: "대분류 J",
+            sections: [
+              {
+                secTitle: "기 타 공 사",
+                items: [
+                  { text: "JE***　슬리브 설치", url: "#2-2" },
+                ]
+              }
+            ]
+          },
         ]
       },
 
       sub5: {
-        name: "BIM 설계",
-        categories: [
-          {
-            catTitle: "대분류 A",
-            sections: [{
-              secTitle: "공통공사",
-              items: [
-                { text: "AA21*  마대 쌓기 및 헐기", url: "#2-2" },
-                { text: "AA22*  물푸기", url: "#2-2" },
-
-              ]
-            }
-            ]
-          }
-        ]
-      },
-
-      sub6: {
         name: "참고자료",
         categories: [
           {
-            catTitle: "대분류 A",
-            sections: [{
-              secTitle: "공통공사",
-              items: [
-                { text: "AA21*  마대 쌓기 및 헐기", url: "#2-2" },
-                { text: "AA22*  물푸기", url: "#2-2" },
-
-              ]
-            }
+            catTitle: "BIM 설계",
+            sections: [
+              {
+                secTitle: "일 반 사 항",
+                items: [
+                  { text: "1.　기본사항", url: "#2-2" },
+                  { text: "2.　용어정의", url: "#2-2" },
+                  { text: "3.　적용방법", url: "#2-2" },
+                ]
+              },
+              {
+                secTitle: "-",
+                items: [
+                  { text: "CG5**　옹벽(역T형)", url: "#2-2" },
+                  { text: "LD***　아스팔트포장(고속도로)", url: "#2-2" },
+                  { text: "LD***　콘크리트포장(고속도로)", url: "#2-2" },
+                  { text: "LD***　아스팔트포장(국도)", url: "#2-2" },
+                  { text: "LD***　콘크리트포장(국도)", url: "#2-2" },
+                  { text: "LH6**　중앙분리대", url: "#2-2" },
+                  { text: "LJ20*　V형 측구", url: "#2-2" },
+                  { text: "LJ30*　산마루측구", url: "#2-2" },
+                  { text: "LJ40*　L형 측구", url: "#2-2" },
+                  { text: "LJ60*　U형 측구", url: "#2-2" },
+                  { text: "LK3**　보강 배수관", url: "#2-2" },
+                  { text: "LL3**　도수로", url: "#2-2" },
+                  { text: "LL73*　배수관 날개벽", url: "#2-2" },
+                  { text: "LL1**　집수정", url: "#2-2" },
+                  { text: "LL31*　용수개거", url: "#2-2" },
+                  { text: "LM1**　수로암거", url: "#2-2" },
+                  { text: "LM1**　통로암거", url: "#2-2" },
+                  { text: "OD***　단열벽체", url: "#2-2" },
+                  { text: "FA1**　조적벽체", url: "#2-2" },
+                  { text: "MA1**　타일마감벽체", url: "#2-2" },
+                  { text: "JI1**　경량천장", url: "#2-2" },
+                  { text: "BA***, BB***　옥내강관", url: "#2-2" },
+                  { text: "BC***, BD***　옥내동관", url: "#2-2" },
+                ]
+              },
+              {
+                secTitle: "표준시장단가 적용시 간접공사비 등 산정 참고자료",
+                items: [
+                  { text: "1. 산업안전보건관리비율", url: "#2-2" },
+                ]
+              },
             ]
-          }
+          },
         ]
       },
+
     }
   },
 
+  // 자재
   group3: {
-    title: "글자3 통합 목차",
+    title: "　자재　",
     hasSubTabs: true,
     subTabs: {
       sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자3 1파트 글1", url: "#3-1" }] }] }] },
@@ -3447,8 +3640,9 @@ const menuData = {
     }
   },
 
+  // 물량산출
   group4: {
-    title: "글자4 통합 목차",
+    title: "물량산출",
     hasSubTabs: true,
     subTabs: {
       sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
@@ -3458,18 +3652,18 @@ const menuData = {
     }
   },
 
+  // 공사비샘플
   group5: {
-    title: "글자5 통합 목차",
+    title: "공사비샘플",
     hasSubTabs: true,
     subTabs: {
-      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자5 1파트 글1", url: "#5-1" }] }] }] },
-      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자5 2파트 글1", url: "#5-2" }] }] }] },
-      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자5 3파트 글1", url: "#5-3" }] }] }] },
-      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자5 4파트 글1", url: "#5-4" }] }] }] }
+      sub1: { name: "1파트", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
+      sub2: { name: "2파트", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
+      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자4 3파트 글1", url: "#4-3" }] }] }] },
+      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
     }
-  }
+  },
 };
-
 
 
 function renderSidebar(groupKey, subKey) {
@@ -3505,20 +3699,11 @@ function renderSidebar(groupKey, subKey) {
         btn.style.backgroundColor = "#ddd";
       }
       btn.addEventListener("click", function () {
-        const targetDiv = document.getElementById("conditionalDiv");
-        if (targetDiv) {
-          if (groupKey === "group1" && sKey === "sub7") {
-            targetDiv.style.display = "block"; // 조건 맞으면 켜기
-          } else {
-            targetDiv.style.display = "none";  // 아니면 끄기
-          }
-        }
-
-
         renderSidebar(groupKey, sKey);
       });
       subTabsContainer.appendChild(btn);
     }
+
 
     const subData = data.subTabs[subKey];
     subData.categories.forEach(cat => {
