@@ -3658,7 +3658,9 @@ const menuData = {
       sub4: {
         name: "나의 프로젝트",
         categories: [
-                    {
+
+
+          {
             catTitle: "WORK",
             sections: [
               {
@@ -3668,20 +3670,6 @@ const menuData = {
                     { text: "새 프로젝트", url: "#4-1" },
                   ]
               },
-              {
-                secTitle: "편의기능",
-                items:
-                  [
-                    { text: "연결설정", url: "#4-1" },
-                    
-                  ]
-              }
-            ]
-          },
-
-          {
-            catTitle: "WORK",
-            sections: [
               {
                 secTitle: "내역서",
                 items:
@@ -3709,7 +3697,22 @@ const menuData = {
                   ]
               }
             ]
-          }
+          },
+
+          {
+            catTitle: "편의기능",
+            sections: [
+
+              {
+                secTitle: "-",
+                items:
+                  [
+                    { text: "연결설정", url: "#4-1" },
+                    { text: "액셀 내보내기", url: "#4-1" },
+                  ]
+              }
+            ]
+          },
         ]
       },
 
