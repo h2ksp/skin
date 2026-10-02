@@ -3695,6 +3695,15 @@ const menuData = {
                     { text: "산출근거", url: "#4-1" },
                     { text: "단가목록표", url: "#4-1" },
                   ]
+              },
+
+              {
+                secTitle: "내보내기",
+                items:
+                  [
+                    { text: "XML", url: "#4-1" },
+                    { text: "Excel", url: "#4-1" },
+                  ]
               }
             ]
           },
@@ -3712,14 +3721,6 @@ const menuData = {
                   ]
               },
 
-              {
-                secTitle: "내보내기",
-                items:
-                  [
-                    { text: "XML", url: "#4-1" },
-                    { text: "Excel", url: "#4-1" },
-                  ]
-              }
             ]
           },
         ]
