@@ -2328,7 +2328,7 @@ const menuData = {
 
       // 유지관리부문
       sub5: {
-        name: "유지관리",
+        name: "유지관리부문",
         categories: [
           {
             catTitle: "제1장　공 통",
@@ -2568,330 +2568,9 @@ const menuData = {
         ]
       },
 
-      // 기계경비산출
-      sub6: {
-        name: "기계경비",
-        categories: [
-          {
-            catTitle: "공통요소",
-            sections: [
-              {
-                secTitle: "공통",
-                items: [
-                  { text: "금액의 단위표준", url: "#1-1" },
-                  { text: "중기기준단가(유류비)", url: "#1-1" },
-                  { text: "운전사의 구분", url: "#1-1" },
-                  { text: "노임계수", url: "#1-1" },
-                ]
-              },
-
-              {
-                secTitle: "팔레트",
-                items: [
-                  { text: "나의 노트", url: "#1-1" },
-                ]
-              },
-            ]
-          },
-
-          {
-            catTitle: "기계경비 산출",
-            sections: [
-              {
-                secTitle: "1　불도저",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/10/blog-post_408.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
-                ]
-              },
-
-              {
-                secTitle: "2　리퍼(유압식)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "3　굴삭기",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "4　트랜처",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "5　로더",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "6　모터 스크레이퍼",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "7　모터 그레이더",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "8　덤프트럭",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "9　롤러",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "10　아스팔트 플랜트",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "11　스테이빌라이저(노상안정기)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "12　크러셔",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "13　대형브레이커",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "14　압쇄기(콘크리트 소활용)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "15　법면다짐기",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "16　골재세척설비",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "17　콘크리트 믹서",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "18　콘크리트 배치플랜트(강제 혼합식)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "19　콘크리트 운반",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "20　기관차",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "21　경운기",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "22　디젤 파일 해머",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "23　유압 파일 해머",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "24　진동파일 해머",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "25　진동파일해머(워터제트 병용 압입공)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "26　유압식 압입 인발기(유압식 압입 인발공)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "27　수중펌프",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "28　터널전단면 굴착기",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "29　펌프식 준설선",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "30　그래브 준설선",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "31　쇄암선(중추식)",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-              {
-                secTitle: "32　이동식 임목파쇄기",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-              {
-                secTitle: "33　하천골재채취선",
-                items: [
-                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
-                ]
-              },
-
-            ]
-          },
-
-        ]
-      },
-
       // 삭제항목
-      sub7: {
-        name: "삭제",
+      sub6: {
+        name: " 삭제",
         categories: [
           {
             catTitle: "-",
@@ -3614,27 +3293,386 @@ const menuData = {
     }
   },
 
-  // 물량산출
+  // 공사비산출하기
   group3: {
-    title: "물량산출",
+    title: "공사비 산출하기",
     hasSubTabs: true,
     subTabs: {
-      sub1: { name: "익스테리어", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
-      sub2: { name: "인테리어", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
-      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자4 3파트 글1", url: "#4-3" }] }] }] },
-      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
-    }
-  },
+      sub1: {
+        name: "공사비샘플",
+        categories: [
+          {
+            catTitle: "익스테리어",
+            sections: [
+              {
+                secTitle: "소제목 1",
+                items:
+                  [
+                    { text: "글자4 1파트 글1", url: "#4-1" }
+                  ]
+              }
+            ]
+          }
+        ]
+      },
 
-  // 공사비샘플
-  group4: {
-    title: "공사비샘플",
-    hasSubTabs: true,
-    subTabs: {
-      sub1: { name: "익스테ㄴㅇㄹ리어", categories: [{ catTitle: "대분류 1", sections: [{ secTitle: "소제목 1", items: [{ text: "글자4 1파트 글1", url: "#4-1" }] }] }] },
-      sub2: { name: "인ㄴㅇㄹ테리어", categories: [{ catTitle: "대분류 2", sections: [{ secTitle: "소제목 2", items: [{ text: "글자4 2파트 글1", url: "#4-2" }] }] }] },
-      sub3: { name: "3파트", categories: [{ catTitle: "대분류 3", sections: [{ secTitle: "소제목 3", items: [{ text: "글자4 3파트 글1", url: "#4-3" }] }] }] },
-      sub4: { name: "4파트", categories: [{ catTitle: "대분류 4", sections: [{ secTitle: "소제목 4", items: [{ text: "글자4 4파트 글1", url: "#4-4" }] }] }] }
+      sub2: {
+        name: "물량산출",
+        categories: [
+          {
+            catTitle: "대분류 1",
+            sections: [
+              {
+                secTitle: "소제목 1",
+                items:
+                  [
+                    { text: "글자4 1파트 글1", url: "#4-1" }
+                  ]
+              }
+            ]
+          }
+        ]
+      },
+
+      sub3: {
+        name: "기계경비 산출",
+        categories: [
+          {
+            catTitle: "공통요소",
+            sections: [
+              {
+                secTitle: "참고기준",
+                items: [
+                  { text: "금액의 단위표준", url: "#1-1" },
+                  { text: "운전사의 구분", url: "#1-1" },
+                  { text: "노임계수", url: "#1-1" },
+                ]
+              },
+
+              {
+                secTitle: "작업 팔레트",
+                items: [
+                  { text: "편집 테이블", url: "#1" },
+                  { text: "편집 노트", url: "#1" },
+
+                ]
+              },
+
+            ]
+          },
+
+          {
+            catTitle: "건설기계 리스트",
+            sections: [
+              {
+                secTitle: "1　불도저",
+                items: [
+                  { text: "_ 기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "_ 시간당 작업량", url: "https://study-with-words.blogspot.com/2026/10/blog-post_408.html" },
+                  { text: "_ 산출결과", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
+                ]
+              },
+
+              {
+                secTitle: "2　리퍼(유압식)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "3　굴삭기",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "4　트랜처",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "5　로더",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "6　모터 스크레이퍼",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "7　모터 그레이더",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "8　덤프트럭",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "9　롤러",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "10　아스팔트 플랜트",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "11　스테이빌라이저(노상안정기)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "12　크러셔",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "13　대형브레이커",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "14　압쇄기(콘크리트 소활용)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "15　법면다짐기",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "16　골재세척설비",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "17　콘크리트 믹서",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "18　콘크리트 배치플랜트(강제 혼합식)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "19　콘크리트 운반",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "20　기관차",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "21　경운기",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "22　디젤 파일 해머",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "23　유압 파일 해머",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "24　진동파일 해머",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "25　진동파일해머(워터제트 병용 압입공)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "26　유압식 압입 인발기(유압식 압입 인발공)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "27　수중펌프",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "28　터널전단면 굴착기",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "29　펌프식 준설선",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "30　그래브 준설선",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "31　쇄암선(중추식)",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+              {
+                secTitle: "32　이동식 임목파쇄기",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+              {
+                secTitle: "33　하천골재채취선",
+                items: [
+                  { text: "기계경비 산출", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "시간당 작업량", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                  { text: "산출결과", url: "https://study-with-words.blogspot.com/2026/09/blog-post_23.html" },
+                ]
+              },
+
+            ]
+          }
+        ]
+      },
+
+      sub4: {
+        name: "WORK",
+        categories: [
+          {
+            catTitle: "대분류 1",
+            sections: [
+              {
+                secTitle: "소제목 1",
+                items:
+                  [
+                    { text: "글자4 1파트 글1", url: "#4-1" }
+                  ]
+              }
+            ]
+          }
+        ]
+      },
+
     }
   },
 };
