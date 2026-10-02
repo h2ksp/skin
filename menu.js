@@ -3684,7 +3684,7 @@ const menuData = {
                   ]
               },
               {
-                secTitle: "XML",
+                secTitle: "SET XML",
                 items:
                   [
                     { text: "원가계산서", url: "#4-1" },
@@ -3700,15 +3700,24 @@ const menuData = {
           },
 
           {
-            catTitle: "편의기능",
+            catTitle: "etc.",
             sections: [
 
               {
-                secTitle: "-",
+                secTitle: "편의기능",
                 items:
                   [
                     { text: "연결설정", url: "#4-1" },
-                    { text: "액셀 내보내기", url: "#4-1" },
+                    { text: "즐겨찾기 설정", url: "#4-1" },
+                  ]
+              },
+
+              {
+                secTitle: "내보내기",
+                items:
+                  [
+                    { text: "XML", url: "#4-1" },
+                    { text: "Excel", url: "#4-1" },
                   ]
               }
             ]
