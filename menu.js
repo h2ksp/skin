@@ -3299,7 +3299,7 @@ const menuData = {
     hasSubTabs: true,
     subTabs: {
       sub1: {
-        name: "공사비샘플",
+        name: "샘플 공사비",
         categories: [
           {
             catTitle: "익스테리어",
@@ -3656,16 +3656,56 @@ const menuData = {
       },
 
       sub4: {
-        name: "WORK",
+        name: "나의 프로젝트",
         categories: [
-          {
-            catTitle: "대분류 1",
+                    {
+            catTitle: "WORK",
             sections: [
               {
-                secTitle: "소제목 1",
+                secTitle: "당신의 프로젝트",
                 items:
                   [
-                    { text: "글자4 1파트 글1", url: "#4-1" }
+                    { text: "새 프로젝트", url: "#4-1" },
+                  ]
+              },
+              {
+                secTitle: "편의기능",
+                items:
+                  [
+                    { text: "연결설정", url: "#4-1" },
+                    
+                  ]
+              }
+            ]
+          },
+
+          {
+            catTitle: "WORK",
+            sections: [
+              {
+                secTitle: "내역서",
+                items:
+                  [
+                    { text: "원가계산서", url: "#4-1" },
+                    { text: "공종별 내역서", url: "#4-1" },
+                    { text: "일위대가목록", url: "#4-1" },
+                    { text: "일위대가", url: "#4-1" },
+                    { text: "중기단가산출", url: "#4-1" },
+                    { text: "산출근거", url: "#4-1" },
+                    { text: "단가목록표", url: "#4-1" },
+                  ]
+              },
+              {
+                secTitle: "XML",
+                items:
+                  [
+                    { text: "원가계산서", url: "#4-1" },
+                    { text: "공종별 내역서", url: "#4-1" },
+                    { text: "일위대가목록", url: "#4-1" },
+                    { text: "일위대가", url: "#4-1" },
+                    { text: "중기단가산출", url: "#4-1" },
+                    { text: "산출근거", url: "#4-1" },
+                    { text: "단가목록표", url: "#4-1" },
                   ]
               }
             ]
