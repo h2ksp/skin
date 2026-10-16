@@ -15,4 +15,21 @@ https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=
 
 
 
+git config --global user.name "h2ksp"
+git config --global user.email "h2ksp2@naver.com"
+
 Initialized empty Git repository in D:/WORK/skin/.git/
+git commit -m "update"
+git remote add origin https://github.com/h2ksp/skin.git
+git branch -M main
+git push -u origin main
+
+
+
+
+git init
+git add .
+git commit -m "초기화"
+git remote add origin https://github.com/h2ksp/skin.git
+git branch -M main
+git push -u origin main --force
