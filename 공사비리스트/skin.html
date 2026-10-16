@@ -1,0 +1,1080 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="<$BlogLanguageDirection$>">
+
+<head>
+  <title>
+    <$BlogPageTitle$>
+  </title>
+  <$BlogMetaData$>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZGMM10FVD0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-ZGMM10FVD0');
+    </script>
+    <!-- 1. 알파인 코어를 먼저 선언 -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://raw.githack.com/h2ksp/skin/main/menu.js?v=33"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/style.css?v=6" type="text/css" />
+
+    <style type="text/css">
+      /* [스크롤바 안정화] 화면 좌우 밀림 방지 */
+      html {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+      }
+
+      @media print {
+        @page {
+          margin: 10mm;
+          size: auto;
+        }
+
+        html,
+        body {
+          height: auto !important;
+          min-height: 100% !important;
+          overflow: visible !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: none !important;
+        }
+
+        body * {
+          visibility: hidden;
+        }
+
+        #sidebar-left,
+        #sidebar,
+        #header,
+        .icon-menu,
+        #sub-tabs-container,
+        #workspace-sticky-btn,
+        button {
+          display: none !important;
+        }
+
+        #print-container,
+        #print-container * {
+          visibility: visible;
+        }
+
+        #print-container {
+          position: absolute !important;
+          top: 40px !important;
+          left: 0 !important;
+          right: 0 !important;
+          margin: 0 auto !important;
+          width: 100% !important;
+          padding: 0 !important;
+          float: none !important;
+          zoom: 1 !important;
+        }
+
+        a[href]:after {
+          content: none !important;
+        }
+
+        .tbl thead th {
+          background-color: #e9e9e9 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+      }
+
+      body {
+        margin: 0;
+        text-align: center;
+      }
+
+      /* Page Structure */
+      #content {
+        width: 1500px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      /* Clearfix */
+      #content-body:after {
+        content: "";
+        display: block;
+        clear: both;
+      }
+
+      /* 1번째: 맨 왼쪽 사이드바 (폭 70px) */
+      #sidebar-left {
+        width: 70px;
+        float: left;
+        margin: 5px 0 0;
+        padding-bottom: 200px;
+        font-family: "Trebuchet MS", Verdana, Arial, Sans-serif;
+        font-size: 13px;
+        line-height: 1.2em;
+        color: #666;
+      }
+
+      /* 1번째 사이드바 공통 아이콘 스타일 */
+      .icon-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon-menu li {
+        margin: 0;
+        padding: 0;
+      }
+
+      .icon-menu a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        text-decoration: none;
+        background-color: transparent;
+        filter: url(#pencil-texture);
+        cursor: pointer;
+      }
+
+      .icon-menu a svg {
+        width: 32px;
+        height: 32px;
+        stroke: #606770;
+        fill: none;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke 0.15s ease;
+      }
+
+      .icon-menu a:hover svg {
+        stroke: #33383f;
+      }
+
+      /* 4번 작업창 아이콘 및 스크롤 고정 스타일 */
+      #workspace-sticky-btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      #workspace-sticky-btn.is-fixed {
+        position: fixed !important;
+        top: 20px;
+        left: calc(50% - 750px + 15px);
+        z-index: 9999;
+      }
+
+      @media (max-width: 1500px) {
+        #workspace-sticky-btn.is-fixed {
+          left: 15px;
+        }
+      }
+
+      /* 2번째: 기존 목차 사이드바 (폭 530px) */
+      #sidebar {
+        width: 530px;
+        float: left;
+        margin: 18px 0 0 15px;
+        padding-bottom: 200px;
+        font-family: "Trebuchet MS", Verdana, Arial, Sans-serif;
+        font-size: 13px;
+        line-height: 1.2em;
+        color: #666;
+      }
+
+      /* 3번째: 맨 오른쪽 본문 (폭 870px) */
+      #main {
+        width: 870px;
+        float: right;
+        margin: 5px 0 0;
+        padding: 0 0 10px;
+        color: #000;
+        font-size: 100%;
+        line-height: 1.5em;
+      }
+
+      #main2 {
+        float: left;
+        width: 100%;
+        padding: 0;
+      }
+
+      #main3 {
+        padding: 0;
+      }
+
+      /* 네이버 모드 전환 시 우측 영역 스타일 */
+      #right-area.naver-mode {
+        background-color: #f4f6f8;
+        min-height: 800px;
+        padding: 40px;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+
+      /* Links */
+      a:link,
+      a:visited {
+        color: #258;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #c63;
+      }
+
+      a img {
+        border-width: 0;
+      }
+
+      #header {
+        background-color: #e9e9e9;
+        margin: 10px 0 0 90px;
+        width: 450px;
+        padding: 2px 12px;
+        border-radius: 5px;
+      }
+
+      #header div {
+        background: none;
+        padding: 0;
+      }
+
+      /* Posts */
+      .post {
+        margin: 0 0 25px;
+        padding: 0 13px;
+      }
+
+      .post p {
+        margin: 0 0 .75em;
+      }
+
+      /* Sidebar Boxes */
+      .box {
+        margin: 0 0 15px;
+        padding: 0;
+      }
+
+      .box2 {
+        padding: 0 13px 8px;
+      }
+
+      .sidebar-title {
+        margin: 0;
+        padding: 0 0 .2em;
+        font-size: 150%;
+        line-height: 1.5em;
+        color: #333;
+      }
+
+      .box ul {
+        margin: .5em 0 1.25em;
+        padding: 0;
+        list-style: none;
+      }
+
+      #sidebar-dynamic-list {
+        font-size: 110%;
+        position: relative;
+        z-index: 100;
+      }
+
+      #sidebar-dynamic-list li {
+        font-size: 1.05em;
+        padding: 4px 0;
+      }
+
+      #sidebar-dynamic-list a {
+        cursor: pointer !important;
+        display: inline-block;
+      }
+
+      #title {
+        padding: 0;
+        font-size: 22px;
+        font-weight: bold;
+        font-family: sans-serif !important;
+      }
+
+      #category-tabs {
+        display: flex;
+        justify-content: space-between;
+        text-align: center;
+      }
+
+      .cat-tab {
+        margin: 0 10px;
+        color: #555 !important;
+        text-decoration: none;
+      }
+
+      .login-btn-area {
+        float: right;
+        margin-top: -28px;
+        margin-right: 15px;
+      }
+
+      body.is-main #header,
+      body.is-main .login-btn-area {
+        display: none !important;
+      }
+
+      .blogger-labels {
+        display: none !important;
+      }
+    </style>
+
+    <!-- API 노무비, 연료단가 -->
+    <script>
+      (async () => {
+        const CACHE_KEY = 'api_data';
+        const targetDate = new Date(Date.now() - 32400000).toISOString().split('T')[0];
+        let cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+
+        if (cache.savedDate !== targetDate || !cache.data?.labor || !cache.data?.oil) {
+          const [laborRes, oilRes] = await Promise.all([
+            fetch('https://script.google.com/macros/s/AKfycbz0A2XWL2fZjTxq50oKdwDwEDl1cDylHeeoMvDYZ1qdH60vlOoNrPm-XRZf4tzDmVFDLQ/exec?mode=lober').then(r => r.json()),
+            fetch('https://script.google.com/macros/s/AKfycbz0A2XWL2fZjTxq50oKdwDwEDl1cDylHeeoMvDYZ1qdH60vlOoNrPm-XRZf4tzDmVFDLQ/exec?mode=oil').then(r => r.json())
+          ]);
+
+          cache.savedDate = targetDate;
+          cache.data = cache.data || {};
+
+          if (laborRes.status === "success") cache.data.labor = laborRes;
+          if (oilRes.status === "success") cache.data.oil = oilRes;
+
+          localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+        }
+      })();
+    </script>
+
+
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        // 1. 최상위를 cost로 하는 기본 데이터 구조 정의
+        const defaultCostData = {
+          projectA: {
+            공종별내역서: [],
+            일위대가: [],
+            중기단가산출근거: [],
+            적용기준: {
+              환율: {
+                달러: '',
+                엔: ''
+              },
+              유류단가: {
+                휘발유: '',
+                경유: '',
+                선박용경유: '',
+                중유: ''
+              },
+            },
+          }
+        }
+
+
+        // 2. 스크립트 실행되자마자 로컬스토리지에 'cost'가 없으면 기본값 박기
+        if (!localStorage.getItem('cost')) {
+          localStorage.setItem('cost', JSON.stringify(defaultCostData));
+        }
+
+        Alpine.store('dbStore', {
+          // 알파인 스토어가 바라보는 데이터 (로컬스토리지의 'cost' 파싱)
+          cost: JSON.parse(localStorage.getItem('cost')),
+          currentProject: 'projectA',
+
+          get 원가계산서() {
+            // 이제 this.cost 바로 아래에서 프로젝트를 찾음
+            const proj = this.cost?.[this.currentProject] || {};
+
+            const 재료비 = (proj.공종별내역서 || []).reduce((sum, item) => {
+              return sum + (Number(item.재료비) || 0);
+            }, 0);
+
+            const 노무비 = Number(proj.원가계산서?.노무비) || 0;
+            const 경비 = Number(proj.원가계산서?.경비) || 0;
+            const 합계 = 재료비 + 노무비 + 경비;
+
+            return { 재료비, 노무비, 경비, 합계 };
+          },
+
+          _getData() {
+            const raw = localStorage.getItem('cost');
+            try {
+              return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(defaultCostData));
+            } catch (e) {
+              return JSON.parse(JSON.stringify(defaultCostData));
+            }
+          },
+
+          _saveData(costObj) {
+            localStorage.setItem('cost', JSON.stringify(costObj));
+            this.cost = costObj; // 알파인 반응성 동기화
+          },
+
+          getItems(project, category) {
+            const costData = this._getData();
+            return costData[project]?.[category] || [];
+          },
+
+          addItem(project, category, newItem) {
+            const costData = this._getData();
+            if (!costData[project]) costData[project] = {};
+            if (!costData[project][category]) costData[project][category] = [];
+
+            costData[project][category].push(newItem);
+            this._saveData(costData);
+          },
+
+          updateItem(project, category, index, updatedData) {
+            const costData = this._getData();
+            const targetList = costData[project]?.[category];
+
+            if (targetList && targetList[index]) {
+              targetList[index] = { ...targetList[index], ...updatedData };
+              this._saveData(costData);
+            }
+          },
+
+          deleteItem(project, category, index) {
+            const costData = this._getData();
+            const targetList = costData[project]?.[category];
+
+            if (targetList) {
+              targetList.splice(index, 1);
+              this._saveData(costData);
+            }
+          }
+        });
+      });
+    </script>
+
+</head>
+
+
+
+
+
+
+<body>
+
+  <div id="content">
+    <div id="content-body">
+
+      <!-- [1번째 컬럼] 맨 왼쪽 사이드바 -->
+      <div id="sidebar-left">
+        <div class="box">
+          <div class="box2">
+            <div class="box3">
+              <ul class="icon-menu">
+                <div class="gongsabida-logo">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.43l-8.57 8.57a2 2 0 1 1-2.83-2.83l8.48-8.48" />
+                  </svg>
+
+                </div>
+
+                <style>
+                  .gongsabida-logo {
+                    display: inline-flex;
+                    flex-direction: column;
+                    align-items: center;
+                    color: #111111;
+                  }
+
+                  .gongsabida-logo svg {
+                    width: 44px;
+                    height: auto;
+                    display: block;
+                  }
+
+                  .gongsabida-logo span {
+                    margin-top: 10px;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                    letter-spacing: 5px;
+                  }
+                </style>
+                <br>
+
+                <!-- 1. 집 아이콘 -->
+                <li>
+                  <a href="/" title="홈으로">
+                    <svg viewBox="0 0 40 40">
+                      <path d="M 6 20 L 20 7 L 34 20" />
+                      <path d="M 10 18 L 10 33 L 30 33 L 30 18" />
+                      <path d="M 16 33 L 16 23 L 24 23 L 24 33" />
+                      <path d="M 27 12 L 27 8 L 30 8 L 30 15" />
+                    </svg>
+                  </a>
+                </li>
+                <!-- 2. 돋보기 아이콘 -->
+                <li>
+                  <a href="javascript:void(0);" id="search-nav-btn" title="선택 분류 검색창 열기">
+                    <svg viewBox="0 0 40 40">
+                      <circle cx="17" cy="17" r="9" />
+                      <path d="M 24 24 L 34 34" />
+                      <path d="M 14 14 A 4 4 0 0 1 18 13" />
+                    </svg>
+                  </a>
+                </li>
+                <!-- 3. 공사원가 책 아이콘 -->
+                <li>
+                  <a href="https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" target="_blank"
+                    rel="noopener noreferrer" title="공사원가통합관리시스템">
+                    <svg viewBox="0 0 40 40">
+                      <path d="M 6 13 C 11 11, 16 12, 20 14 C 24 12, 29 11, 34 13" />
+                      <path d="M 6 28 C 11 26, 16 27, 20 29 C 24 27, 29 26, 34 28" />
+                      <path d="M 6 13 L 6 28" />
+                      <path d="M 20 14 L 20 29" />
+                      <path d="M 34 13 L 34 28" />
+                    </svg>
+                  </a>
+                </li>
+                <!-- 4. 네이버 아이콘 (DOM 우측 전환용으로 변경) -->
+                <li>
+                  <a href="javascript:void(0);" id="naver-mode-btn" title="우측 화면 전환">
+                    <svg viewBox="0 0 40 40">
+                      <rect x="7" y="7" width="26" height="26" rx="6" />
+                      <path d="M 14 27 L 14 13 L 26 27 L 26 13" />
+                    </svg>
+                  </a>
+                </li>
+                <!-- 5. 작업창 아이콘 -->
+                <li id="workspace-sticky-btn">
+                  <a href="#" target="_blank" rel="noopener noreferrer" title="내 작업창 띄우기">
+                    <svg viewBox="0 0 40 40">
+                      <path
+                        d="M 15 8 L 9 8 C 7.5 8, 6 9.5, 6 11 L 6 27 C 6 28.5, 7.5 30, 9 30 L 25 30 C 26.5 30, 28 28.5, 28 27 L 28 21" />
+                      <path d="M 18 22 L 32 8" />
+                      <path d="M 24 8 L 32 8 L 32 16" />
+                    </svg>
+                  </a>
+                </li>
+                <!-- 6. 수정 아이콘 -->
+                <li id="admin-edit-btn" style="display: none;">
+                  <a id="admin-edit-link" href="#" target="_blank" title="현재 글 수정하기">
+                    <svg viewBox="0 0 40 40">
+                      <path d="M 10 30 L 14 30 L 30 14 L 26 10 L 10 26 Z" />
+                      <path d="M 8 32 L 12 32" />
+                      <path d="M 24 12 L 28 16" />
+                      <path d="M 10 26 L 14 30" />
+                    </svg>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽 넓은 영역 -->
+      <div id="right-area">
+
+        <!-- Blog Header -->
+        <div id="header">
+          <div id="category-tabs">
+            <div class="tab-group-left">
+              <a class="cat-tab" href="?group=group1&sub=sub1" data-target="group1">표준품셈</a>
+              <a class="cat-tab" href="?group=group2&sub=sub1" data-target="group2">표준시장단가</a>
+            </div>
+            <div class="tab-group-right">
+              <a class="cat-tab" href="?group=group3&sub=sub1" data-target="group3">공사비산출</a>
+            </div>
+          </div>
+        </div>
+        <div class="login-btn-area">
+          <a href="#" onclick="alert('로그인 기능 준비중!'); return false;">로그인</a>
+        </div>
+
+        <!-- [2번째 컬럼] 목차 사이드바 -->
+        <div id="sidebar">
+          <div class="box">
+            <div class="box2">
+              <div class="box3">
+                <h1 id="sidebar-category-title" class="sidebar-title">목차 선택</h1>
+                <div id="sub-tabs-container" style="margin-bottom: 10px; display: none;"></div>
+                <ul id="sidebar-dynamic-list">
+                  <li>상단의 글자 중 하나를 클릭해봐.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- [3번째 컬럼] 본문 내용 -->
+        <div id="main">
+          <div id="main2">
+            <div id="main3">
+              <MainPage>
+                <style type="text/css">
+                  body.is-main #sidebar-left,
+                  body.is-main #sidebar {
+                    display: none;
+                  }
+
+                  body.is-main #main {
+                    width: 100% !important;
+                    max-width: 1400px !important;
+                    float: none !important;
+                    margin: 0 auto !important;
+                  }
+
+                  body.is-main.show-sidebar #sidebar-left,
+                  body.is-main.show-sidebar #sidebar {
+                    display: block !important;
+                  }
+
+                  body.is-main.show-sidebar #main {
+                    width: 870px !important;
+                    float: right !important;
+                    margin: 5px 0 0 !important;
+                  }
+
+                  .main-typography {
+                    text-align: center;
+                    padding: 70px 20px 90px;
+                    margin: 0 auto;
+                  }
+
+                  .main-big-sub {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: #258;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    margin-bottom: 18px;
+                  }
+
+                  .main-big-title {
+                    font-size: 60px;
+                    font-weight: 900;
+                    color: #111;
+                    line-height: 1.22;
+                    letter-spacing: -2px;
+                    margin: 0 0 24px;
+                    word-break: keep-all;
+                  }
+
+                  .main-big-desc {
+                    font-size: 21px;
+                    font-weight: 500;
+                    color: #333;
+                    line-height: 1.6;
+                    max-width: 860px;
+                    margin: 0 auto 20px;
+                    word-break: keep-all;
+                  }
+
+                  .main-detail-text {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: #666;
+                    line-height: 1.8;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    word-break: keep-all;
+                  }
+
+                  .main-vert-list {
+                    max-width: 800px;
+                    margin: 60px auto 0;
+                    text-align: left;
+                    border-top: 2px solid #222;
+                    border-bottom: 1px solid #ddd;
+                  }
+
+                  .main-vert-item {
+                    padding: 22px 0;
+                    border-top: 1px solid #e5e5e5;
+                    display: flex;
+                    align-items: baseline;
+                    gap: 32px;
+                  }
+
+                  .main-vert-item:first-child {
+                    border-top: none;
+                  }
+
+                  .main-vert-num {
+                    font-size: 15px;
+                    font-weight: 800;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+                    color: #258;
+                    min-width: 42px;
+                    letter-spacing: 0.5px;
+                  }
+
+                  .main-vert-content {
+                    flex: 1;
+                  }
+
+                  .main-vert-title {
+                    font-size: 18px;
+                    font-weight: 800;
+                    color: #111;
+                    margin-bottom: 6px;
+                    letter-spacing: -0.3px;
+                    word-break: keep-all;
+                  }
+
+                  .main-vert-desc {
+                    font-size: 14.5px;
+                    font-weight: 400;
+                    color: #666;
+                    line-height: 1.65;
+                    margin: 0;
+                    word-break: keep-all;
+                  }
+                </style>
+
+                <div class="post">
+                  <div class="post-body">
+                    <div class="main-typography">
+                      <div class="main-big-sub">Standard Cost Engineering Reference</div>
+                      <div class="main-big-title">
+                        설계부터 공무까지,<br />
+                        가장 직관적인 표준 내역 기준
+                      </div>
+                      <div class="main-big-desc">
+                        방대한 토목·건축 표준품셈과 표준시장단가를 낭비 없이 검색하고 확인하세요.
+                      </div>
+                      <a href="https://study-with-words.blogspot.com/2026/10/blog-post_95.html?group=group3&sub=sub4">
+                        시작하기
+                      </a>
+                      <div class="main-detail-text">
+                        수백 페이지의 두꺼운 품셈 책자나 깨지기 쉬운 PDF를 일일이 뒤적일 필요가 없습니다.<br />
+                        공종별 품셈 수량, 기준 할증률, 인력 및 기계 장비 조합 내역을 한눈에 열람할 수 있으며,<br />
+                        상단 메뉴의 항목을 선택하면 좌측 목차를 통해 세부 단위 공종으로 즉시 이동합니다.
+                      </div>
+
+                      <div class="main-vert-list">
+                        <div class="main-vert-item">
+                          <span class="main-vert-num">/ 01</span>
+                          <div class="main-vert-content">
+                            <div class="main-vert-title">A4 1장 규격 단면 최적화</div>
+                            <p class="main-vert-desc">
+                              인쇄 버튼 클릭 시 불필요한 레이아웃을 완전히 제거하고, 실무 제출 및 현장 보고용 양식에 맞춰 비율을 1:1로 정렬합니다.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div class="main-vert-item">
+                          <span class="main-vert-num">/ 02</span>
+                          <div class="main-vert-content">
+                            <div class="main-vert-title">즉각적인 단위 공종 인덱싱</div>
+                            <p class="main-vert-desc">
+                              상단 메뉴 선택 시 연동되는 3단 내비게이션을 통해 공통부문부터 전문 세부 공종까지 단 두 번의 클릭으로 접근합니다.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div class="main-vert-item">
+                          <span class="main-vert-num">/ 03</span>
+                          <div class="main-vert-content">
+                            <div class="main-vert-title">공신력 있는 표준 공사비 기준</div>
+                            <p class="main-vert-desc">
+                              한국건설기술연구원 및 국토교통부 표준시장단가 고시 기준을 기반으로 데이터 신뢰성을 유지합니다.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </MainPage>
+
+              <ItemPage>
+                <Blogger>
+                  <div class="post">
+                    <div class="post-body">
+                      <$BlogItemBody$>
+                        <ItemPageBlogAuthor>
+                          <span id="meta-blog-id" style="display:none;">
+                            <$BlogID$>
+                          </span>
+                          <span id="meta-post-id" style="display:none;">
+                            <$BlogItemNumber$>
+                          </span>
+                        </ItemPageBlogAuthor>
+                    </div>
+
+                  </div>
+                </Blogger>
+              </ItemPage>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const isMainPage = (window.location.pathname === "/" || window.location.pathname === "") && !urlParams.has("group");
+
+    if (isMainPage) {
+      document.body.classList.add("is-main");
+      document.body.classList.remove("show-sidebar");
+    } else {
+      document.body.classList.remove("is-main");
+      document.body.classList.add("show-sidebar");
+    }
+
+    // 1. 사이드바 및 상태 초기화 함수
+    function initSidebar() {
+      if (typeof menuData === "undefined" || typeof renderSidebar !== "function") {
+        setTimeout(initSidebar, 50);
+        return;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentGroup = urlParams.get("group") || "group1";
+      const currentSub = urlParams.get("sub") || "sub1";
+
+      if (urlParams.has("group")) {
+        document.body.classList.add("show-sidebar");
+      } else {
+        document.body.classList.remove("show-sidebar");
+      }
+
+      document.querySelectorAll(".cat-tab").forEach(tab => {
+        if (tab.getAttribute("data-target") === currentGroup) {
+          tab.classList.add("active");
+        } else {
+          tab.classList.remove("active");
+        }
+      });
+
+      renderSidebar(currentGroup, currentSub);
+    }
+
+    // 2. 사이드바 렌더링 함수
+    function renderSidebar(groupKey, subKey) {
+      if (typeof menuData === "undefined") return;
+      const data = menuData[groupKey];
+      if (!data) return;
+
+      const titleElem = document.getElementById("sidebar-category-title");
+      const subTabsContainer = document.getElementById("sub-tabs-container");
+      const ul = document.getElementById("sidebar-dynamic-list");
+      if (!ul) return;
+
+      if (titleElem) titleElem.textContent = data.title;
+      ul.innerHTML = "";
+
+      if (data.hasSubTabs && subTabsContainer) {
+        subTabsContainer.style.display = "block";
+        subTabsContainer.innerHTML = "";
+
+        if (!subKey || !data.subTabs[subKey]) {
+          subKey = Object.keys(data.subTabs)[0];
+        }
+
+        subTabsContainer.style.marginBottom = "-20px";
+        for (let sKey in data.subTabs) {
+          const btn = document.createElement("button");
+          btn.textContent = data.subTabs[sKey].name;
+          btn.style.marginRight = "5px";
+          btn.style.cursor = "pointer";
+
+          if (sKey === subKey) {
+            btn.style.fontWeight = "bold";
+            btn.style.backgroundColor = "#ddd";
+          }
+
+          btn.addEventListener("click", function () {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set("group", groupKey);
+            newUrl.searchParams.set("sub", sKey);
+            window.history.pushState({}, '', newUrl);
+
+            initSidebar();
+          });
+          subTabsContainer.appendChild(btn);
+        }
+
+        const subData = data.subTabs[subKey];
+        if (subData && subData.categories) {
+          subData.categories.forEach(cat => {
+            const catLi = document.createElement("li");
+            catLi.textContent = "📁 " + cat.catTitle;
+            catLi.style.fontWeight = "bold";
+            catLi.style.marginTop = "50px";
+            catLi.style.color = "#234";
+            catLi.style.listStyle = "none";
+            catLi.style.paddingLeft = "0";
+            ul.appendChild(catLi);
+
+            cat.sections.forEach(sec => {
+              const titleLi = document.createElement("li");
+              titleLi.textContent = "📂 " + sec.secTitle;
+              titleLi.style.fontWeight = "bold";
+              titleLi.style.marginTop = "5px";
+              titleLi.style.marginLeft = "20px";
+              titleLi.style.color = "#456";
+              titleLi.style.listStyle = "none";
+              titleLi.style.paddingLeft = "0";
+              ul.appendChild(titleLi);
+
+              sec.items.forEach(item => {
+                const li = document.createElement("li");
+                li.style.marginLeft = "45px";
+
+                const a = document.createElement("a");
+
+                let finalItemUrl = item.url;
+                if (finalItemUrl && !finalItemUrl.startsWith("#")) {
+                  const sep = finalItemUrl.includes("?") ? "&" : "?";
+                  finalItemUrl = `${finalItemUrl}${sep}group=${groupKey}&sub=${subKey}`;
+                }
+
+                a.href = finalItemUrl;
+                a.textContent = item.text;
+
+                a.onclick = function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  if (finalItemUrl.startsWith("#")) {
+                    window.location.hash = finalItemUrl;
+                  } else {
+                    window.location.href = finalItemUrl;
+                  }
+                };
+
+                li.appendChild(a);
+                ul.appendChild(li);
+              });
+            });
+          });
+        }
+      }
+    }
+
+    document.querySelectorAll(".cat-tab").forEach(tab => {
+      tab.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetGroup = this.getAttribute("data-target");
+
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set("group", targetGroup);
+        newUrl.searchParams.set("sub", "sub1");
+        window.history.pushState({}, '', newUrl);
+
+        document.body.classList.add("show-sidebar");
+        initSidebar();
+      });
+    });
+
+    const searchNavBtn = document.getElementById("search-nav-btn");
+    if (searchNavBtn) {
+      searchNavBtn.addEventListener("click", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentGroup = urlParams.get("group") || "group1";
+        const groupUrlMap = {
+          "group1": "https://study-with-words.blogspot.com/2026/09/blog-post_22.html",
+          "group2": "#sd",
+          "group3": "/p/search3.html",
+          "group4": "/p/search4.html",
+          "group5": "/p/search5.html"
+        };
+
+        let targetUrl = groupUrlMap[currentGroup] || groupUrlMap["group1"];
+
+        if (!targetUrl.startsWith("#")) {
+          const separator = targetUrl.includes("?") ? "&" : "?";
+          targetUrl = `${targetUrl}${separator}group=${currentGroup}`;
+        }
+
+        window.location.href = targetUrl;
+      });
+    }
+
+    // 네이버 아이콘 클릭 시 우측 공간 내용을 전부 날리고 배경과 새 화면으로 교체
+    const naverModeBtn = document.getElementById("naver-mode-btn");
+    if (naverModeBtn) {
+      naverModeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const rightArea = document.getElementById("right-area");
+        if (!rightArea) return;
+
+        // 기존 내용을 전부 없앰
+        rightArea.innerHTML = "";
+        rightArea.classList.add("naver-mode");
+
+        // 새롭게 대체될 콘텐츠 주입
+        const customContent = document.createElement("div");
+        customContent.innerHTML = `
+          <div style="text-align: center; padding-top: 100px;">
+            <h1 style="font-size: 32px; color: #03c75a; margin-bottom: 20px;">커스텀 화면 모드</h1>
+            <p style="font-size: 16px; color: #555; margin-bottom: 30px;">기존 요소를 모두 지우고 우측 공간 배경을 새롭게 바꿨어!</p>
+            <button onclick="window.location.reload();" style="padding: 10px 20px; cursor: pointer; background: #333; color: #fff; border: none; border-radius: 4px;">원래대로 되돌리기</button>
+          </div>
+        `;
+        rightArea.appendChild(customContent);
+
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set("view", "custom-mode");
+        window.history.pushState({}, '', newUrl);
+      });
+    }
+
+    window.addEventListener("scroll", () => {
+      const btn = document.getElementById("workspace-sticky-btn");
+      if (!btn) return;
+
+      if (window.scrollY > 120) {
+        btn.classList.add("is-fixed");
+      } else {
+        btn.classList.remove("is-fixed");
+      }
+    });
+
+    window.addEventListener("popstate", () => {
+      initSidebar();
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initSidebar();
+
+      const blogIdElem = document.getElementById("meta-blog-id");
+      const postIdElem = document.getElementById("meta-post-id");
+
+      if (blogIdElem && postIdElem) {
+        const blogId = blogIdElem.textContent.trim();
+        const postId = postIdElem.textContent.trim();
+
+        if (blogId && postId) {
+          const editBtn = document.getElementById("admin-edit-btn");
+          const editLink = document.getElementById("admin-edit-link");
+          if (editBtn && editLink) {
+            editLink.href = "https://www.blogger.com/blog/post/edit/" + blogId + "/" + postId;
+            editBtn.style.display = "block";
+          }
+        }
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,424 @@
+<div x-data="sketchNoteApp()">
+    <div>
+        <input type="text" x-model="inputQuery" @keyup="handleKeyup" @keydown.enter="handleEnterKey"
+            placeholder="ID 입력 후 스페이스 2번 또는 엔터 (예: 1)">
+    </div>
+
+    <hr>
+
+    <div>
+        <template x-for="(item, index) in items">
+            <div>
+                <div>
+                    <span x-text="'ID: ' + item.id"></span> |
+                    <span x-text="'품명: ' + item.품명"></span> |
+                    <span x-text="'규격: ' + item.규격"></span> |
+                    <span x-text="'수량: ' + item.unit"></span>
+
+                    <span>
+                        <template x-for="btn in item.buttons">
+                            <a :href="getLinkWithParams(btn.link)" x-text="btn.name"></a>
+                        </template>
+
+                        <button @click="toggleOpen(item)" x-text="item.isOpen ? '접기' : '상세'"></button>
+                        <button @click="deleteItem(index)">삭제</button>
+                    </span>
+                </div>
+
+                <div x-show="item.isOpen">
+                    <template x-for="line in item.detailLines">
+                        <div x-text="line"></div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('sketchNoteApp', () => ({
+            inputQuery: '',
+            currentSiteMode: 'site',
+            currentNoteId: '1',
+            validMasterItems: [
+                {
+                    id: '1', 품명: '불도저', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: 'https://study-with-words.blogspot.com/2026/09/blog-post_23.html?group=group3&sub=sub3' },
+                        { name: '작업량', link: 'https://study-with-words.blogspot.com/2026/10/blog-post_408.html?group=group3&sub=sub3' }
+                    ],
+                },
+                {
+                    id: '2', 품명: '리퍼(유압식)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '3', 품명: '굴삭기', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '4', 품명: '트랜처', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '5', 품명: '로더', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '6', 품명: '모터 스크레이퍼', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '7', 품명: '모터 그레이더', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '8', 품명: '덤프트럭', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '9', 품명: '롤러', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '10', 품명: '아스팔트 플랜트', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '11', 품명: '스테이빌라이저(노상안정기)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+
+                {
+                    id: '12', 품명: '크러셔', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '13', 품명: '대형브레이커', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '14', 품명: '압쇄기(콘크리트 소활용)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '15', 품명: '법면다짐기', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '16', 품명: '골재세척설비', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '17', 품명: '콘크리트 믹서', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '18', 품명: '콘크리트 배치플랜트(강제혼합식)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '19', 품명: '콘크리트 운반', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '20', 품명: '기관차', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '21', 품명: '경운기', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '22', 품명: '디젤 파일 해머', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '23', 품명: '유압 파일 해머', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '24', 품명: '진동파일 해머', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '24', 품명: '진동파일 해머(워터제트 병용 압입공)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '26', 품명: '유압식 압입 인발기(유압식 압입 인발공)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '27', 품명: '수중펌프', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '28', 품명: '터널전단면 굴착기', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '29', 품명: '펌프식 준설선', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '30', 품명: '그래브 준설선', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '31', 품명: '쇄암선(중추식)', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '32', 품명: '이동식 임목파쇄기', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+                {
+                    id: '33', 품명: '하천골재채취선', 규격: '', isOpen: false,
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ],
+                },
+            ],
+
+            items: [],
+
+
+            init() {
+                // 1. 페이지가 처음 뜰 때 모드 설정 및 데이터 로드
+                const urlParams = new URLSearchParams(window.location.search);
+                const siteParam = urlParams.get('sub');
+                this.currentSiteMode = (siteParam === 'sub3') ? 'site' : 'cost';
+
+                this.loadFromLocalStorage();
+
+                // 2. 다른 링크로 갔다가 뒤로가기로 돌아왔을 때(캐시 복원 시) 최신 데이터를 강제로 다시 로드
+                window.addEventListener('pageshow', (event) => {
+                    // 브라우저 캐시(BFCache)에서 살아 돌아왔거나 페이지가 다시 보일 때
+                    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                        // 주소창의 쿼리스트링이 혹시 바뀌었을 수도 있으니 모드도 다시 체크
+                        const currentParams = new URLSearchParams(window.location.search);
+                        const currentSiteParam = currentParams.get('site');
+
+                        if (currentSiteParam === 'cost' || currentSiteParam === 'site') {
+                            this.currentSiteMode = currentSiteParam;
+                        }
+
+                        // 최신 로컬 스토리지 데이터를 다시 불러와서 화면 갱신!
+                        this.loadFromLocalStorage();
+                    }
+                });
+            },
+
+            loadFromLocalStorage() {
+                switch (this.currentSiteMode) {
+                    case 'site': {
+                        let parsedSite = JSON.parse(localStorage.getItem('site') || '{}');
+
+                        parsedSite['건설기계'] ??= {};
+                        parsedSite['건설기계']['산출노트'] ??= [];
+
+                        localStorage.setItem('site', JSON.stringify(parsedSite));
+                        this.items = parsedSite['건설기계']['산출노트'];
+                        break;
+                    }
+                    case 'cost': {
+                        const activeProjectKey = localStorage.getItem('activeproject') || 'projectA';
+                        let parsedCost = JSON.parse(localStorage.getItem('cost') || '{}');
+
+                        if (!parsedCost[activeProjectKey]) parsedCost[activeProjectKey] = {};
+                        if (!parsedCost[activeProjectKey]['산출노트']) parsedCost[activeProjectKey]['산출노트'] = {};
+                        if (!parsedCost[activeProjectKey]['산출노트'][this.currentNoteId]) {
+                            parsedCost[activeProjectKey]['산출노트'][this.currentNoteId] = [];
+                        }
+
+                        localStorage.setItem('cost', JSON.stringify(parsedCost));
+                        this.items = parsedCost[activeProjectKey]['산출노트'][this.currentNoteId];
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            },
+
+            saveToLocalStorage() {
+                switch (this.currentSiteMode) {
+                    case 'site': {
+                        let parsedSite = JSON.parse(localStorage.getItem('site') || '{}');
+
+                        parsedSite['건설기계'] ??= {};
+                        parsedSite['건설기계']['산출노트'] = this.items;
+
+                        localStorage.setItem('site', JSON.stringify(parsedSite));
+                        break;
+                    }
+                    case 'cost': {
+                        const activeProjectKey = localStorage.getItem('activeproject') || 'projectA';
+                        let parsedCost = JSON.parse(localStorage.getItem('cost') || '{}');
+
+                        if (!parsedCost[activeProjectKey]) parsedCost[activeProjectKey] = {};
+                        if (!parsedCost[activeProjectKey]['산출노트']) parsedCost[activeProjectKey]['산출노트'] = {};
+
+                        parsedCost[activeProjectKey]['산출노트'][this.currentNoteId] = this.items;
+                        localStorage.setItem('cost', JSON.stringify(parsedCost));
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            },
+
+            handleKeyup(e) {
+                if (e.key === ' ') {
+                    const val = this.inputQuery;
+                    if (val.endsWith('  ')) {
+                        this.processRegistration();
+                    }
+                }
+            },
+
+            handleEnterKey() {
+                this.processRegistration();
+            },
+
+            processRegistration() {
+                const queryId = this.inputQuery.trim();
+                const matchedMaster = this.validMasterItems.find(m => String(m.id).trim() === queryId);
+
+                if (!matchedMaster) {
+                    this.inputQuery = '';
+                    return;
+                }
+
+                this.items.push(JSON.parse(JSON.stringify(matchedMaster)));
+
+                this.inputQuery = '';
+                this.saveToLocalStorage();
+            },
+
+            deleteItem(index) {
+                if (confirm('삭제하시겠습니까?')) {
+                    this.items.splice(index, 1);
+                    this.saveToLocalStorage();
+                }
+            },
+
+            // 자세히/접기 버튼을 누를 때 상태를 반전시키고 바로 로컬 스토리지에 저장
+            toggleOpen(item) {
+                item.isOpen = !item.isOpen;
+
+                this.saveToLocalStorage();
+            },
+
+            getLinkWithParams(link) {
+                // SITE 값이 'cost'일 경우만 파라미터 붙이되, 문자열로 직접 더해서 대소문자 변조 방지
+                if (this.currentSiteMode === 'cost') {
+                    // 이미 쿼리스트링(?)이 포함된 주소인지 확인 후 처리
+                    const separator = link.includes('?') ? '&' : '?';
+                    return `${link}${separator}site=cost`;
+                }
+
+                return link;
+            }
+        }));
+    });
+</script>
+
+</body>
+
+</html>

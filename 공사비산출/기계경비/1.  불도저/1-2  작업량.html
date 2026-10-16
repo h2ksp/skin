@@ -1,0 +1,625 @@
+<style>
+    .header-box {
+        display: flex;
+        justify-content: space-between;
+        /* 타이틀은 왼쪽, 버튼은 우측 끝으로 정렬 */
+        align-items: center;
+
+    }
+
+    .formula-table {
+        display: inline-block;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+
+    .top-line {
+        border-top: 1px solid black;
+    }
+
+    .formula-input {
+        border: none;
+        background: transparent;
+        font-size: inherit;
+        text-align: center;
+        field-sizing: content;
+        width: 31px;
+    }
+
+    .result-box {
+        margin-top: 20px;
+        padding: 10px 30px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        font-size: 17px;
+        /* 글씨 크기 살짝 확대 (15px -> 16px) */
+        font-style: italic;
+        /* 기울임꼴 적용 */
+        line-height: 1.3;
+
+        /* 인쇄 시 배경색(#f1f5f9)이 무조건 출력되도록 강제함 */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+</style>
+
+
+<div id="print-container" x-data="bulldozerCalc()">
+    <div class="header-box">
+        <div id="title">
+            <div id="title" x-html="`1. ${machineKey}　_ 시간당 작업량(m<sup>3</sup>/hr)`"></div>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <button @click="copyResult()">결과복사</button>
+            <button @click="goToLink()">원문보기</button>
+        </div>
+    </div>
+    <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 20px;">
+
+
+    <div class="result-box" x-html="summaryText" style="margin-bottom: 25px;"></div>
+
+
+    <div style="display: flex; align-items: center;">
+        <table class="formula-table">
+            <tr>
+                <td rowspan="2"> Q &nbsp;&nbsp;=&nbsp;</td>
+                <td class="center-text">&nbsp; 60 · q · f · E &nbsp;</td>
+                <td rowspan="2"> , q = q˚ × e</td>
+            </tr>
+            <tr>
+                <td class="top-line center-text">cm</td>
+            </tr>
+        </table>
+
+        <!-- 두 번째 수식 테이블 -->
+        <table class="formula-table" style="margin-left: 50px;">
+            <tr>
+                <td rowspan="2"> <span x-text="formattedQTotal"></span> &nbsp;&nbsp;=&nbsp;</td>
+                <td class="center-text">
+                    &nbsp;&nbsp;60&nbsp;&nbsp;·&nbsp;
+                    <span x-text="formattedQ"></span>&nbsp;&nbsp;·
+                    <input type="text" x-model.number="valF" class="formula-input" placeholder="f">·
+                    <input type="text" x-model.number="valE" class="formula-input" placeholder="E">
+                    &nbsp;
+                </td>
+                <td rowspan="2">
+                    ,　<span x-text="formattedQ"></span> =
+                    <input type="text" x-model.number="q0" class="formula-input" placeholder="q˚">
+                    ×
+                    <input type="text" x-model.number="e" class="formula-input" style="width: 30px;" placeholder="e">
+                </td>
+            </tr>
+            <tr>
+                <td class="top-line center-text">
+                    <input type="text" x-model.number="cm" class="formula-input" style="width: 40px;" placeholder="cm">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table style="margin: 10px;">
+        <tr>
+            <td>여기서　</td>
+            <td>Q </td>
+            <td>:&nbsp;&nbsp;시간당 작업량 (m<sup>3</sup>/hr)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>q</td>
+            <td>: 삽날의 용량(㎥)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>q˚</td>
+            <td>
+                <a href="#" @click.prevent="subActive = (subActive === 'c' ? '' : 'c')">
+                    :&nbsp;&nbsp;거리를 고려하지 않은 삽날의 용량 (㎥)
+                </a>
+            </td>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>e</td>
+            <td>
+                <a href="#" @click.prevent="toggleSub('d')">
+                    :&nbsp;&nbsp;운반거리계수
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>f</td>
+            <td class="click-cursor" @click="subActive = (subActive === 'e' ? '' : 'e')">: 체적환산계수 (여기를 클릭해봐!)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>E</td>
+
+            <td>
+                <a href="#" @click.prevent="subActive = (subActive === 'f' ? '' : 'f')">
+                    :&nbsp;&nbsp;작업효율
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>cm</td>
+            <td>
+                <a href="#" @click.prevent="toggleSub('g')">
+                    :&nbsp;&nbsp;1회 싸이클 시간
+                </a>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+
+
+    <!-- q˚ 상세 내용 -->
+    <div x-show="subActive === 'c'">
+        <div class="tbl-text">( q˚ : 거리를 고려하지 않은 삽날의 용량 상세 내용 )</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th rowspan="2">
+                        <span style="vertical-align:sub">종별</span>＼<span style="vertical-align:super">급수(ton)</span>
+                    </th>
+                    <th>4<br>(초습지)</th>
+                    <th>7</th>
+                    <th>10</th>
+                    <th>12</th>
+                    <th>13<br>(습지)</th>
+                    <th>15</th>
+                    <th>19</th>
+                    <th>28</th>
+                    <th>32</th>
+                    <th>33</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left; padding-left: 20px;">
+                        무 한 궤 도<br>
+                        타 이 어
+                    </td>
+                    <td>
+                        <a @click="q0=0.5" style="cursor: pointer;">0.5</a><br>
+                        -<br>
+                    </td>
+                    <td>
+                        <a @click="q0=1.1" style="cursor: pointer;">1.1</a><br>
+                        -<br>
+                    </td>
+                    <td>
+                        <a @click="q0=1.5" style="cursor: pointer;">1.5</a><br>
+                        -<br>
+                    </td>
+                    <td>
+                        <a @click="q0=2.0" style="cursor: pointer;">2.0</a><br>
+                        -<br>
+                    </td>
+                    <td>
+                        <a @click="q0=1.5" style="cursor: pointer;">1.5</a><br>
+                        -
+                    </td>
+                    <td>
+                        -<br>
+                        <a @click="q0=3.1" style="cursor: pointer;">3.1</a>
+                    </td>
+                    <td>
+                        <a @click="q0=3.2" style="cursor: pointer;">3.2</a><br>
+                        -
+                    </td>
+                    <td>
+                        -<br>
+                        <a @click="q0=4.0" style="cursor: pointer;">4.0</a>
+                    </td>
+                    <td>
+                        <a @click="q0=5.5" style="cursor: pointer;">5.5</a><br>
+                        -
+                    </td>
+                    <td>
+                        -<br>
+                        <a @click="q0=5.7" style="cursor: pointer;">5.7</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div x-show="subActive === 'd'">
+        <div class="tbl-text">( e: 운반거리계수 )</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th>운반거리(m)</th>
+                    <th>10이하</th>
+                    <th>20</th>
+                    <th>30</th>
+                    <th>40</th>
+                    <th>50</th>
+                    <th>60</th>
+                    <th>70</th>
+                    <th>80</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>e</td>
+                    <td>
+                        <a @click="e=1.0" style="cursor: pointer;">1.0</a>
+                    </td>
+
+                    <td>
+                        <a @click="e=0.96" style="cursor: pointer;">0.96</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.92" style="cursor: pointer;">0.92</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.88" style="cursor: pointer;">0.88</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.84" style="cursor: pointer;">0.84</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.80" style="cursor: pointer;">0.80</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.76" style="cursor: pointer;">0.76</a>
+                    </td>
+                    <td>
+                        <a @click="e=0.72" style="cursor: pointer;">0.72</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+
+    <!-- f 체적환산계수 상세 및 선택 표 -->
+    <div x-show="subActive === 'e'"
+        style="margin-top: 15px; padding: 10px; border: 1px solid #ddd; background: #f9f9f9;">
+        <h5>f : 체적환산계수 선택</h5>
+        <p style="font-size: 14px; color: #555;">표의 항목을 클릭하면 위의 수식 인풋박스(f)에 자동으로 값이 입력돼.</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; max-width: 400px; background: #fff;">
+            <thead>
+                <tr style="background: #eee;">
+                    <th style="padding: 5px;">토질 상태</th>
+                    <th style="padding: 5px;">계수 값 (f)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr @click="valF = 1.15" style="cursor: pointer;">
+                    <td style="padding: 5px;">보통토사 (자연상태)</td>
+                    <td style="padding: 5px; text-align: center;">1.15</td>
+                </tr>
+                <tr @click="valF = 1.25" style="cursor: pointer;">
+                    <td style="padding: 5px;">모래 및 자갈</td>
+                    <td style="padding: 5px; text-align: center;">1.25</td>
+                </tr>
+                <tr @click="valF = 0.85" style="cursor: pointer;">
+                    <td style="padding: 5px;">암석 (발파암)</td>
+                    <td style="padding: 5px; text-align: center;">0.85</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div x-show="subActive === 'f'">
+        <div class="tbl-text">( E : 작업효율 )</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 200px;">
+                        <span style="vertical-align:sub">토질명</span>＼<span style="vertical-align:super">현장조건</span>
+                    </th>
+                    <th colspan="3">자연상태</th>
+                    <th colspan="3">흐트러진 상태</th>
+                </tr>
+                <tr>
+                    <th>양 호</th>
+                    <th>보 통</th>
+                    <th>불 량</th>
+                    <th>양 호</th>
+                    <th>보 통</th>
+                    <th>불 량</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left; padding-left: 20px;">
+                        모래, 사질토<br>
+                        자갈 섞인 흙, 점성토<br>
+                        파 쇄 암
+                    </td>
+                    <td>
+                        <a @click="valE=0.80" style="cursor: pointer;">0.80</a><br>
+                        <a @click="valE=0.70" style="cursor: pointer;">0.70</a><br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="valE=0.65" style="cursor: pointer;">0.65</a><br>
+                        <a @click="valE=0.55" style="cursor: pointer;">0.55</a><br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="valE=0.50" style="cursor: pointer;">0.50</a><br>
+                        <a @click="valE=0.40" style="cursor: pointer;">0.40</a><br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="valE=0.85" style="cursor: pointer;">0.85</a><br>
+                        <a @click="valE=0.75" style="cursor: pointer;">0.75</a><br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="valE=0.70" style="cursor: pointer;">0.70</a><br>
+                        <a @click="valE=0.60" style="cursor: pointer;">0.60</a><br>
+                        <a @click="valE=0.35" style="cursor: pointer;">0.35</a>
+                    </td>
+                    <td>
+                        <a @click="valE=0.55" style="cursor: pointer;">0.55</a><br>
+                        <a @click="valE=0.45" style="cursor: pointer;">0.45</a><br>
+                        <a @click="valE=0.25" style="cursor: pointer;">0.25</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="tbl-note">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td style="vertical-align: top; width: 40px;">양호 : </td>
+                <td>작업현장이 넓고(배토판폭의 3배 이상), 지반의 요철 등에 의한 미끄럼이 없고, 또한 하향 구배
+                    등으로서 작업속도가 충분히 기대되는 조건인 경우</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td style="vertical-align: top;">보통 : </td>
+                <td>작업현장은 넓으나 작업속도가 기대되지 않는 경우, 작업현장은 좁으나(배토관폭의 3배 미만)
+                    작업속도가 충분히 기대되는 등 제조건이 중간으로 판단되는 경우</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td style="vertical-align: top;">불량 : </td>
+                <td>작업현장이 좁고 지반상태를 고려한 미끄럼이 많고 또 상향 구배 등으로서 작업속도를 저해하는
+                    조건인 경우</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④&nbsp;</td>
+                <td colspan="2">정지작업을 겸하는 경우는 0.1을 뺀 값으로 한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤&nbsp;</td>
+                <td colspan="2">터파기에 대해서는 0.05를 뺀 값으로 한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑥&nbsp;</td>
+                <td colspan="2">리핑한 것은 리핑된 상태를 고려하여 그 상태에 해당하는 토질에서의 값을 취한다.</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div x-show="subActive === 'g'">
+        <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 20px;">
+        <div id="title">　_ 1회 싸이클 시간(cm)</div>
+
+        <table style="margin-top:10px; margin-left: 20px;">
+            <tr>
+                <td rowspan="2"> cm &nbsp;=&nbsp;</td>
+                <td style="text-align: center;">&nbsp; L &nbsp;</td>
+                <td rowspan="2">&nbsp; + &nbsp;</td>
+                <td style="text-align: center;">&nbsp; L &nbsp;</td>
+                <td rowspan="2">&nbsp; + &nbsp; t</td>
+            </tr>
+            <tr>
+                <td style="border-top: 1px solid black; text-align: center;">&nbsp;V<sub>1</sub></td>
+                <td style="border-top: 1px solid black; text-align: center;">&nbsp;V<sub>2</sub></td>
+            </tr>
+        </table>
+
+        <table style="margin-top:10px; margin-left: 30px;">
+            <tr>
+                <td>여기서　　</td>
+                <td>cm　</td>
+                <td>:&nbsp;&nbsp;1회 싸이클시간(분)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>L</td>
+                <td>:&nbsp;&nbsp;운반거리(m)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>V<sub>1</sub></td>
+                <td>:&nbsp;&nbsp;전진속도(m/분)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>V<sub>2</sub></td>
+                <td>:&nbsp;&nbsp;후진속도(m/분)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>t</td>
+                <td>:&nbsp;&nbsp;기어 변속시간(0.25분)</td>
+            </tr>
+        </table>
+
+
+        <a href="#" @click.prevent="toggleSub2('g')">
+            :&nbsp;&nbsp;거리를 고려하지 않은 삽날의 용량 (㎥)
+        </a>
+
+        <div x-show="subActive2 === 'g'">
+            <p>asdfasdfs</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+function bulldozerCalc() {
+        // 로컬스토리지에서 가져오거나, 없으면 바로 빈 객체로 시작!
+        const initialData = JSON.parse(localStorage.getItem('site')) || {};
+
+        let defaultKey = '불도저';
+        let machineData = initialData['건설기계']?.[defaultKey]?.작업량 || {};
+
+        return {
+            dbData: initialData,
+            machineKey: defaultKey,
+            subActive: '',
+            subActive2: '',
+
+            valF: machineData.valF ?? '',
+            valE: machineData.valE ?? '',
+            q0: machineData.q0 ?? '',
+            e: machineData.e ?? '',
+            cm: machineData.cm ?? '',
+
+            init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.subActive = urlParams.get('tab1') || '';
+                this.subActive2 = urlParams.get('tab2') || '';
+
+                this.$watch('valF', () => this.saveToLocal());
+                this.$watch('valE', () => this.saveToLocal());
+                this.$watch('q0', () => this.saveToLocal());
+                this.$watch('e', () => this.saveToLocal());
+                this.$watch('cm', () => this.saveToLocal());
+            },
+            toggleSub(val) {
+                this.subActive = (this.subActive === val ? '' : val);
+                if (!this.subActive) this.subActive2 = '';
+                this.updateUrl();
+            },
+
+            toggleSub2(val) {
+                this.subActive2 = (this.subActive2 === val ? '' : val);
+                this.updateUrl();
+            },
+
+            updateUrl() {
+                const url = new URL(window.location);
+                if (this.subActive) url.searchParams.set('tab1', this.subActive);
+                else url.searchParams.delete('tab1');
+
+                if (this.subActive2) url.searchParams.set('tab2', this.subActive2);
+                else url.searchParams.delete('tab2');
+
+                window.history.pushState({}, '', url);
+            },
+            get rawQ() {
+                if (this.q0 !== '' && this.e !== '' && !isNaN(this.q0) && !isNaN(this.e)) {
+                    return Number(this.q0) * Number(this.e);
+                }
+                return null;
+            },
+
+            get formattedQ() {
+                let val = this.rawQ;
+                if (val !== null) {
+                    return val.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+                }
+                return 'q';
+            },
+
+            get rawQTotal() {
+                let qVal = this.rawQ;
+                if (qVal !== null && this.valF !== '' && this.valE !== '' && this.cm !== '' && Number(this.cm) !== 0) {
+                    return (60 * qVal * Number(this.valF) * Number(this.valE)) / Number(this.cm);
+                }
+                return null;
+            },
+
+            get formattedQTotal() {
+                let result = this.rawQTotal;
+                if (result !== null) {
+                    return result.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+                }
+                return 'Q';
+            },
+
+            get summaryText() {
+                let q = this.formattedQ;
+                let Q = this.formattedQTotal;
+                let q0 = this.q0 !== '' ? this.q0 : '-';
+                let f = this.valF !== '' ? this.valF : '-';
+                let eVal = this.e !== '' ? this.e : '-';
+                let E = this.valE !== '' ? this.valE : '-';
+                let cm = this.cm !== '' ? this.cm : '-';
+
+                return '// _시간당 작업량(m<sup>3</sup>/hr)<br>' +
+                    'Q : ' + Q + '<br>' +
+                    'q : ' + q + '<br>' +
+                    'q˚: ' + q0 + '<br>' +
+                    'e : ' + eVal + '<br>' +
+                    'f : ' + f + '<br>' +
+                    'E : ' + E + '<br>' +
+                    'cm: ' + cm;
+            },
+
+            copyResult() {
+                let textToCopy = this.summaryText
+                    .replace(/<br>/g, '\n')
+                    .replace(/<\/?sup>/g, '');
+
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert('내용이 복사되었습니다.');
+                }).catch(err => {
+                    alert('복사에 실패했습니다.');
+                });
+            },
+
+            resizeInput(el) {
+                let len = el.value.length || 1;
+                el.style.width = (len * 11 + 15) + 'px';
+            },
+            goToLink() {
+                let url = 'https://study-with-words.blogspot.com/2026/09/8-2-1-25.html?group=group1&sub=sub6';
+                if (!url) return;
+                window.location.href = url;
+            },
+            saveToLocal() {
+                if (!this.dbData['건설기계']) {
+                    this.dbData['건설기계'] = {};
+                }
+                if (!this.dbData['건설기계'][this.machineKey]) {
+                    this.dbData['건설기계'][this.machineKey] = {};
+                }
+
+                this.dbData['건설기계'][this.machineKey] = {
+                    작업량: {
+                        valF: this.valF,
+                        valE: this.valE,
+                        q0: this.q0,
+                        e: this.e,
+                        cm: this.cm,
+                        q: this.rawQ,
+                        Q: this.rawQTotal
+                    }
+                };
+
+                localStorage.setItem('site', JSON.stringify(this.dbData));
+            }
+        }
+    }
+</script>

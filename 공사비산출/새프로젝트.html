@@ -1,0 +1,387 @@
+<div id="print-container">
+
+    <h1>새 프로젝트</h1>
+
+    <div class="tbl-text"
+        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 19px; font-weight: 400; font-style: italic; color: #666666; margin-bottom: 12px; line-height: 1.6;">
+        "프로젝트를 추가 할 수 있고 순서를 바꾸거나 이름을 편집하거나 삭제할 수 있습니다."
+    </div>
+
+    <div class="active-box">
+        <span>현재 활성: </span>
+        <span id="activeDisplay">선택된 프로젝트 없음</span>
+    </div>
+
+    <div class="input-row">
+        <input type="text" id="projectInput" placeholder=" 새 프로젝트 이름 입력..." autocomplete="off">
+        <button onclick="addProject()">추가</button>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <div class="tbl-text">프로젝트 목록</div>
+        <table id="projectTable">
+            <tbody id="projectList"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<style>
+    #main {
+        position: relative;
+        /* 또는 absolute */
+        left: -70px;
+        /* margin-left 대신 left 속성 사용 */
+    }
+
+    .active-box {
+        margin: 18px 0;
+    }
+
+    #activeDisplay {
+        font-weight: bold;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .input-row input {
+        width: 50%;
+        outline: none;
+    }
+
+    .input-row button {
+        padding: 5px 12px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    #projectTable {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    #projectTable td {
+        border: none;
+        padding: 0 2px;
+        vertical-align: middle;
+    }
+
+    .tbl-num {
+        width: 30px;
+        color: #666;
+        text-align: left;
+    }
+
+    .is-active-project {
+        font-weight: bold;
+    }
+
+    table button {
+        cursor: pointer;
+    }
+
+    .btn-group {
+        display: inline-flex;
+        gap: 4px;
+        white-space: nowrap;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .project-manager-app table button {
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .project-manager-app table button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        // cost 데이터만 스토어로 관리
+        Alpine.store('dbstore', {
+            cost: JSON.parse(localStorage.getItem('cost')) || {},
+
+            saveCost() {
+                localStorage.setItem('cost', JSON.stringify(this.cost));
+            }
+        });
+    });
+
+    (function () {
+        const STORAGE_KEY = 'cost';
+        const LIST_ORDER_KEY = 'projectList';
+        const ACTIVE_KEY = 'activeProject';
+
+        let projectOrder = [];
+        let activeProject = null;
+
+        function init() {
+            const store = Alpine.store('dbstore');
+            const costData = store ? store.cost : {};
+            const allKeys = Object.keys(costData);
+
+            // 1. 프로젝트 리스트 순서는 로컬스토리지에서 직접 로드
+            const rawOrder = localStorage.getItem(LIST_ORDER_KEY);
+            if (rawOrder) {
+                try {
+                    const parsedOrder = JSON.parse(rawOrder);
+                    if (Array.isArray(parsedOrder)) {
+                        projectOrder = parsedOrder.filter(name => costData[name]);
+                        allKeys.forEach(name => {
+                            if (!projectOrder.includes(name)) {
+                                projectOrder.push(name);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    projectOrder = allKeys;
+                }
+            } else {
+                projectOrder = allKeys;
+            }
+            saveProjectOrder();
+
+            // 2. 활성 프로젝트도 로컬스토리지에서 직접 로드
+            const savedActive = localStorage.getItem(ACTIVE_KEY);
+            if (savedActive && costData[savedActive]) {
+                activeProject = savedActive;
+            } else if (projectOrder.length > 0) {
+                activeProject = projectOrder[0];
+                saveActive();
+            }
+
+            render();
+        }
+
+        window.addProject = function () {
+            const input = document.getElementById('projectInput');
+            const name = input.value.trim();
+
+            if (!name) {
+                alert('프로젝트 이름을 입력해줘!');
+                return;
+            }
+
+            const store = Alpine.store('dbstore');
+            if (store.cost[name]) {
+                alert('이미 존재하는 프로젝트야!');
+                return;
+            }
+
+            // 스토어를 통해 cost에 기본 틀 추가 후 저장
+            store.cost[name] = {
+                공종별내역서: [],
+                일위대가: [],
+                중기단가산출근거: [],
+                적용기준: {
+                    환율: {
+                        달러: '',
+                        엔: ''
+                    },
+                    유류단가: {
+                        휘발유: '',
+                        경유: '',
+                        선박용경유: '',
+                        중유: ''
+                    },
+                },
+            };
+            store.saveCost();
+
+            projectOrder.push(name);
+            saveProjectOrder();
+
+            if (!activeProject) {
+                setActive(name);
+            }
+
+            input.value = '';
+            render();
+        }
+
+        window.editProject = function (oldName) {
+            const newName = prompt('변경할 프로젝트 이름을 입력해줘:', oldName);
+            if (!newName) return;
+
+            const trimmedName = newName.trim();
+            if (!trimmedName) {
+                alert('유효한 이름을 입력해줘!');
+                return;
+            }
+
+            if (trimmedName === oldName) return;
+
+            const store = Alpine.store('dbstore');
+            if (store.cost[trimmedName]) {
+                alert('이미 존재하는 프로젝트 이름이야!');
+                return;
+            }
+
+            store.cost[trimmedName] = store.cost[oldName];
+            delete store.cost[oldName];
+            store.saveCost();
+
+            projectOrder = projectOrder.map(name => name === oldName ? trimmedName : name);
+            saveProjectOrder();
+
+            if (activeProject === oldName) {
+                setActive(trimmedName);
+            } else {
+                render();
+            }
+        }
+
+        function deleteProject(name) {
+            if (!confirm(`"${name}" 프로젝트를 삭제할래?`)) return;
+
+            const store = Alpine.store('dbstore');
+            delete store.cost[name];
+            store.saveCost();
+
+            projectOrder = projectOrder.filter(p => p !== name);
+            saveProjectOrder();
+
+            if (activeProject === name) {
+                activeProject = projectOrder.length > 0 ? projectOrder[0] : null;
+                saveActive();
+            }
+
+            render();
+        }
+
+        window.moveUp = function (index) {
+            if (index <= 0) return;
+            const temp = projectOrder[index];
+            projectOrder[index] = projectOrder[index - 1];
+            projectOrder[index - 1] = temp;
+            saveProjectOrder();
+            render();
+        }
+
+        window.moveDown = function (index) {
+            if (index >= projectOrder.length - 1) return;
+            const temp = projectOrder[index];
+            projectOrder[index] = projectOrder[index + 1];
+            projectOrder[index + 1] = temp;
+            saveProjectOrder();
+            render();
+        }
+
+        function setActive(name) {
+            activeProject = name;
+            saveActive();
+            render();
+        }
+
+        function saveProjectOrder() {
+            localStorage.setItem(LIST_ORDER_KEY, JSON.stringify(projectOrder));
+        }
+
+        function saveActive() {
+            if (activeProject) {
+                localStorage.setItem(ACTIVE_KEY, activeProject);
+            } else {
+                localStorage.removeItem(ACTIVE_KEY);
+            }
+        }
+
+        function render() {
+            const activeDisplay = document.getElementById('activeDisplay');
+            activeDisplay.textContent = activeProject ? activeProject : '선택된 프로젝트 없음';
+
+            const listEl = document.getElementById('projectList');
+            listEl.innerHTML = '';
+
+            if (projectOrder.length === 0) {
+                listEl.innerHTML = '<tr><td colspan="4" style="color: gray; font-size: 17px; padding: 6px 2px;">등록된 프로젝트가 없습니다.</td></tr>';
+                return;
+            }
+
+            projectOrder.forEach((project, index) => {
+                const tr = document.createElement('tr');
+
+                // 1. 첫 번째 칸: 순번 (숫자)
+                const tdNum = document.createElement('td');
+                tdNum.className = 'tbl-num';
+                tdNum.textContent = (index + 1) + '.';
+
+                // 2. 두 번째 칸: 프로젝트 이름
+                const tdName = document.createElement('td');
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'tbl-text';
+                nameDiv.textContent = project;
+                if (project === activeProject) {
+                    nameDiv.classList.add('is-active-project');
+                }
+                tdName.appendChild(nameDiv);
+
+                // 3. 세 번째 칸: 선택, 편집, 삭제 버튼
+                const tdActions = document.createElement('td');
+                tdActions.style.width = '170px';
+                tdActions.style.textAlign = 'right';
+
+                const actionGroup = document.createElement('div');
+                actionGroup.className = 'btn-group';
+
+                const selectBtn = document.createElement('button');
+                selectBtn.textContent = '선택';
+                selectBtn.onclick = () => setActive(project);
+
+                const editBtn = document.createElement('button');
+                editBtn.textContent = '편집';
+                editBtn.onclick = () => editProject(project);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '삭제';
+                deleteBtn.onclick = () => deleteProject(project);
+
+                actionGroup.appendChild(selectBtn);
+                actionGroup.appendChild(editBtn);
+                actionGroup.appendChild(deleteBtn);
+                tdActions.appendChild(actionGroup);
+
+                // 4. 네 번째 칸: 위아래(▲, ▼) 버튼
+                const tdOrder = document.createElement('td');
+                tdOrder.style.width = '90px';
+                tdOrder.style.textAlign = 'right';
+
+                const orderGroup = document.createElement('div');
+                orderGroup.className = 'btn-group';
+
+                const upBtn = document.createElement('button');
+                upBtn.textContent = '▲';
+                upBtn.onclick = () => moveUp(index);
+                if (index === 0) upBtn.disabled = true;
+
+                const downBtn = document.createElement('button');
+                downBtn.textContent = '▼';
+                downBtn.onclick = () => moveDown(index);
+                if (index === projectOrder.length - 1) downBtn.disabled = true;
+
+                orderGroup.appendChild(upBtn);
+                orderGroup.appendChild(downBtn);
+                tdOrder.appendChild(orderGroup);
+
+                tr.appendChild(tdNum);
+                tr.appendChild(tdName);
+                tr.appendChild(tdActions);
+                tr.appendChild(tdOrder);
+                listEl.appendChild(tr);
+            });
+        }
+
+        // 알파인 초기화 시점과 DOM 로드 시점을 맞춰주기 위해 약간 지연 후 init 호출
+        setTimeout(() => {
+            init();
+        }, 50);
+    })();
+</script>

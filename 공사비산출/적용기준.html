@@ -1,0 +1,230 @@
+<style>
+    .project-select-wrap {
+        margin-top: 35px;
+    }
+
+    .project-select-wrap label {
+        margin-right: 8px;
+    }
+
+    #projectSelect {
+        width: 280px;
+        padding: 4px;
+    }
+
+    .group-title {
+        margin-top: 14px;
+        margin-bottom: 4px;
+    }
+
+    .sub-box {
+        padding-left: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 25px;
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 350px;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+    }
+</style>
+
+<div id="print-container">
+    <h1>적용기준 관리</h1>
+    <div class="tbl-text"
+        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 19px; font-weight: 400; font-style: italic; color: #666666; margin-bottom: 12px; line-height: 1.6;">
+        "개별임금 노임단가는 최신으로 적용되며 추후 변경할 수 있습니다."
+    </div>
+    <div class="project-select-wrap">
+        <label for="projectSelect" class="tbl-text">프로젝트 선택:</label>
+        <select id="projectSelect" onchange="onProjectChange()"></select>
+    </div>
+
+    <div id="contentArea" style="display: none;">
+        <div id="projectTitle" class="tbl-text" style="margin-top: 30px;"></div>
+        <div id="standardsContainer"></div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const ACTIVE_KEY = 'activeProject';
+
+        function getStore() {
+            return window.Alpine && Alpine.store('dbStore');
+        }
+
+        function formatNumber(value) {
+            if (!value) return '';
+            // 숫자와 소수점만 남기고 제거 후 3자리마다 콤마 삽입
+            const cleaned = value.toString().replace(/[^\d.]/g, '');
+            const parts = cleaned.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        function initApp() {
+            const store = getStore();
+            if (!store) return;
+
+            let costData = store._getData();
+            const projectNames = Object.keys(costData);
+
+            if (projectNames.length === 0) {
+                document.getElementById('projectSelect').innerHTML = '<option value="">등록된 프로젝트 없음</option>';
+                document.getElementById('contentArea').style.display = 'none';
+                return;
+            }
+
+            const selectEl = document.getElementById('projectSelect');
+            selectEl.innerHTML = '';
+            projectNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                selectEl.appendChild(opt);
+            });
+
+            let activeProject = localStorage.getItem(ACTIVE_KEY);
+            if (!activeProject || !costData[activeProject]) {
+                activeProject = projectNames[0];
+                localStorage.setItem(ACTIVE_KEY, activeProject);
+            }
+
+            selectEl.value = activeProject;
+            store.currentProject = activeProject;
+            renderStandards(activeProject);
+        }
+
+        window.onProjectChange = function () {
+            const selectEl = document.getElementById('projectSelect');
+            const selected = selectEl.value;
+            localStorage.setItem(ACTIVE_KEY, selected);
+
+            const store = getStore();
+            if (store) {
+                store.currentProject = selected;
+            }
+
+            renderStandards(selected);
+        };
+
+        function renderStandards(projectName) {
+            const contentArea = document.getElementById('contentArea');
+            const titleEl = document.getElementById('projectTitle');
+            const container = document.getElementById('standardsContainer');
+
+            const store = getStore();
+            if (!store) return;
+
+            let costData = store._getData();
+
+            if (!costData[projectName] || !costData[projectName].적용기준) {
+                contentArea.style.display = 'none';
+                return;
+            }
+
+            const standards = costData[projectName].적용기준;
+
+            contentArea.style.display = 'block';
+            titleEl.textContent = `[${projectName}] _ 적용기준`;
+            container.innerHTML = '';
+
+            let index = 1;
+            for (const [key, value] of Object.entries(standards)) {
+                const groupDiv = document.createElement('div');
+                groupDiv.style.marginBottom = '6px';
+
+                if (typeof value === 'object' && value !== null) {
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'tbl-text group-title';
+                    groupTitle.textContent = `${index}. ${key}`;
+                    groupDiv.appendChild(groupTitle);
+
+                    const subBox = document.createElement('div');
+                    subBox.className = 'sub-box';
+
+                    for (const [subKey, subVal] of Object.entries(value)) {
+                        const row = document.createElement('div');
+                        row.className = 'input-row';
+
+                        const label = document.createElement('span');
+                        label.className = 'tbl-text';
+                        label.textContent = subKey;
+                        row.appendChild(label);
+
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = formatNumber(subVal);
+                        input.autocomplete = 'off';
+
+                        input.oninput = (e) => {
+                            const rawValue = e.target.value.replace(/,/g, '');
+                            e.target.value = formatNumber(rawValue);
+
+                            let freshData = store._getData();
+                            if (freshData[projectName] && freshData[projectName].적용기준) {
+                                freshData[projectName].적용기준[key][subKey] = rawValue;
+                                store._saveData(freshData);
+                            }
+                        };
+
+                        row.appendChild(input);
+                        subBox.appendChild(row);
+                    }
+                    groupDiv.appendChild(subBox);
+                } else {
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'tbl-text group-title';
+                    groupTitle.textContent = `${index}. ${key}`;
+                    groupDiv.appendChild(groupTitle);
+
+                    const subBox = document.createElement('div');
+                    subBox.className = 'sub-box';
+
+                    const row = document.createElement('div');
+                    row.className = 'input-row';
+
+                    const label = document.createElement('span');
+                    label.className = 'tbl-text';
+                    label.textContent = '기준';
+                    row.appendChild(label);
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = formatNumber(value);
+                    input.autocomplete = 'off';
+
+                    input.oninput = (e) => {
+                        const rawValue = e.target.value.replace(/,/g, '');
+                        e.target.value = formatNumber(rawValue);
+
+                        let freshData = store._getData();
+                        if (freshData[projectName] && freshData[projectName].적용기준) {
+                            freshData[projectName].적용기준[key] = rawValue;
+                            store._saveData(freshData);
+                        }
+                    };
+
+                    row.appendChild(input);
+                    subBox.appendChild(row);
+                    groupDiv.appendChild(subBox);
+                }
+
+                container.appendChild(groupDiv);
+                index++;
+            }
+        }
+
+        document.addEventListener('alpine:init', () => {
+            setTimeout(initApp, 50);
+        });
+    })();
+</script>

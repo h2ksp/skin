@@ -1,0 +1,122 @@
+<div id="print-container" class="fuel-container">
+    <div x-data="fuelApp()" x-init="initData()">
+        <h1>지역별 평균 연료가격 정보</h1>
+        <div class="tbl-text date-text">( 기준일: <span x-text="dateStr"></span> )</div>
+        <div class="region-grid">
+            <template x-for="group in groupedRegions" :key="group.region">
+                <div class="region-item">
+                    <div class="region-title" x-text="group.region"></div>
+                    <table class="fuel-table">
+                        <template x-for="fuel in group.fuels" :key="fuel.fuelType">
+                            <tr>
+                                <td><span x-text="fuel.fuelType"></span></td>
+                                <td class="text-right"><span x-text="Number(fuel.price).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span>원</td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <style>
+        .fuel-container {
+            max-width: 650px;
+        }
+
+        .date-text {
+            margin-bottom: 20px;
+        }
+
+        .fuel-table {
+            width: 300px;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 80px;
+        }
+
+        .region-item {
+            margin-bottom: 15px;
+        }
+
+        .region-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+    </style>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbz0A2XWL2fZjTxq50oKdwDwEDl1cDylHeeoMvDYZ1qdH60vlOoNrPm-XRZf4tzDmVFDLQ/exec?mode=oil';
+        const CACHE_KEY = 'api_data';
+
+        function getTodayStr() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function fuelApp() {
+            return {
+                dateStr: '-',
+                fuelPrices: [],
+                groupedRegions: [],
+
+                async initData() {
+                    const cachedRaw = localStorage.getItem(CACHE_KEY);
+                    const today = getTodayStr();
+
+                    if (cachedRaw) {
+                        try {
+                            const cachedObj = JSON.parse(cachedRaw);
+                            if (cachedObj.savedDate === today && cachedObj.data && cachedObj.data.oil) {
+                                this.parseData(cachedObj.data.oil);
+                                return;
+                            }
+                        } catch (e) { }
+                    }
+
+                    try {
+                        const response = await fetch(API_URL);
+                        const apiResult = await response.json();
+                        if (apiResult.status === "success") {
+                            let cachedObj = {};
+                            if (cachedRaw) { try { cachedObj = JSON.parse(cachedRaw); } catch (e) { } }
+                            cachedObj.savedDate = today;
+                            if (!cachedObj.data) cachedObj.data = {};
+                            cachedObj.data.oil = apiResult;
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(cachedObj));
+                            this.parseData(apiResult);
+                        }
+                    } catch (error) {
+                        console.error('API 호출 에러:', error);
+                    }
+                },
+
+                parseData(jsonData) {
+                    const dateObj = new Date(jsonData.date);
+                    this.dateStr = `${dateObj.getFullYear()}. ${dateObj.getMonth() + 1}. ${dateObj.getDate()}`;
+                    this.fuelPrices = jsonData.fuelPrices || [];
+                    const fuelTypesOrder = ["휘발유", "고급휘발유", "실내등유", "자동차용경유", "자동차용부탄"];
+                    const groupedMap = {};
+                    (jsonData.regions || []).forEach((item, idx) => {
+                        if (!groupedMap[item.region]) groupedMap[item.region] = [];
+                        groupedMap[item.region].push({ fuelType: fuelTypesOrder[idx % 5], price: item.price });
+                    });
+                    this.groupedRegions = Object.keys(groupedMap).map(r => ({ region: r, fuels: groupedMap[r] }));
+                }
+            }
+        }
+    </script>
+</div>

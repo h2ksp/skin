@@ -1,0 +1,171 @@
+<div id="my-page">
+
+<style>
+  /* 좌우 폭 및 텍스트/이미지 간격 조정 */
+  #my-page {
+    position: relative;
+    overflow: hidden;
+    max-width: 1050px;
+    margin: 20px auto;
+    padding: 40px;
+    text-align: left !important;
+    font-style: italic;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #222;
+    box-sizing: border-box;
+    background: #fff;
+  }
+
+  /* --- 이미지 크기 축소 및 더 우측으로 밀어내기 --- */
+  #my-page::before {
+    content: "";
+    position: absolute;
+    top: 50%;            
+    right: 25px;        /* 우측 끝으로 더 밀어냄 */
+    transform: translateY(-50%) rotate(3deg); 
+    
+    width: 190px;       /* 이미지 크기를 더 줄여서 부담스럽지 않게 조정 */
+    height: auto;       
+    aspect-ratio: 110/799; 
+    
+    background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbaVBZfKSdt9O9ck-6Xlm9iVeWU0hxzUfh5pA3MVWzgBvZH2lHTjTk-YWpKaphHGR4dRGqIXeLYnYBrtzAAQfZmqulHZvD7MXhtzAMIkBAcm31vPqhDWvU1LHQuDrl9OyEd49qlhwYcmAEMFZPrvgg03Dw-pEj39SezTjBsjbkJ4VRgJGb4wSpzwgj9Q8/s1600/111111.JPG'); 
+    
+    background-size: contain;    
+    background-position: center; 
+    background-repeat: no-repeat;
+    
+    opacity: 1;         
+    z-index: 0;         
+    pointer-events: none; 
+    filter: drop-shadow(4px 8px 16px rgba(0,0,0,0.18)); 
+  }
+  /* ---------------------------------------------------- */
+
+  /* 글씨가 들어가는 좌우 폭을 줄여서 이미지와 겹치지 않게 분리 */
+  #my-page .plain-post {
+    position: relative;
+    z-index: 1;
+    max-width: 680px; 
+  }
+
+  #my-page .page-header {
+    margin-bottom: 20px;
+  }
+
+  #my-page .page-badge {
+    display: inline-block;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  #my-page h1 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin: 0;
+    color: #111;
+  }
+
+  #my-page .page-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 30px;
+  }
+
+  #my-page h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111;
+    margin: 30px 0 15px 0;
+  }
+
+  #my-page .feature-item {
+    line-height: 1.2;
+    margin: 0 0 15px 0;
+  }
+
+  #my-page .component-item {
+    line-height: 1.3;
+    margin: 0 0 8px 0;
+  }
+
+  #my-page .info-box {
+    margin: 25px 0;
+  }
+
+  #my-page .info-text-main {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+  }
+
+  #my-page .info-text-sub {
+    margin: 0 0 18px 0;
+    font-size: 15px;
+    color: #555;
+  }
+
+  #my-page .action-link {
+    display: inline-block;
+    color: #222;
+    text-decoration: underline;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  #my-page .footer-notice {
+    font-size: 13px;
+    color: #888;
+    margin-top: 40px;
+    padding-top: 15px;
+  }
+</style>
+
+
+    <div class="plain-post">
+        <div class="page-header">
+            <span class="page-badge">실무 템플릿</span>
+            <h1>토목·건축 공사비 산출 및 내역서 자동화 엑셀 템플릿</h1>
+        </div>
+
+        <p class="page-desc">
+            수십 년간의 실무 경험과 최신 표준품셈·표준시장단가를 반영하여, 누구나 엑셀 하나로 정확하고 빠르게 공사비를 산출할 수 있도록 제작된 실무형 템플릿입니다.
+        </p>
+
+        <h2>주요 특징</h2>
+        <p class="feature-item"><strong>· 공종별 내역서 자동 집계:</strong> 재료비, 노무비, 경비 입력 시 총공사비 및 구성비가 실시간으로 자동 계산됩니다.</p>
+        <p class="feature-item"><strong>· 표준품셈 및 시장단가 연동:</strong> 최신 고시 기준 단가 데이터를 기반으로 오차 없는 산출 근거를 제공합니다.</p>
+        <p class="feature-item"><strong>· A4 출력 최적화:</strong> 보고서 및 견적 제출용 양식에 맞춰 인쇄 시 불필요한 여백 없이 1페이지 규격에 딱 맞아떨어집니다.</p>
+        <p class="feature-item"><strong>· 매크로 없는 순수 엑셀:</strong> 보안 경고나 버전 충돌 없이 모든 PC 환경에서 안정적으로 작동합니다.</p>
+
+        <h2>2. 제공 구성품</h2>
+        <p class="component-item">· 공사원가계산서 및 총괄표 템플릿 (1식)</p>
+        <p class="component-item">· 공종별 내역서 및 단가산출근거 시트 (1식)</p>
+        <p class="component-item">· 노무비 및 유류·자재 적용기준표 (1식)</p>
+
+        <h2>3. 구매 안내 및 다운로드</h2>
+        <p style="line-height: 1.7; margin: 0 0 15px 0;">본 템플릿은 실무에서 즉시 활용하실 수 있도록 이메일 전송 또는 다운로드 링크 방식으로 제공됩니다.</p>
+
+        <div class="info-box">
+            <p class="info-text-main"><strong>· 판매 가격:</strong> 33,000원 (부가세 포함)</p>
+            <p class="info-text-sub"><strong>· 문의 및 신청:</strong> 아래 버튼을 통해 오픈채팅 또는 네이버 폼으로 신청해 주시면 확인 후 즉시 발송해 드립니다.</p>
+            <a href="https://open.kakao.com" target="_blank" rel="noopener noreferrer" class="action-link">
+                구매 문의 / 신청하기 →
+            </a>
+        </div>
+
+        <p class="footer-notice">
+            ※ 본 자료는 디지털 콘텐츠 특성상 발송 후 환불이 불가하오니 신중히 검토 후 구매해 주시기 바랍니다.
+        </p>
+    </div>
+</div>
+
+<script>
+    const page = document.getElementById('my-page');
+    if (page) {
+        document.body.replaceChildren(page);
+    }
+</script>
+
+</div>

@@ -1,0 +1,178 @@
+<div id="print-container">
+    <div x-data="laborApp()" x-init="initData()">
+
+        <h1>노임단가 정보</h1>
+
+        <!-- 데이터 갱신일 및 범례 표시 -->
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; max-width: 800px; font-size: 14px; color: #666; margin-bottom: 15px;">
+            <span>데이터 갱신일: <span x-text="lastUpdateDate"></span> (오늘: <span x-text="todayStr"></span>)</span>
+            <!-- 범례 -->
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span style="display: inline-flex; align-items: center; gap: 4px;">
+                    <span
+                        style="display: inline-block; width: 8px; height: 8px; background-color: #888; border-radius: 50%;"></span>
+                    임의가격 적용
+                </span>
+            </div>
+        </div>
+
+        <!-- 기준일 선택 드롭박스 -->
+        <div style="margin-bottom: 20px;">
+            <label for="dateSelect" style="margin-right: 8px; font-weight: 500;">기준일 선택:</label>
+            <select id="dateSelect" x-model="selectedDate" @change="filterByDate()"
+                style="padding: 6px 12px; font-size: 15px; width: 220px; border-radius: 4px; border: 1px solid #ccc;">
+                <template x-for="date in availableDates" :key="date.raw">
+                    <option :value="date.raw" x-text="date.formatted"></option>
+                </template>
+            </select>
+        </div>
+
+        <!-- 좌우 2열 배치를 위한 컨테이너 -->
+        <div style="display: flex; gap: 40px; max-width: 800px;">
+
+            <!-- 왼쪽 컬럼 -->
+            <table style="flex: 1;">
+                <template x-for="(item, index) in leftList" :key="index">
+                    <tr>
+                        <td><span x-text="item.col4"></span></td>
+                        <td style="text-align: right;">
+                            <!-- 값이 없을 때 '조사 없음' 배지만 표시 (기호 없음) -->
+                            <span x-show="!item.hasValue"
+                                style="font-size: 11px; color: #888; background-color: #f1f3f5; padding: 2px 5px; border-radius: 3px;">조사
+                                없음</span>
+                            <span x-show="item.hasValue" x-text="Number(item.col2).toLocaleString() + '원'"></span>
+                        </td>
+                    </tr>
+                </template>
+            </table>
+
+            <!-- 오른쪽 컬럼 -->
+            <table style="flex: 1;">
+                <template x-for="(item, index) in rightList" :key="index">
+                    <tr>
+                        <td><span x-text="item.col4"></span></td>
+                        <td style="text-align: right;">
+                            <!-- 값이 없을 때 '조사 없음' 배지만 표시 (기호 없음) -->
+                            <span x-show="!item.hasValue"
+                                style="font-size: 11px; color: #888; background-color: #f1f3f5; padding: 2px 5px; border-radius: 3px;">조사
+                                없음</span>
+                            <span x-show="item.hasValue" x-text="Number(item.col2).toLocaleString() + '원'"></span>
+                        </td>
+                    </tr>
+                </template>
+            </table>
+
+        </div>
+    </div>
+    <script>
+        const LABOR_API_URL = 'https://script.google.com/macros/s/AKfycbz0A2XWL2fZjTxq50oKdwDwEDl1cDylHeeoMvDYZ1qdH60vlOoNrPm-XRZf4tzDmVFDLQ/exec?mode=lober';
+        const CACHE_KEY = 'api_data';
+
+        function getTodayStr() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateStr(dateStr) {
+            if (!dateStr) return '';
+            const cleaned = dateStr.toString().trim();
+            const parts = cleaned.split(/[-./]/);
+            if (parts.length >= 3) {
+                return `${parts[0]}년 ${parseInt(parts[1], 10)}월 ${parseInt(parts[2], 10)}일`;
+            }
+            return cleaned;
+        }
+
+        function laborApp() {
+            return {
+                todayStr: getTodayStr(),
+                lastUpdateDate: '-',
+                processedList: [],
+                availableDates: [],
+                selectedDate: '',
+                leftList: [],
+                rightList: [],
+
+                async initData() {
+                    const cachedRaw = localStorage.getItem(CACHE_KEY);
+                    const today = getTodayStr();
+
+                    if (cachedRaw) {
+                        try {
+                            const cachedObj = JSON.parse(cachedRaw);
+                            this.lastUpdateDate = cachedObj.savedDate || '없음';
+
+                            if (cachedObj.savedDate === today && cachedObj.data && cachedObj.data.labor) {
+                                this.parseData(cachedObj.data.labor);
+                                return;
+                            }
+                        } catch (e) { }
+                    }
+
+                    try {
+                        const response = await fetch(LABOR_API_URL);
+                        const apiResult = await response.json();
+                        if (apiResult.status === "success") {
+                            let cachedObj = {};
+                            if (cachedRaw) { try { cachedObj = JSON.parse(cachedRaw); } catch (e) { } }
+                            cachedObj.savedDate = today;
+                            if (!cachedObj.data) cachedObj.data = {};
+                            cachedObj.data.labor = apiResult;
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(cachedObj));
+
+                            this.lastUpdateDate = today;
+                            this.parseData(apiResult);
+                        }
+                    } catch (error) {
+                        console.error('노임단가 API 호출 에러:', error);
+                    }
+                },
+
+                parseData(jsonData) {
+                    const allData = jsonData.data || [];
+                    const rawList = allData.slice(1);
+
+                    const dateSet = new Set();
+                    rawList.forEach(item => {
+                        if (item.col3) dateSet.add(item.col3.toString().trim());
+                    });
+
+                    const sortedDates = Array.from(dateSet).sort().reverse();
+                    this.availableDates = sortedDates.map(date => ({
+                        raw: date,
+                        formatted: formatDateStr(date)
+                    }));
+
+                    this.processedList = rawList.map(item => {
+                        const price = item.col2;
+                        const hasValue = (price !== undefined && price !== null && price !== '' && !isNaN(price));
+
+                        return {
+                            col3: item.col3 ? item.col3.toString().trim() : '',
+                            col4: item.col4,
+                            col2: price,
+                            hasValue: hasValue
+                        };
+                    });
+
+                    if (this.availableDates.length > 0) {
+                        this.selectedDate = this.availableDates[0].raw;
+                        this.filterByDate();
+                    }
+                },
+
+                filterByDate() {
+                    const filtered = this.processedList.filter(item => item.col3 === this.selectedDate);
+                    const midIndex = Math.ceil(filtered.length / 2);
+                    this.leftList = filtered.slice(0, midIndex);
+                    this.rightList = filtered.slice(midIndex);
+                }
+            }
+        }
+    </script>
+
+</div>

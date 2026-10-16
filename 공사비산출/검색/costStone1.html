@@ -1,0 +1,408 @@
+<style>
+  .cost-app {
+    font-family: sans-serif;
+    font-size: 0.8em;
+    margin-left: -80px;
+  }
+
+  /* 테이블 전체는 기본 100% 유지 */
+  .cost-app table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .cost-app th,
+  .cost-app td {
+    border: 1px solid #999;
+    padding: 2px 4px;
+    text-align: left;
+    white-space: nowrap;
+    /* 글자가 길어져도 아래로 줄바꿈 안 하고 우측으로 쭉 늘림 */
+  }
+
+  .cost-app th {
+    background: #eee;
+    font-weight: normal;
+  }
+
+  .cost-app .num {
+    text-align: right;
+  }
+
+  .cost-app .parent-row {
+    cursor: pointer;
+  }
+
+  .cost-app .parent-row:hover {
+    background: #f5f5f5;
+  }
+
+  /* 부모 행의 좌우 선만 투명하게 */
+  .cost-app .parent-row td:first-child {
+    border-left: 1px solid transparent;
+  }
+
+  .cost-app .parent-row td:last-child {
+    border-right: 1px solid transparent;
+  }
+
+  /* 자식 박스 숨김 처리 */
+  .cost-app .child-box {
+    display: none;
+  }
+
+  /* 1. 자식 표를 감싸는 바깥쪽 컨테이너(td) 설정: 배경 흰색, 좌우 선 투명 */
+  .cost-app tr.child-box>td {
+    background: #fff !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    padding: 8px;
+  }
+
+  /* 2. 자식 내부에 들어가는 진짜 표의 th, td: 격자 선 다 있게 설정 */
+  .cost-app .child-box table th,
+  .cost-app .child-box table td {
+    border: 1px solid #999 !important;
+    padding: 4px;
+
+  }
+
+  .cost-app .child-box table th {
+    background: #e0e0e0;
+  }
+
+  /* 하위 표 아래쪽에 100px 여백 추가 */
+  .cost-app .child-box table {
+    margin-bottom: 100px;
+  }
+
+  .cost-app input[type="text"],
+  .cost-app button {
+    box-sizing: border-box;
+    height: 26px;
+    /* 원하는 높이로 통일 */
+    padding: 0 8px;
+    font-size: 12px;
+    vertical-align: middle;
+    border: 1px solid #999;
+    /* 테두리 두께도 똑같이 맞춤 */
+  }
+
+  .cost-app button {
+    width: 9%;
+    background: #eee;
+    cursor: pointer;
+  }
+
+  .cost-app #status {
+    font-size: 11px;
+    margin-bottom: 5px;
+    color: #555;
+  }
+
+  /* 검색어를 입력하세요 안내 행의 좌우 선을 투명하게 처리 */
+  .cost-app #listBody tr td[colspan] {
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+  }
+</style>
+
+
+<div class="cost-app">
+  <script>
+    const SHOW_PARENT_CODE = false;
+    const SHOW_CHILD_CODE = false;  
+  </script>
+
+  <div id="status">데이터 확인 중...</div>
+
+  <div>
+    <input type="text" id="keyword" placeholder="품명 또는 코드 입력">
+    <button id="btnSearch">검색</button>
+  </div>
+
+  <table id="resultTable">
+    <thead id="parentHead"></thead>
+    <tbody id="listBody">
+      <tr>
+        <td colspan="7" style="text-align: center;">검색어를 입력하세요.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const DB_NAME = 'CostDatabase';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'cost_store1';
+  const BASE_URL = 'https://h2ksp3.cafe24.com/cost/search_1/';
+  const VER_KEY = 'cost_data_version';
+
+  const statusEl = document.getElementById('status');
+  const keywordInput = document.getElementById('keyword');
+  const listBody = document.getElementById('listBody');
+  const parentHead = document.getElementById('parentHead');
+
+  function parseNum(val) {
+    if (!val || val === '-') return 0;
+    const n = parseFloat(String(val).replace(/,/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatCost(val) {
+    if (val === '-' || val === undefined || val === null) return '-';
+    const num = parseNum(val);
+    return num.toLocaleString();
+  }
+
+  function renderParentHeader() {
+    let ths = '';
+    if (SHOW_PARENT_CODE) ths += '<th>일위대가코드</th>';
+    ths += `
+        <th>품명</th>
+        <th>규격</th>
+        <th>단위</th>
+        <th class="num">재료비</th>
+        <th class="num">노무비</th>
+        <th class="num">경비</th>
+        <th class="num">합계</th>
+      `;
+    parentHead.innerHTML = `<tr>${ths}</tr>`;
+  }
+  renderParentHeader();
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          const store = db.createObjectStore(STORE_NAME, { autoIncrement: true });
+          store.createIndex('일위대가코드', '일위대가코드', { unique: false });
+          store.createIndex('품명', '품명', { unique: false });
+        }
+      };
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  async function autoSync() {
+    try {
+      const verRes = await fetch(`${BASE_URL}?check=ver`);
+      const serverVer = (await verRes.text()).trim();
+      const localVer = localStorage.getItem(VER_KEY);
+
+      if (localVer && localVer === serverVer) {
+        statusEl.textContent = `준비 완료 (${serverVer})`;
+        return;
+      }
+
+      statusEl.textContent = `다운로드 중...`;
+      const dataRes = await fetch(BASE_URL);
+      const tsvText = await dataRes.text();
+
+      const lines = tsvText.split(/\r\n|\n|\r/);
+      if (lines.length < 2) return;
+
+      const headers = lines[0].split('\t').map(h => h.trim());
+      const db = await openDB();
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.clear();
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const cols = line.split('\t');
+        const rowObj = {};
+        headers.forEach((h, idx) => {
+          rowObj[h] = cols[idx] !== undefined ? cols[idx].trim() : '-';
+        });
+        store.add(rowObj);
+      }
+
+      tx.oncomplete = () => {
+        localStorage.setItem(VER_KEY, serverVer);
+        statusEl.textContent = `동기화 완료 (${serverVer})`;
+      };
+    } catch (err) {
+      statusEl.textContent = `동기화 실패`;
+    }
+  }
+
+  async function search() {
+    const q = keywordInput.value.trim().toLowerCase();
+    if (!q) return;
+
+    statusEl.textContent = '검색 중...';
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+
+    const parentMap = new Map();
+
+    const req = store.openCursor();
+    req.onsuccess = (e) => {
+      const cursor = e.target.result;
+      if (cursor) {
+        const row = cursor.value;
+        const parentName = (row['품명'] || '').toLowerCase();
+        const parentCode = (row['일위대가코드'] || '').toLowerCase();
+
+        if (parentName.includes(q) || parentCode.includes(q)) {
+          const key = row['일위대가코드'] || row['품명'];
+
+          if (!parentMap.has(key)) {
+            const mat = parseNum(row['재료비']);
+            const lab = parseNum(row['노무비']);
+            const exp = parseNum(row['경비']);
+            const total = mat + lab + exp;
+
+            parentMap.set(key, {
+              parent: {
+                code: row['일위대가코드'],
+                name: row['품명'],
+                spec: row['규격'],
+                unit: row['단위'],
+                mat: row['재료비'],
+                lab: row['노무비'],
+                exp: row['경비'],
+                total: total
+              },
+              children: []
+            });
+          }
+
+          if (row['자원코드'] && row['자원코드'] !== '-') {
+            const cMat = parseNum(row['자원재료비']);
+            const cLab = parseNum(row['자원노무비']);
+            const cExp = parseNum(row['자원경비']);
+            const unitTotal = cMat + cLab + cExp;
+
+            const qty = parseNum(row['자원수량']);
+            const totalPrice = Math.round(unitTotal * qty);
+
+            parentMap.get(key).children.push({
+              type: row['자원구분'],
+              code: row['자원코드'],
+              name: row['자원품명'],
+              spec: row['자원규격'],
+              unit: row['자원단위'],
+              qty: row['자원수량'],
+              mat: row['자원재료비'],
+              lab: row['자원노무비'],
+              exp: row['자원경비'],
+              total: totalPrice
+            });
+          }
+        }
+        cursor.continue();
+      } else {
+        renderList(parentMap);
+      }
+    };
+  }
+
+  function renderList(map) {
+    listBody.innerHTML = '';
+    const totalColspan = (SHOW_PARENT_CODE ? 1 : 0) + 7;
+
+    if (map.size === 0) {
+      listBody.innerHTML = `<tr><td colspan="${totalColspan}" style="text-align: center;">결과 없음</td></tr>`;
+      statusEl.textContent = '검색 완료: 0건';
+      return;
+    }
+
+    statusEl.textContent = `검색 완료: ${map.size}개`;
+
+    let idx = 0;
+    map.forEach((item) => {
+      const p = item.parent;
+      const childCount = item.children.length;
+      const childRowId = `child-row-${idx}`;
+
+      const parentTr = document.createElement('tr');
+      parentTr.className = 'parent-row';
+
+      let pCols = '';
+      if (SHOW_PARENT_CODE) pCols += `<td>${p.code}</td>`;
+      pCols += `
+          <td>${p.name}</td>
+          <td>${p.spec}</td>
+          <td>${p.unit}</td>
+          <td class="num">${formatCost(p.mat)}</td>
+          <td class="num">${formatCost(p.lab)}</td>
+          <td class="num">${formatCost(p.exp)}</td>
+          <td class="num">${formatCost(p.total)}</td>
+        `;
+      parentTr.innerHTML = pCols;
+
+      const childTr = document.createElement('tr');
+      childTr.id = childRowId;
+      childTr.className = 'child-box';
+
+      let childTableHtml = '';
+      if (childCount > 0) {
+        let cThs = '<th>구분</th>';
+        if (SHOW_CHILD_CODE) cThs += '<th>자원코드</th>';
+        cThs += `
+            <th>자원명</th>
+            <th>규격</th>
+            <th>단위</th>
+            <th class="num">수량</th>
+            <th class="num">재료비단가</th>
+            <th class="num">노무비단가</th>
+            <th class="num">경비단가</th>
+            <th class="num">금액</th>
+          `;
+
+        const rows = item.children.map(c => {
+          let cTds = `<td>${c.type}</td>`;
+          if (SHOW_CHILD_CODE) cTds += `<td>${c.code}</td>`;
+          cTds += `
+              <td>${c.name}</td>
+              <td>${c.spec}</td>
+              <td>${c.unit}</td>
+              <td class="num">${c.qty}</td>
+              <td class="num">${formatCost(c.mat)}</td>
+              <td class="num">${formatCost(c.lab)}</td>
+              <td class="num">${formatCost(c.exp)}</td>
+              <td class="num">${formatCost(c.total)}</td>
+            `;
+          return `<tr>${cTds}</tr>`;
+        }).join('');
+
+        childTableHtml = `
+            <table>
+              <thead><tr>${cThs}</tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          `;
+      } else {
+        childTableHtml = '하위 자원 없음';
+      }
+
+      childTr.innerHTML = `<td colspan="${totalColspan}">${childTableHtml}</td>`;
+
+      parentTr.addEventListener('click', () => {
+        const isVisible = childTr.style.display === 'table-row';
+        childTr.style.display = isVisible ? 'none' : 'table-row';
+      });
+
+      listBody.appendChild(parentTr);
+      listBody.appendChild(childTr);
+      idx++;
+    });
+  }
+
+  document.getElementById('btnSearch').addEventListener('click', search);
+  keywordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') search();
+  });
+
+  autoSync();
+</script>

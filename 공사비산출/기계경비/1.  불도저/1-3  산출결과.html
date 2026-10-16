@@ -1,0 +1,215 @@
+<style>
+    .formula-editor-wrapper {
+        padding: 20px;
+        font-family: sans-serif;
+    }
+    .formula-container {
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .debug-box {
+        padding: 15px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+    .debug-box h4 {
+        margin-top: 0;
+        color: #166534;
+    }
+    .debug-box pre {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #d1fae5;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .formula-textarea {
+        padding: 12px;
+        font-size: 16px;
+        font-family: monospace;
+        width: 100%;
+        border: 2px solid #3b82f6;
+        border-radius: 6px;
+        outline: none;
+        resize: vertical;
+        line-height: 1.5;
+        background: #fafafa;
+    }
+    .formula-textarea:focus {
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .formula-display {
+        padding: 12px;
+        background: #f4f4f4;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 15px;
+        white-space: pre-wrap;
+        line-height: 1.5;
+    }
+    .edit-btn {
+        padding: 8px 16px;
+        cursor: pointer;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+    .edit-btn:hover {
+        background: #2563eb;
+    }
+</style>
+
+<div id="print-container">
+    <div class="formula-editor-wrapper">
+        <div x-data="formulaEditorApp()" class="formula-container">
+            <h3>🚜 건설기계 수식 편집기</h3>
+
+            <!-- 현재 가져온 변수 상태 출력 박스 (확인용) -->
+            <div class="debug-box">
+                <h4>📦 추출된 변수 데이터 확인</h4>
+                <pre x-text="JSON.stringify(variables, null, 2)"></pre>
+            </div>
+
+            <!-- 수식 입력 및 출력 영역 -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label><strong>수식 입력창 (CALC(...) 사용 가능):</strong></label>
+
+                <!-- 1. 편집 모드일 때 -->
+                <template x-if="isEditing">
+                    <textarea x-model="formula" rows="6" class="formula-textarea"></textarea>
+                </template>
+
+                <!-- 2. 편집 모드가 아닐 때 -->
+                <template x-if="!isEditing">
+                    <div class="formula-display" x-text="getDisplayText()"></div>
+                </template>
+
+                <!-- 버튼 영역 -->
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <button @click="toggleEdit()" x-text="isEditing ? '완료' : '편집'" class="edit-btn"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('formulaEditorApp', () => ({
+            isEditing: false,
+            machineName: "불도저",
+
+            formula: `기계이름: \${장비명}
+작업량 계산: CALC(\${valE} * 5)
+재료비: \${재료비}, 노무비: \${노무비}, 경비: \${경비}
+
+[총합 계산]: CALC(\${재료비} + \${노무비} + \${경비})`,
+
+            // URL 파라미터에서 site 값 읽기
+            getSiteParam() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('site');
+            },
+
+            // Select-Case (switch) 구조로 파라미터 분기
+            get variables() {
+                const siteParam = this.getSiteParam();
+                
+                // 파라미터에 따른 분기 처리
+                switch (siteParam) {
+                    case 'cost':
+                        // TODO: cost일 때의 로컬스토리지 경로 및 변수 처리 (현재는 비워둠)
+                        return {
+                            장비명: this.machineName,
+                            재료비: 0,
+                            노무비: 0,
+                            경비: 0,
+                            valE: 0,
+                            sum: 0
+                        };
+
+                    default:
+                        // site가 없거나 다른 값일 경우 (기존 로직)
+                        try {
+                            const rawData = localStorage.getItem('site');
+                            const siteData = rawData ? JSON.parse(rawData) : {};
+
+                            const machineData = siteData?.건설기계?.[this.machineName] || {};
+                            const operationalCost = machineData?.운전경비 || {};
+                            const workData = machineData?.작업량 || {};
+
+                            return {
+                                장비명: this.machineName,
+                                재료비: operationalCost.재료비 ?? 0,
+                                노무비: operationalCost.노무비 ?? 0,
+                                경비: operationalCost.경비 ?? 0,
+                                valE: workData.valE ?? 0,
+                                sum: workData.sum ?? 0
+                            };
+                        } catch (e) {
+                            console.error('파싱 에러:', e);
+                            return { 장비명: this.machineName, 재료비: 0, 노무비: 0, 경비: 0, valE: 0, sum: 0 };
+                        }
+                }
+            },
+
+            // [완료] 누를 때 저장 경로 분기
+            toggleEdit() {
+                if (this.isEditing) {
+                    const siteParam = this.getSiteParam();
+
+                    try {
+                        switch (siteParam) {
+                            case 'cost':
+                                // TODO: cost일 때 로컬스토리지 저장 경로 (현재 비워둠)
+                                break;
+
+                            default:
+                                // 기존 site 저장 경로
+                                const rawData = localStorage.getItem('site');
+                                let siteData = rawData ? JSON.parse(rawData) : {};
+
+                                if (!siteData.건설기계) siteData.건설기계 = {};
+                                if (!siteData.건설기계[this.machineName]) siteData.건설기계[this.machineName] = {};
+
+                                siteData.건설기계[this.machineName].결과 = this.getDisplayText();
+                                localStorage.setItem('site', JSON.stringify(siteData));
+                                break;
+                        }
+                    } catch (e) {
+                        console.error('로컬스토리지 저장 에러:', e);
+                    }
+                }
+                this.isEditing = !this.isEditing;
+            },
+
+            getDisplayText() {
+                let evaluated = this.formula;
+                const vars = this.variables;
+
+                for (const [key, val] of Object.entries(vars)) {
+                    const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+                    evaluated = evaluated.replace(regex, val);
+                }
+
+                evaluated = evaluated.replace(/CALC\s*\(([^)]+)\)/g, (match, formulaStr) => {
+                    try {
+                        return eval(formulaStr);
+                    } catch (err) {
+                        return match;
+                    }
+                });
+
+                return evaluated;
+            }
+        }));
+    });
+</script>

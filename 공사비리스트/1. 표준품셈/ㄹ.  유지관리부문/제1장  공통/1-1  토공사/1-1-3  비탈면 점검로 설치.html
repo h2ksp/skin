@@ -1,0 +1,90 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        1-1-3 비탈면 점검로 설치('02년 신설, '20, '25년 보완)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '1-1-3 비탈면 점검로 설치('02년 신설, '20, '25년 보완)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            1-1-3 비탈면 점검로 설치('02년 신설, '20, '25년 보완)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(일당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th style="width: 25%">구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+                <th style="width: 25%">시공량(점검로 m)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; width: 15%; padding-left: 15px">
+                    철 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    4<br>
+                    1
+                </td>
+                <td>
+                    7.8
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    비 고
+                </td>
+                <td colspan="3" style="text-align: left; padding-left: 15px">
+                    - 본 품은 수직고 30m까지를 기준한 것 이므로,<br>　이를 초과하는 경우 매 l0m증가마다 시공량을 9%씩 감한다.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 비탈면에 강관파이프 및 발판재(폭 90㎝이하)를 사용한 계단식 점검로 설치 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품은 지주 및 보조기둥 설치, 점검로 난간 및 발판 조립을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>본 품은 비탈경사 1:1.0이하를 기준한 것으로, 1:1.0초과인 경우에는 시공량을 43%까지 가산하여 적용할 수 있다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>기초 터파기 및 콘크리트 타설은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤</td>
+                <td>현장여건상 크레인이 필요한 경우 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑥</td>
+                <td>공구손료 및 경장비(전동드릴, 절단기 등)의 기계경비는 인력품의 3%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="비탈면 점검로" %}
+{% endblock %}

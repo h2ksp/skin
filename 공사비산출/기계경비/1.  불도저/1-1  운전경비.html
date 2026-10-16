@@ -1,0 +1,811 @@
+<style>
+    .tbl-text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 17px;
+        font-weight: 400;
+        font-style: italic;
+        color: #666666;
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }
+
+    .header-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+
+    .top-line {
+        border-top: 1px solid black;
+    }
+
+    .formula-input {
+        border: none;
+        background: transparent;
+        font-size: inherit;
+        text-align: center;
+        field-sizing: content;
+        width: 31px;
+    }
+
+    .result-box {
+        margin-top: 5px;
+        margin-left: 10px;
+        margin-bottom: 15px;
+        font-size: 17px;
+        font-style: italic;
+        line-height: 1.2;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .cha {
+        font-size: 18px;
+        font-style: italic;
+        color: #c31a0b;
+        line-height: 1.2;
+        font-weight: bold;
+        /* 또는 700 */
+        text-align: right;
+    }
+
+    .chasoeul input[type="text"] {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 17px;
+        font-style: italic;
+        color: #c31a0b;
+        line-height: 1.2;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+
+    .chasoeul input:focus {
+        background: rgba(186, 104, 104, 0.02);
+    }
+
+    .tbl-work {
+        margin-bottom: 5px;
+    }
+
+    .tbl-work thead th {
+        background: #f1f5f9;
+        padding: 0;
+    }
+
+    .tbl-work {
+        width: 800px;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .tbl-work td {
+        padding: 1px 2px;
+    }
+</style>
+
+<div id="print-container" x-data="machineCalc()">
+
+    <div class="header-box">
+        <div id="title">
+            <div x-html="`1. ${machineKey} _ 운전경비 산정`"></div>
+        </div>
+
+        <div style="margin-top: 5px; display: flex; gap: 5px;">
+            <button @click="refreshPage()" type="button">다시쓰기</button>
+        </div>
+    </div>
+    <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0 10px 0;">
+
+
+    <div class="chasoeul">
+
+        <template x-for="(row, index) in item.table" :key="index">
+            <div style="margin-bottom: 8px;">
+
+                <table class="tbl-work">
+                    <tr>
+
+                        <td style="width: 40px;">
+                            &nbsp; 품 명 : &nbsp;
+                        </td>
+                        <td style="width: 350px;">
+                            <input type="text" x-model="row.품명" @input="saveToLocal()" placeholder="품 명">
+                        </td>
+                        <td style="width: 50px;">단 위 : &nbsp;</td>
+                        <td style="width: 140px;">
+                            <input type="text" x-model="row.단위" @input="saveToLocal()" placeholder="">
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="width: 70px;">
+                            &nbsp; 규 격 : &nbsp;
+                        </td>
+                        <td>
+                            <input type="text" x-model="row.규격" @input="saveToLocal()" placeholder="">
+                        </td>
+                        <td>수 량 : &nbsp;</td>
+                        <td>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <input type="text" x-model="row.수량" @input="saveToLocal()" placeholder=""
+                                    style="width: calc(100% - 65px);">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="tbl tbl-work">
+                    <thead>
+                        <tr>
+                            <th>(재료비)단가</th>
+                            <th>금액</th>
+                            <th>(노무비)단가</th>
+                            <th>금액</th>
+                            <th>(경비)단가</th>
+                            <th>금액</th>
+                            <th>(합계)단가</th>
+                            <th>금액</th>
+                            <th>비고</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" :value="formatNumber(row.재료비단가)" placeholder=""
+                                    @input="row.재료비단가 = $event.target.value.replace(/,/g, ''); updateTableValues(); saveToLocal();">
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.재료비)" readonly>
+
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.노무비단가)" placeholder=""
+                                    @input="row.노무비단가 = $event.target.value.replace(/,/g, ''); saveToLocal();">
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.노무비)" readonly>
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.경비단가)" placeholder=""
+                                    @input="row.경비단가 = $event.target.value.replace(/,/g, ''); saveToLocal();">
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.경비)" readonly>
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.합계단가)" readonly>
+                            </td>
+                            <td>
+                                <input type="text" :value="formatNumber(row.합계)" readonly>
+                            </td>
+                            <td>
+                                <input type="text" x-model="row.비고" @input="saveToLocal()"
+                                    @blur="row.비고 = formatNumber(row.비고)" placeholder="">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+    </div>
+
+    <!-- 하단 메뉴 및 테이블 영역 유지 -->
+    <table style="margin-left: 40px; margin-top: 25px; margin-bottom: 30px; border-collapse: collapse;">
+        <tr style="border: none;">
+            <td style="border: none; padding: 2px 0;">
+                <li>
+                    <a href="#" @click.prevent="toggleSub('a')">재료비 (원/hr) &nbsp;</a>
+                </li>
+            </td>
+            <td style="border: none; padding: 2px 0;">
+                : &nbsp; ( 연료량 &nbsp; × &nbsp; 연료가격 ) &nbsp; × &nbsp; 잡재료
+            </td>
+            <td style="width: 135px;"></td>
+            <td style="width: 40px;"></td>
+            <td class="cha" x-text="item.재료비" style="width: 110px;"></td>
+            <td></td>
+        </tr>
+
+        <tr style="border: none;">
+            <td style="border: none; padding: 2px 0;">
+                <li>노무비 (원/hr) &nbsp;</li>
+            </td>
+            <td style="border: none; padding: 2px 0;">
+                : &nbsp;
+                <a href="#" @click.prevent="toggleSub('b')">노임계수 </a>
+                &nbsp; × &nbsp;
+                <a href="#" @click.prevent="toggleSub('c')">시중노임단가</a>
+            </td>
+            <td></td>
+            <td></td>
+            <td class="cha" x-text="item.노무비"></td>
+            <td style="width: 20px;"></td>
+            <td></td>
+
+        </tr>
+        <tr style="border: none;">
+            <td style="border: none; padding: 2px 0;">
+                <li> 경 비(원/hr) &nbsp; </li>
+            </td>
+            <td style="border: none; padding: 2px 0;">
+                : &nbsp;
+                <a href="#" @click.prevent="toggleSub('d')">기계손료</a>
+                &nbsp; × &nbsp;
+                <a href="#" @click.prevent="toggleSub('e')">기계가격</a>
+            </td>
+            <td></td>
+            <td></td>
+            <td class="cha" x-text="item.경비"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align: right;">= </td>
+            <td></td>
+            <td class="cha top-line center-text" x-text="item.합계"></td>
+            <td class="cha top-line"></td>
+            <td class="cha">(원/hr)</td>
+        </tr>
+    </table>
+    <br>
+
+
+    <!-- 재료비(규격, 연료량, 잡재료) -->
+    <div x-show="subActive === 'a'">
+        <div class="tbl-text">[00] 토공기계</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th>분류번호</th>
+                    <th>기계명</th>
+                    <th>규격</th>
+                    <th>주연료<br>(ℓ/hr)</th>
+                    <th>잡재료<br>(주연료의%)</th>
+                    <th>조종원<br>(인/일)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">0101-0007<br>0010<br>0012<br>0019<br>0032</td>
+                    <td style="text-align: left; padding-left: 15px;">불 도 저 ( 무 한 궤 도 )<br><br><br><br><br></td>
+                    <td>
+                        <a @click="selectItem('규격','7ton')" style="cursor: pointer;">7ton</a><br>
+                        <a @click="selectItem('규격','10ton')" style="cursor: pointer;">10ton</a><br>
+                        <a @click="selectItem('규격','12ton')" style="cursor: pointer;">12ton</a><br>
+                        <a @click="selectItem('규격','19ton')" style="cursor: pointer;">19ton</a><br>
+                        <a @click="selectItem('규격','32ton')" style="cursor: pointer;">32ton</a>
+                    </td>
+                    <td>9.0<br>12.5<br>14.6<br>25.0<br>41.6</td>
+                    <td>16%<br>16<br>16<br>16<br>16</td>
+                    <td>1<br>1<br>1<br>1<br>1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 노임계수 -->
+    <div x-show="subActive === 'b'">
+
+        <div class="chasoeul">
+            <span class="tbl-text">// 노임계수:　</span>
+            <input type="text" x-model="laborRate" @blur="calculateRate" style="width: 300px;" placeholder="">
+            <br>
+            <br>
+        </div>
+
+        <div class="tbl-text">
+            // 표준품셈 공통부문 8-1-3 운반 및 수송. 6번<br>
+            "운전사 (건설기계운전사, 화물차운전사, 일반기계운전사)의 노임은
+            <b>상시 고용일 경우에 월정액을 지급함을 원칙으로 하며</b>
+            예정가격 작성기준(기획재정부 회계예규)에 의거 계상한다."<br>
+            <br>
+
+            // 근로기준법 제50조(근로시간) 2항<br>
+            "1일 근로시간은 휴게시간을 제외하고
+            <b>8시간을 초과할 수 없다.</b>"<br>
+            <br>
+
+            // 근로자퇴직급여 보장법 제15조(급여수준)<br>
+            "급여 수준은 가입자의 퇴직일을 기준으로 산정한 일시금이
+            <b>계속근로기간 1년에 대하여 30일분 이상의 평균임금이 되도록</b>
+            하여야 한다."<br>
+            <br>
+            <u>&nbsp; ex) 노임계수 = 작업시간(1/8) × 휴지계수(25/20) × 상여 및 퇴직금(16/12)　</u>
+
+            <br>
+            <br>
+            <br>
+            // 표준품셈 토목부문 7-1-4 준설선 취업시간 및 운전시간<br>
+            "<b>준설선</b>의 취업시간과 운전시간은 다음 표를 기준으로 한다."
+            <table class="tbl open">
+                <thead>
+                    <tr>
+                        <th>종 류</th>
+                        <th>취업시간</th>
+                        <th>운전시간</th>
+                        <th>비 고</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            펌프 준설선<br>
+                            그래브 준설선<br>
+                            양 모 선<br>
+                            토운선<br>
+                            예선
+                        </td>
+                        <td>
+                            24hr<br>
+                            24hr<br>
+                            모션과 동일<br>
+                            ″<br>
+                            ″
+                        </td>
+                        <td>
+                            15hr<br>
+                            10hr<br>
+                            실운전시간<br>
+                            -<br>
+                            실운전시간
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <u>&nbsp; ex) 노임계수 = 작업시간(1/8) × 휴지계수(25/20) × 상여 및 퇴직금(16/12) × 펌프준설선(24/15)　</u>
+        </div>
+
+    </div>
+
+    <!-- 노임단가 -->
+    <div x-show="subActive === 'c'">
+        <div class="tbl-text">5. 운전사의 구분</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th style="width: 15%">구 분</th>
+                    <th>해 당 기 계</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>건설기계<br>운전사</td>
+                    <td style="text-align: left; padding-left: 10px;">
+                        건설기계관리법 시행령 제2조에 규정한 기계로서 다음과 같은 기종을 말한다.<br>
+                        불도저, 굴삭기, 로더, 지게차, 스크레이퍼, 덤프트럭(12ton이상),<br>
+                        기중기(차륜 및 무한궤도), 모터 그레이더, 롤러, 노상안전기, 콘크리트배치플랜트, 콘크리트피니셔, 콘크리트스프레더,<br>
+                        콘크리트 믹서(0.55㎥이상), 콘크리트 펌프(5㎥이상), 아스팔트 믹싱플랜트, 아스팔트피니셔, 아스팔트살포기, 슬러리실기계, 골재살포기, 쇄석기<br>
+                        천공기, 항타 및 항발기(0.5ton 이상), 사리채취기, 노면파쇄기, 공기압축기(이동식, 2.83㎥/min이상), 기타 이와 유사한 기계<br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>화 물 차<br>운 전 사</td>
+                    <td style="text-align: left; padding-left: 10px;">
+                        자동차관리법 시행규칙 제2조에 규정한 차량류로서 12ton 미만의 덤프트럭, 화물트럭, 살수차, 트랙터, 제설차, 노면청소차, 트럭탑재형크레인, 기타 공업용 소형트럭 등을
+                        말한다.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>일반기계<br>운전사</td>
+                    <td style="text-align: left; padding-left: 10px;">
+                        건설기계관리법 및 자동차관리법에 규정되어 있지 아니한 기계로서 소형의 공기압축기, 양수기, 소형믹서, 윈치, 소형항타기, 소형그라우트펌프, 벨트컨베이어, 발전기, 래머,
+                        콤팩터,
+                        콘크리트파쇄기, 기타 소형기계 등을 말한다.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+
+
+        <div class="tbl-text">6. 운전사 노임</div>
+        <table class="tbl-note">
+            <tr>
+                <td>　</td>
+                <td>운전사 (건설기계운전사, 화물차운전사, 일반기계운전사)의 노임은 상시 고용일 경우에 월정액을 지급함을 원칙으로 하며 예정가격 작성기준(기획재정부 회계예규)에 의거 계상한다.
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 기계손료 -->
+    <div x-show="subActive === 'd'">
+        <div class="tbl-text">　(0101) 불도저(무한궤도)</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th rowspan="2">분류<br>번호</th>
+                    <th rowspan="2">규격<br>(ton)</th>
+                    <th rowspan="2">내용<br>시간</th>
+                    <th rowspan="2">연간표준<br>가동시간</th>
+                    <th rowspan="2">상각<br>비율</th>
+                    <th rowspan="2">정비<br>비율</th>
+                    <th rowspan="2">연간<br>관리<br>비율</th>
+                    <th colspan="4">시 간 당(10<sup>&minus;7</sup>)</th>
+                </tr>
+                <tr>
+                    <th>상각비<br>계수</th>
+                    <th>정비비<br>계수</th>
+                    <th>관리비<br>계수</th>
+                    <th>계</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">0101-0007<br>0010<br>0012<br>0019<br>0032</td>
+                    <td>7<br>10<br>12<br>19<br>32</td>
+                    <td>12,000<br>12,000<br>12,000<br>12,000<br>12,000</td>
+                    <td>1,250<br>1,250<br>1,250<br>1,250<br>1,250</td>
+                    <td>0.9<br>0.9<br>0.9<br>0.9<br>0.9</td>
+                    <td>0.7<br>0.7<br>0.7<br>0.7<br>0.7</td>
+                    <td>0.1<br>0.1<br>0.1<br>0.1<br>0.1</td>
+                    <td>750<br>750<br>750<br>750<br>750</td>
+                    <td>583<br>583<br>583<br>583<br>583</td>
+                    <td>478<br>478<br>478<br>478<br>478</td>
+                    <td>1,811<br>1,811<br>1,811<br>1,811<br>1,811</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="tbl-note">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>규격은 작업상태에서의 중량을 말한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>삽날(귀삽날 포함)은 운전경비에서 별도 계상한다.</td>
+            </tr>
+        </table>
+        <br>
+        <br>
+
+        <div class="tbl-text">　(0102) 불도저(타이어)</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th rowspan="2">분류<br>번호</th>
+                    <th rowspan="2">규격<br>(ton)</th>
+                    <th rowspan="2">내용<br>시간</th>
+                    <th rowspan="2">연간표준<br>가동시간</th>
+                    <th rowspan="2">상각<br>비율</th>
+                    <th rowspan="2">정비<br>비율</th>
+                    <th rowspan="2">연간<br>관리<br>비율</th>
+                    <th colspan="4">시 간 당(10<sup>&minus;7</sup>)</th>
+                </tr>
+                <tr>
+                    <th>상각비<br>계수</th>
+                    <th>정비비<br>계수</th>
+                    <th>관리비<br>계수</th>
+                    <th>계</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">0102-0015<br>0028<br>0033</td>
+                    <td>15<br>28<br>33</td>
+                    <td>12,000<br>12,000<br>12,000</td>
+                    <td>1,250<br>1,250<br>1,250</td>
+                    <td>0.9<br>0.9<br>0.9</td>
+                    <td>0.6<br>0.6<br>0.6</td>
+                    <td>0.1<br>0.1<br>0.1</td>
+                    <td>750<br>750<br>750</td>
+                    <td>500<br>500<br>500</td>
+                    <td>478<br>478<br>478</td>
+                    <td>1,728<br>1,728<br>1,728</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="tbl-note">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>규격은 작업상태에서의 중량을 말한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>삽날(귀삽날 포함), 타이어는 운전경비에서 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 기계가격 -->
+    <div x-show="subActive === 'e'">
+        <div class="tbl-text">[00] 토공기계</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th style="width: 33%;">기 종</th>
+                    <th>분류번호</th>
+                    <th>가격(￦)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left; padding-left: 10px;">불 도 저<br>( 무 한 궤 도 )<br><br><br><br></td>
+                    <td style="text-align: right; padding-right: 15px;">0101-0007<br>0010<br>0012<br>0019<br>0032</td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        73,892<br>161,250<br>185,580<br>289,332<br>256,354</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding-left: 10px;">
+                        불 도 저<br>
+                        ( 타 이 어 )<br>
+                        <br>
+
+                    </td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        0102-0015<br>
+                        0028<br>
+                        0033
+                    </td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        154,841<br>
+                        286,114<br>
+                        362,697
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+    function machineCalc() {
+        const saved = localStorage.getItem('site');
+        const initialData = saved ? JSON.parse(saved) : {
+            건설기계: {},
+        };
+
+        const defaultKey = '불도저';
+        let machineData = initialData['건설기계']?.[defaultKey]?.운전경비;
+
+        const apidata = JSON.parse(localStorage.getItem('api_data')) || {}
+        const fuelPrices = apidata.data.oil.fuelPrices
+        const data = apidata.data.labor.data
+        const oil = {
+            휘발유: fuelPrices.find(item => item.fuelType === "휘발유")?.price || 0,
+            경유: fuelPrices.find(item => item.fuelType === "자동차용경유")?.price || 0
+        };
+        const labor = {
+            건설기계운전사: data.find(item => item.col4.split('-').pop() === "건설기계운전사")?.col2 || 0,
+            화물차운전사: data.find(item => item.col4.split('-').pop() === "화물차운전사")?.col2 || 0,
+            일반기계운전사: data.find(item => item.col4.split('-').pop() === "일반기계운전사")?.col2 || 0,
+        }
+
+        return {
+            dbData: initialData,
+            machineKey: defaultKey,
+            subActive: '',
+            subActive2: '',
+
+            oil: {
+                name: '경유',
+                spec: '저유황',
+                price: oil.경유
+            },
+            labor: {
+                name: '건설기계운전사',
+                spec: '일반공사 직종',
+                price: labor.건설기계운전사,
+            },
+            laborRate: '',
+            laborResult: '',
+
+            selectedKey: '',
+            ct: {
+                '7ton': { 기계명: '불도저 (무한궤도)', 규격: '7 ton', 연료량: 9.0, 잡재료: 16, 기계가격: 73892, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                '10ton': { 기계명: '불도저 (무한궤도)', 규격: '10 ton', 연료량: 12.5, 잡재료: 16, 기계가격: 161250, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                '12ton': { 기계명: '불도저 (무한궤도)', 규격: '12 ton', 연료량: 14.6, 잡재료: 16, 기계가격: 185580, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                '19ton': { 기계명: '불도저(무한궤도)', 규격: '19 ton', 연료량: 25.0, 잡재료: 16, 기계가격: 289332, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                '32ton': { 기계명: '불도저 (무한궤도)', 규격: '32 ton', 연료량: 41.6, 잡재료: 16, 기계가격: 256354, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+            },
+
+            item: {
+                재료비() { return this.calculateTotal('재료비'); },
+                노무비() { return this.calculateTotal('노무비'); },
+                경비() { return this.calculateTotal('경비'); },
+                합계() {
+                    const total = this.calculateTotal('재료비', false)
+                        + this.calculateTotal('노무비', false)
+                        + this.calculateTotal('경비', false);
+                    return this.formatNumber(total);
+                }
+            },
+
+
+            init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.subActive = urlParams.get('tab1') || '';
+                this.subActive2 = urlParams.get('tab2') || '';
+
+                this.item.table = machineData?.tableData?.length
+                    ? machineData.tableData.map(row => {
+                        // 1. calcTable로 기본 구조(getter 포함)를 가진 객체를 생성하고
+                        const newRow = this.calcTable(row.품명, row.규격, row.단위);
+
+                        // 2. 저장해두었던 값들을 각각 덮어씌워 줌
+                        newRow.수량 = row.수량;
+                        newRow.재료비단가 = row.재료비단가;
+                        newRow.노무비단가 = row.노무비단가;
+                        newRow.경비단가 = row.경비단가;
+                        newRow.비고 = row.비고;
+                        return newRow;
+                    })
+                    : [
+                        this.calcTable(defaultKey, '', '대'),
+                        this.calcTable(this.oil.name, this.oil.spec, 'ℓ'),
+                        this.calcTable('잡재료', '-', '%'),
+                        this.calcTable(this.labor.name, this.labor.spec, '인')
+                    ];
+                this.laborRate = machineData?.laborRate ?? '(1/8) * (25/20) * (16/12)';
+                this.calculateRate();
+            },
+            updateTableValues() {
+                this.item.table[2].재료비단가 = this.item.table[1].재료비;
+            },
+
+            selectItem(type, key) {
+                this.selectedKey = key;
+                switch (type) {
+                    case '규격':
+                        const data = this.ct[key];
+                        this.item.table[0].품명 = this.ct[key].기계명;
+                        this.item.table[0].규격 = this.ct[key].규격;
+                        this.item.table[0].수량 = String(this.ct[key].손료 * this.ct[key].시간계수);
+                        this.item.table[0].경비단가 = String(this.ct[key].기계가격);
+                        this.item.table[0].비고 = '천단위';
+
+                        this.item.table[1].수량 = String(this.ct[key].연료량);
+                        this.item.table[1].재료비단가 = String(this.oil.price);
+
+                        this.item.table[2].규격 = "주연료의 " + this.ct[key].잡재료 + "%";
+                        this.item.table[2].수량 = String(this.ct[key].잡재료 / 100);
+                        this.item.table[2].재료비단가 = String(this.item.table[1].재료비);
+
+                        this.item.table[3].수량 = this.laborResult
+                        this.item.table[3].노무비단가 = String(this.labor.price);
+
+
+                        break;
+
+                    case '노임단가':
+                        break;
+                }
+
+                this.saveToLocal();
+            },
+
+            calculateRate() {
+                try {
+                    this.laborResult = this.formatNumber(Function('return' + this.laborRate)());
+                } catch (e) {
+                    this.laborResult = '오류'
+                }
+                this.item.table[3].수량 = this.laborResult
+                this.saveToLocal();
+            },
+
+            calcTable(품명, 규격, 단위) {
+                return {
+                    품명: 품명,
+                    규격: 규격,
+                    단위: 단위,
+                    수량: 1,
+                    재료비단가: '',
+                    노무비단가: '',
+                    경비단가: '',
+
+                    get 재료비() { return +this.수량 * +this.재료비단가 },
+                    get 노무비() { return this.수량 * this.노무비단가 },
+                    get 경비() { return this.수량 * this.경비단가 },
+                    get 합계단가() { return +this.재료비단가 + +this.노무비단가 + +this.경비단가 },
+                    get 합계() { return this.수량 * this.합계단가 },
+                    비고: '',
+                }
+            },
+
+            calculateTotal(keyName, needFormat = true) {
+                const sum = this.item.table.reduce((acc, cur) => acc + Number(cur[keyName] || 0), 0);
+                return needFormat ? this.formatNumber(sum) : sum;
+            },
+
+            saveToLocal() {
+                if (!this.dbData['건설기계']) this.dbData['건설기계'] = {};
+                if (!this.dbData['건설기계'][this.machineKey]) {
+                    this.dbData['건설기계'][this.machineKey] = {};
+                }
+
+                const tableDataToSave = this.item.table.map(row => ({
+                    품명: row.품명,
+                    규격: row.규격,
+                    단위: row.단위,
+                    수량: row.수량,
+                    재료비단가: row.재료비단가,
+                    노무비단가: row.노무비단가,
+                    경비단가: row.경비단가,
+                    비고: row.비고
+                }));
+
+                this.dbData['건설기계'][this.machineKey].운전경비 = {
+                    tableData: tableDataToSave,
+                    laborRate: this.laborRate
+                };
+                localStorage.setItem('site', JSON.stringify(this.dbData));
+            },
+
+            formatNumber(val) {
+                if (!val && val !== 0) return '';
+                const cleared = String(val).replace(/[^0-9.-]/g, '');
+                if (cleared === '') return '';
+                const num = Number(cleared);
+                return num.toLocaleString('ko-KR', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2
+                });
+            },
+
+            refreshPage() {
+                if (confirm('수정한 내용을 모두 지우고 처음 상태로 되돌리시겠습니까?')) {
+                    // 1. 로컬스토리지에 저장된 해당 장비의 운전경비 데이터 삭제
+                    if (this.dbData['건설기계'] && this.dbData['건설기계'][this.machineKey]) {
+                        delete this.dbData['건설기계'][this.machineKey].운전경비;
+                        localStorage.setItem('site', JSON.stringify(this.dbData));
+                    }
+
+                    // 2. 페이지 새로고침 (처음 기본값으로 자동 로드됨)
+                    window.location.reload();
+                }
+            },
+
+            toggleSub(val) {
+                this.subActive = (this.subActive === val ? '' : val);
+                if (!this.subActive) this.subActive2 = '';
+                this.updateUrl();
+            },
+
+            toggleSub2(val) {
+                this.subActive2 = (this.subActive2 === val ? '' : val);
+                this.updateUrl();
+            },
+            updateUrl() {
+                const url = new URL(window.location);
+                if (this.subActive) url.searchParams.set('tab1', this.subActive);
+                else url.searchParams.delete('tab1');
+
+                if (this.subActive2) url.searchParams.set('tab2', this.subActive2);
+                else url.searchParams.delete('tab2');
+
+                window.history.pushState({}, '', url);
+            },
+        }
+    }
+</script>
