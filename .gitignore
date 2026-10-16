@@ -4,5 +4,8 @@ API_데이터/
 
 *.log
 
+.gitignore
 .vscode
 .env
+
+memo.txt

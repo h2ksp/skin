@@ -1,4 +1,6 @@
-
+git add .
+git commit -m "update"
+git push
 
 
 // 깃헙 스타일주소
