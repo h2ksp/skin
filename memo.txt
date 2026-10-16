@@ -3,6 +3,9 @@ git commit -m "update"
 git push
 
 
+git rm --cached .gitignore
+
+git rm -r --cached .vscode
 git rm --cached memo.txt
 
 // 깃헙 스타일주소
