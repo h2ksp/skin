@@ -1,0 +1,455 @@
+<div id="print-container" x-data="appData()" x-init="initData()">
+    <div id="title">공종별 내역서</div>
+    <div style="padding: 20px;">
+        <!-- 1. 최상단: 프로젝트 콤보박스 + 그룹 추가 버튼 + 배경색 체크박스 -->
+        <div class="group-create-top">
+            <select x-model="activeProject" style="width: 400px;" @change="saveActiveProject()">
+                <option value="">프로젝트 선택</option>
+                <template x-for="proj in projectList" :key="proj">
+                    <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
+                </template>
+            </select>
+            <button type="button" @click="addGroup()">+ 그룹 추가</button>
+
+            <div class="bg-checkboxes">
+                <label><input type="checkbox" x-model="useBg1"> 배경색1</label>
+                <label><input type="checkbox" x-model="useBg2"> 배경색2</label>
+            </div>
+        </div>
+
+        <!-- 그룹들이 쌓이는 리스트 -->
+        <ul id="group-list" class="chasoeul">
+            <template x-for="(group, gIndex) in groups" :key="group.id">
+                <li>
+                    <!-- 배경색1 체크 시 그룹 헤더에 배경색 적용 -->
+                    <div class="group-header" :class="{ 'bg-color-1': useBg1 }">
+                        <div style="display: flex; width: 325px; align-items: center; gap: 4px;">
+                            | &nbsp;
+                            <input type="text" x-model="group.name" placeholder="공종명" style="flex: 1; width: 100%;">
+                        </div>
+                        <div>
+                            <button type="button" @click="addItemRow(gIndex)">추가</button>
+                            <button type="button" @click="deleteGroup(gIndex)">삭제</button>
+                        </div>
+                    </div>
+
+                    <!-- 하부 리스트 영역 -->
+                    <div class="sub-list-area">
+                        <ul class="sub-items-ul">
+                            <template x-for="(item, iIndex) in group.items" :key="item.id">
+                                <li class="sub-row-wrapper">
+                                    <!-- 첫 번째 줄: 배경색2 체크 시 첫 줄 요약 영역에만 배경색 적용 -->
+                                    <div class="sub-row-1" :class="{ 'bg-color-2': useBg2 }">
+                                        <span class="c-cat">
+                                            <select class="row-cat" x-model="item.category">
+                                                <option value="일반">일반</option>
+                                                <option value="일위대가">일위대가</option>
+                                                <option value="건설기계">건설기계</option>
+                                            </select>
+                                        </span>
+                                        <span class="c-name"><input type="text" x-model="item.name"
+                                                placeholder="품명"></span>
+                                        <span class="c-spec"><input type="text" x-model="item.spec"
+                                                placeholder="규격"></span>
+                                        <span class="c-unit"><input type="text" x-model="item.unit"
+                                                placeholder="단위"></span>
+                                        <span class="c-qty"><input type="text" x-model="item.qty"
+                                                placeholder="수량"></span>
+                                        <span class="c-toggle">
+                                            <a href="#" @click.prevent="item.showDetail = !item.showDetail"
+                                                x-text="item.showDetail ? '닫기' : '금액'" title="토글"></a>
+                                        </span>
+                                    </div>
+                                    <!-- 상세 영역 (펼쳐졌을 때는 배경색 영향 없음) -->
+                                    <div class="sub-detail-panel" x-show="item.showDetail">
+                                        <!-- 두 번째 줄: 위로가기(▲), 단가 4개, 삭제 -->
+                                        <div class="sub-row-2">
+                                            <span class="c-order">
+                                                <a @click="moveRow(gIndex, iIndex, 'up')" title="위로"
+                                                    style="cursor: pointer; color: #555; font-size: 13px; text-decoration: none;">▲</a>
+
+                                            </span>
+                                            <div class="f-item"><span>단가 :&nbsp;</span><input type="text"
+                                                    x-model="item.matPrice">
+                                            </div>
+                                            <div class="f-item"><span>단가 :&nbsp;</span><input type="text"
+                                                    x-model="item.labPrice">
+                                            </div>
+                                            <div class="f-item"><span>단가 :&nbsp;</span><input type="text"
+                                                    x-model="item.expPrice">
+                                            </div>
+                                            <div class="f-item"><span>단가 :&nbsp;</span><input type="text"
+                                                    x-model="item.totalPrice">
+                                            </div>
+                                            <span class="c-toggle">
+                                                <a href="#" @click.prevent="deleteRow(gIndex, iIndex)" title="삭제"
+                                                    style="cursor: pointer; color: red; font-size: 13px; text-decoration: none; font-weight: bold;">×</a>
+
+                                            </span>
+                                        </div>
+
+                                        <!-- 세 번째 줄: 아래로가기(▼), 금액 4개, 상세 (일위대가/건설기계일 때만) -->
+                                        <div class="sub-row-3">
+                                            <span class="c-order">
+                                                <a @click="moveRow(gIndex, iIndex, 'down')" title="아래로"
+                                                    style="cursor: pointer; color: #555; font-size: 13px; text-decoration: none;">▼</a>
+                                            </span>
+                                            <div class="f-item"><span>재료비 :&nbsp;</span><input type="text"
+                                                    x-model="item.matCost">
+                                            </div>
+                                            <div class="f-item"><span>노무비 :&nbsp;</span><input type="text"
+                                                    x-model="item.labCost">
+                                            </div>
+                                            <div class="f-item"><span>경비 :&nbsp;</span><input type="text"
+                                                    x-model="item.expCost">
+                                            </div>
+                                            <div class="f-item"><span>합계 :&nbsp;</span><input type="text"
+                                                    x-model="item.totalCost">
+                                            </div>
+                                            <span class="c-toggle">
+                                                <a href="#" x-show="item.category === '일위대가'"
+                                                    @click.prevent="openIlwiDetail(item)" title="일위대가 상세">편집</a>
+                                                <a href="#" x-show="item.category === '건설기계'"
+                                                    @click.prevent="openMachineDetail(item)" title="건설기계 상세">편집</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </li>
+            </template>
+        </ul>
+    </div>
+</div>
+<script>
+    function appData() {
+        return {
+            projectList: [],
+            activeProject: '',
+            useBg1: false,
+            useBg2: false,
+            groups: [],
+
+            initData() {
+                const savedProjects = localStorage.getItem('projectList');
+                if (savedProjects) {
+                    try {
+                        this.projectList = JSON.parse(savedProjects);
+                    } catch (e) {
+                        this.projectList = [];
+                    }
+                }
+
+                const savedActive = localStorage.getItem('activeProject');
+                if (savedActive) {
+                    this.activeProject = savedActive;
+                }
+            },
+
+            saveActiveProject() {
+                localStorage.setItem('activeProject', this.activeProject);
+            },
+
+            addGroup() {
+                if (!this.activeProject) {
+                    alert('프로젝트를 먼저 선택해 주세요!');
+                    return;
+                }
+
+                this.groups.push({
+                    id: Date.now(),
+                    items: []
+                });
+            },
+
+            deleteGroup(gIndex) {
+                if (confirm('이 그룹을 정말 삭제하시겠습니까?')) {
+                    this.groups.splice(gIndex, 1);
+                }
+            },
+
+            addItemRow(gIndex) {
+                if (!this.activeProject) {
+                    alert('프로젝트를 먼저 선택해 주세요!');
+                    return;
+                }
+
+                this.groups[gIndex].items.push({
+                    id: Date.now() + Math.random(),
+                    category: '일반',
+                    name: '',
+                    spec: '',
+                    unit: '',
+                    qty: '',
+                    matPrice: '',
+                    matCost: '',
+                    labPrice: '',
+                    labCost: '',
+                    expPrice: '',
+                    expCost: '',
+                    totalPrice: '',
+                    totalCost: '',
+                    showDetail: false
+                });
+            },
+
+            deleteRow(gIndex, iIndex) {
+                if (confirm('이 항목을 정말 삭제하시겠습니까?')) {
+                    this.groups[gIndex].items.splice(iIndex, 1);
+                }
+            },
+
+            moveRow(gIndex, iIndex, direction) {
+                const items = this.groups[gIndex].items;
+                if (direction === 'up' && iIndex > 0) {
+                    const temp = items[iIndex];
+                    items[iIndex] = items[iIndex - 1];
+                    items[iIndex - 1] = temp;
+                } else if (direction === 'down' && iIndex < items.length - 1) {
+                    const temp = items[iIndex];
+                    items[iIndex] = items[iIndex + 1];
+                    items[iIndex + 1] = temp;
+                }
+            },
+
+            openIlwiDetail(item) {
+                alert(`[일위대가 전용 상세] 품명: ${item.name || '없음'}`);
+            },
+
+            openMachineDetail(item) {
+                alert(`[건설기계 전용 상세] 품명: ${item.name || '없음'}`);
+            }
+        }
+    }
+</script>
+
+<style>
+    .group-create-top {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .group-create-top select {
+        padding: 3px;
+    }
+
+    .bg-checkboxes {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        line-height: 1.2;
+        margin-left: 50px;
+        font-size: 13px;
+    }
+
+    .bg-checkboxes label {
+        cursor: pointer;
+    }
+
+    /* 배경색1 (그룹 헤더용) */
+    .bg-color-1 {
+        background-color: #f2f5fa !important;
+        padding: 4px !important;
+    }
+
+    /* 배경색2 (첫 번째 줄 요약 영역용) */
+    .bg-color-2 {
+        background-color: #faf5f2 !important;
+        padding: 2px !important;
+    }
+
+    #group-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+
+
+    .group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        padding: 2px 0;
+    }
+
+    .group-header input {
+        padding: 2px;
+    }
+
+    .sub-list-area {
+        margin-bottom: 44px;
+    }
+
+    .sub-items-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sub-row-wrapper {
+        padding: 2px 0;
+    }
+
+    /* 첫 번째 줄 정렬 */
+    .sub-row-1 {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .c-cat {
+        width: 90px;
+    }
+
+    .c-name {
+        flex: 2;
+    }
+
+    .c-spec {
+        flex: 2;
+    }
+
+    .c-unit {
+        width: 60px;
+    }
+
+    .c-qty {
+        width: 60px;
+    }
+
+    .c-toggle {
+        width: 60px;
+        text-align: center;
+        line-height: 1.2;
+        font-size: 15px;
+        font-style: italic;
+    }
+
+
+    /* 상세 패널 (2, 3번째 줄) */
+    .sub-detail-panel {
+        margin-top: 24px;
+        margin-bottom: 555px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .sub-row-2,
+    .sub-row-3 {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        line-height: 1.2;
+        font-size: 15px;
+    }
+
+    .c-order {
+        width: 25px;
+        text-align: center;
+    }
+
+    .c-order a {
+        cursor: pointer;
+        color: #555;
+        text-decoration: none;
+    }
+
+    .f-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .f-item span {
+        color: #333;
+        width: 70px;
+        flex-shrink: 0;
+        text-align: left;
+    }
+
+
+    .f-item input,
+    .sub-row-1 input,
+    .sub-row-1 select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 2px;
+    }
+
+
+
+    .chasoeul {
+        font-size: 18px;
+        font-style: italic;
+        color: #c31a0b;
+        line-height: 1.2;
+        /* 또는 700 */
+        text-align: right;
+    }
+
+    .chasoeul select {
+        border: 1px solid #dcdcdc;
+        outline: none;
+        line-height: 1.2;
+        font-size: 14px;
+        border-radius: 4px;
+        font-style: italic;
+    }
+
+    .chasoeul a {
+
+        outline: none;
+        line-height: 1.2;
+        font-size: 14px;
+        border-radius: 4px;
+        font-style: italic;
+        padding: 2px 12px;
+    }
+
+    .chasoeul input[type="text"] {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #dcdcdc;
+        /* 연하고 깔끔한 회색 테두리 */
+        border-radius: 4px;
+        /* 모서리를 살짝 둥글게 (원치 않으면 이 줄 삭제) */
+        outline: none;
+        font-size: 16px;
+        font-style: italic;
+        color: #c31a0b;
+        line-height: 1.2;
+        box-sizing: border-box;
+        padding: 2px 12px;
+        /* 여백을 살짝 주어 입력 글자가 테두리에 붙지 않게 */
+        margin: 0;
+        transition: border-color 0.2s;
+        /* 클릭 시 부드럽게 색 변경 */
+    }
+
+    /* 크롬, 사파리, 엣지 등 */
+    .chasoeul input[type="text"]::placeholder {
+        color: #cccccc;
+        /* 기본 placeholder보다 더 연한 회색 */
+        font-style: italic;
+    }
+
+    /* 파이어폭스 */
+    .chasoeul input[type="text"]:-moz-placeholder {
+        color: #cccccc;
+        opacity: 1;
+    }
+
+    /* 입력창을 클릭(포커스)했을 때 테두리 색상 강조 */
+    .chasoeul input[type="text"]:focus {
+        border-color: #888888;
+        /* 클릭 시 조금 더 진한 회색 (원하면 #4a90e2 같은 파란색으로 변경 가능) */
+    }
+</style>

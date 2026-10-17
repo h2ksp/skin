@@ -17,8 +17,9 @@
     <!-- 1. 알파인 코어를 먼저 선언 -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://raw.githack.com/h2ksp/skin/main/menu.js?v=33"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/style.css?v=6" type="text/css" />
+
+    <script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/menu.js?v=33"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/style.css?v=6" type="text/css" />
 
     <style type="text/css">
       /* [스크롤바 안정화] 화면 좌우 밀림 방지 */
@@ -477,39 +478,7 @@
           <div class="box2">
             <div class="box3">
               <ul class="icon-menu">
-                <div class="gongsabida-logo">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path
-                      d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.43l-8.57 8.57a2 2 0 1 1-2.83-2.83l8.48-8.48" />
-                  </svg>
-
-                </div>
-
-                <style>
-                  .gongsabida-logo {
-                    display: inline-flex;
-                    flex-direction: column;
-                    align-items: center;
-                    color: #111111;
-                  }
-
-                  .gongsabida-logo svg {
-                    width: 44px;
-                    height: auto;
-                    display: block;
-                  }
-
-                  .gongsabida-logo span {
-                    margin-top: 10px;
-                    font-family: Arial, Helvetica, sans-serif;
-                    font-size: 14px;
-                    font-weight: 500;
-                    letter-spacing: 5px;
-                  }
-                </style>
-                <br>
-
+                
                 <!-- 1. 집 아이콘 -->
                 <li>
                   <a href="/" title="홈으로">
@@ -521,16 +490,7 @@
                     </svg>
                   </a>
                 </li>
-                <!-- 2. 돋보기 아이콘 -->
-                <li>
-                  <a href="javascript:void(0);" id="search-nav-btn" title="선택 분류 검색창 열기">
-                    <svg viewBox="0 0 40 40">
-                      <circle cx="17" cy="17" r="9" />
-                      <path d="M 24 24 L 34 34" />
-                      <path d="M 14 14 A 4 4 0 0 1 18 13" />
-                    </svg>
-                  </a>
-                </li>
+               
                 <!-- 3. 공사원가 책 아이콘 -->
                 <li>
                   <a href="https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" target="_blank"
@@ -984,29 +944,6 @@
       });
     });
 
-    const searchNavBtn = document.getElementById("search-nav-btn");
-    if (searchNavBtn) {
-      searchNavBtn.addEventListener("click", () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentGroup = urlParams.get("group") || "group1";
-        const groupUrlMap = {
-          "group1": "https://study-with-words.blogspot.com/2026/09/blog-post_22.html",
-          "group2": "#sd",
-          "group3": "/p/search3.html",
-          "group4": "/p/search4.html",
-          "group5": "/p/search5.html"
-        };
-
-        let targetUrl = groupUrlMap[currentGroup] || groupUrlMap["group1"];
-
-        if (!targetUrl.startsWith("#")) {
-          const separator = targetUrl.includes("?") ? "&" : "?";
-          targetUrl = `${targetUrl}${separator}group=${currentGroup}`;
-        }
-
-        window.location.href = targetUrl;
-      });
-    }
 
     // 네이버 아이콘 클릭 시 우측 공간 내용을 전부 날리고 배경과 새 화면으로 교체
     const naverModeBtn = document.getElementById("naver-mode-btn");
