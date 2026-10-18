@@ -362,27 +362,21 @@
 
     <script>
       document.addEventListener('alpine:init', () => {
-        // 1. 최상위를 cost로 하는 기본 데이터 구조 정의
+        // 1. 최상위를 cost로 하는 기본 데이터 구조 정의 (앱 초기화용)
         const defaultCostData = {
           projectA: {
             공종별내역서: [],
             일위대가: [],
             중기단가산출근거: [],
             적용기준: {
-              환율: {
-                달러: '',
-                엔: ''
-              },
-              유류단가: {
-                휘발유: '',
-                경유: '',
-                선박용경유: '',
-                중유: ''
-              },
+              환율: { 달러: '', 엔: '' },
+              유류단가: { 휘발유: '', 경유: '', 선박용경유: '', 중유: '' },
             },
+            옵션: {
+              그룹명: ['건축', '토목', '전기', '기계', '조경', '소방', '통신', '기타']
+            }
           }
-        }
-
+        };
 
         // 2. 스크립트 실행되자마자 로컬스토리지에 'cost'가 없으면 기본값 박기
         if (!localStorage.getItem('cost')) {
@@ -390,12 +384,12 @@
         }
 
         Alpine.store('dbStore', {
-          // 알파인 스토어가 바라보는 데이터 (로컬스토리지의 'cost' 파싱)
+          // 알파인 스토어가 바라보는 실시간 데이터 (로컬스토리지의 'cost'를 파싱해서 담음)
           cost: JSON.parse(localStorage.getItem('cost')),
           currentProject: 'projectA',
 
+          // 공종별내역서 등의 데이터가 바뀔 때 합계를 실시간으로 계산해 주는 Getter
           get 원가계산서() {
-            // 이제 this.cost 바로 아래에서 프로젝트를 찾음
             const proj = this.cost?.[this.currentProject] || {};
 
             const 재료비 = (proj.공종별내역서 || []).reduce((sum, item) => {
@@ -409,6 +403,7 @@
             return { 재료비, 노무비, 경비, 합계 };
           },
 
+          // [내부함수] 로컬스토리지에서 최신 데이터를 안전하게 가져오는 함수
           _getData() {
             const raw = localStorage.getItem('cost');
             try {
@@ -418,42 +413,51 @@
             }
           },
 
+          // 💡 [핵심 자동 연동 함수] 데이터를 변경한 뒤 로컬스토리지와 알파인 스토어에 동시 반영!
           _saveData(costObj) {
+            // 1) 변경된 전체 객체를 문자열로 바꿔서 로컬스토리지에 저장 (새로고침해도 안 날아가게)
             localStorage.setItem('cost', JSON.stringify(costObj));
-            this.cost = costObj; // 알파인 반응성 동기화
+
+            // 2) 알파인의 반응성(Reactivity)을 트리거하기 위해 store 내부의 cost 변수도 갱신
+            // 이 과정 덕분에 화면(UI)과 다른 컴포넌트들도 실시간으로 자동 업데이트됨!
+            this.cost = costObj;
           },
 
+          // 데이터를 가져오는 조회 함수
           getItems(project, category) {
             const costData = this._getData();
             return costData[project]?.[category] || [];
           },
 
+          // ➕ 데이터를 추가할 때: 추가 후 자동으로 _saveData를 호출하므로 로컬+화면 자동 반영됨
           addItem(project, category, newItem) {
             const costData = this._getData();
             if (!costData[project]) costData[project] = {};
             if (!costData[project][category]) costData[project][category] = [];
 
             costData[project][category].push(newItem);
-            this._saveData(costData);
+            this._saveData(costData); // <-- 여기서 로컬스토리지 저장 + 알파인 동기화 일체화!
           },
 
+          // 🔄 데이터를 수정할 때: 수정 후 자동 저장 및 화면 갱신
           updateItem(project, category, index, updatedData) {
             const costData = this._getData();
             const targetList = costData[project]?.[category];
 
             if (targetList && targetList[index]) {
               targetList[index] = { ...targetList[index], ...updatedData };
-              this._saveData(costData);
+              this._saveData(costData); // <-- 자동 저장 & 동기화
             }
           },
 
+          // ❌ 데이터를 삭제할 때: 삭제 후 자동 저장 및 화면 갱신
           deleteItem(project, category, index) {
             const costData = this._getData();
             const targetList = costData[project]?.[category];
 
             if (targetList) {
               targetList.splice(index, 1);
-              this._saveData(costData);
+              this._saveData(costData); // <-- 자동 저장 & 동기화
             }
           }
         });
@@ -478,7 +482,7 @@
           <div class="box2">
             <div class="box3">
               <ul class="icon-menu">
-                
+
                 <!-- 1. 집 아이콘 -->
                 <li>
                   <a href="/" title="홈으로">
@@ -490,7 +494,7 @@
                     </svg>
                   </a>
                 </li>
-               
+
                 <!-- 3. 공사원가 책 아이콘 -->
                 <li>
                   <a href="https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" target="_blank"

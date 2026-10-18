@@ -3,7 +3,7 @@
 
 /* 전체 컨테이너: 폰트 일괄 통일 */
 #print-container {
-  width: 790px;
+  width: 100%;
   box-sizing: border-box;
   font-family: "HCRBatang", "HCR Batang", "Batang", "바탕", serif;
   color: #000;

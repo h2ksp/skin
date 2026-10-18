@@ -1,0 +1,198 @@
+<style>
+    .project-select-wrap {
+        margin-top: 35px;
+    }
+
+    .project-select-wrap label {
+        margin-right: 8px;
+    }
+
+    #projectSelect {
+        width: 280px;
+        padding: 4px;
+    }
+
+    .group-title {
+        margin-top: 14px;
+        margin-bottom: 4px;
+    }
+
+    .sub-box {
+        padding-left: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 25px;
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 350px;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+    }
+</style>
+
+<div x-data="standardsApp()" x-init="init()" id="print-container">
+    <h1>적용기준 관리</h1>
+    <div class="tbl-text"
+        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 19px; font-weight: 400; font-style: italic; color: #666666; margin-bottom: 12px; line-height: 1.6;">
+        "개별임금 노임단가는 최신으로 적용되며 추후 변경할 수 있습니다."
+    </div>
+
+    <!-- 프로젝트 선택 콤보박스 (option.activeProject와 양방향 바인딩) -->
+    <div class="project-select-wrap">
+        <label for="projectSelect" class="tbl-text">프로젝트 선택:</label>
+        <select id="projectSelect" x-model="$store.dbStore.option.activeProject" @change="onProjectChange()">
+            <template x-for="name in $store.dbStore.option.projectList" :key="name">
+                <option :value="name" x-text="name"></option>
+            </template>
+            <template x-if="$store.dbStore.option.projectList.length === 0">
+                <option value="">등록된 프로젝트 없음</option>
+            </template>
+        </select>
+    </div>
+
+    <!-- 컨텐츠 영역 (활성 프로젝트가 있을 때만 노출) -->
+    <div id="contentArea" x-show="activeProject && standards">
+        <div id="projectTitle" class="tbl-text" style="margin-top: 30px;" x-text="`[${activeProject}] _ 적용기준`"></div>
+        
+        <div id="standardsContainer">
+            <template x-for="(groupEntry, groupIndex) in Object.entries(standards || {})" :key="groupEntry[0]">
+                <div style="margin-bottom: 6px;">
+                    <!-- 그룹 타이틀 -->
+                    <div class="tbl-text group-title" x-text="`${groupIndex + 1}. ${groupEntry[0]}`"></div>
+
+                    <!-- 서브 박스 -->
+                    <div class="sub-box">
+                        <!-- 객체 형태일 때 (예: 환율, 유류단가, 옵션 등) -->
+                        <template x-if="typeof groupEntry[1] === 'object' && groupEntry[1] !== null">
+                            <template x-for="subEntry in Object.entries(groupEntry[1])" :key="subEntry[0]">
+                                <div class="input-row">
+                                    <span class="tbl-text" x-text="subEntry[0]"></span>
+                                    <input type="text" autocomplete="off"
+                                        :value="formatNumber(subEntry[1])"
+                                        @input="updateStandardValue(groupEntry[0], subEntry[0], $event)">
+                                </div>
+                            </template>
+                        </template>
+
+                        <!-- 단일 값 형태일 때 -->
+                        <template x-if="typeof groupEntry[1] !== 'object' || groupEntry[1] === null">
+                            <div class="input-row">
+                                <span class="tbl-text">기준</span>
+                                <input type="text" autocomplete="off"
+                                    :value="formatNumber(groupEntry[1])"
+                                    @input="updateStandardValue(groupEntry[0], null, $event)">
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('dbStore', {
+            cost: JSON.parse(localStorage.getItem('cost')) || {},
+            
+            option: JSON.parse(localStorage.getItem('option')) || {
+                projectList: [],
+                activeProject: null
+            },
+
+            saveCost() {
+                localStorage.setItem('cost', JSON.stringify(this.cost));
+            },
+            saveOption() {
+                localStorage.setItem('option', JSON.stringify(this.option));
+            }
+        });
+    });
+
+    function standardsApp() {
+        return {
+            get activeProject() {
+                const store = Alpine.store('dbstore');
+                return store && store.option ? store.option.activeProject : null;
+            },
+
+            get standards() {
+                const store = Alpine.store('dbstore');
+                if (!store || !this.activeProject) return null;
+                const costData = store.cost || {};
+                return costData[this.activeProject]?.적용기준 || null;
+            },
+
+            init() {
+                const store = Alpine.store('dbstore');
+                if (!store) return;
+
+                const costData = store.cost || {};
+                const projectNames = Object.keys(costData);
+                let currentList = store.option.projectList;
+
+                if (currentList.length > 0) {
+                    currentList = currentList.filter(name => costData[name]);
+                    projectNames.forEach(name => {
+                        if (!currentList.includes(name)) {
+                            currentList.push(name);
+                        }
+                    });
+                    store.option.projectList = currentList;
+                } else {
+                    store.option.projectList = projectNames;
+                }
+                store.saveOption();
+
+                if (store.option.activeProject && costData[store.option.activeProject]) {
+                    // 유효함
+                } else if (store.option.projectList.length > 0) {
+                    store.option.activeProject = store.option.projectList[0];
+                    store.saveOption();
+                } else {
+                    store.option.activeProject = null;
+                    store.saveOption();
+                }
+            },
+
+            onProjectChange() {
+                const store = Alpine.store('dbStore');
+                if (store && typeof store.saveOption === 'function') {
+                    store.saveOption();
+                }
+            },
+
+            formatNumber(value) {
+                if (value === undefined || value === null || value === '') return '';
+                const cleaned = value.toString().replace(/[^\d.]/g, '');
+                const parts = cleaned.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return parts.join('.');
+            },
+
+            updateStandardValue(groupKey, subKey, event) {
+                const rawValue = event.target.value.replace(/,/g, '');
+                event.target.value = this.formatNumber(rawValue);
+
+                const store = Alpine.store('dbStore');
+                if (!store || !this.activeProject) return;
+
+                const costData = store.cost;
+                if (costData[this.activeProject] && costData[this.activeProject].적용기준) {
+                    if (subKey !== null) {
+                        costData[this.activeProject].적용기준[groupKey][subKey] = rawValue;
+                    } else {
+                        costData[this.activeProject].적용기준[groupKey] = rawValue;
+                    }
+                    store.saveCost();
+                }
+            }
+        }
+    }
+</script>

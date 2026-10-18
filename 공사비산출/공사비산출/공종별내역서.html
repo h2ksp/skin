@@ -1,0 +1,380 @@
+<style>
+    /* 전체 버튼 크기 줄이기 및 디자인 통일 */
+    #print-container button {
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        height: auto !important;
+        cursor: pointer;      
+        
+    }
+</style>
+
+
+<div id="print-container" x-data="appData()" x-init="init()">
+    <div id="title">공종별 내역서</div>
+
+    <div style="width: 100%;">
+        <!-- 최상단 컨트롤 영역 -->
+        <div>
+            <select x-model="activeProject" @change="saveActiveProject()">
+                <option value="">프로젝트 선택</option>
+                <template x-for="proj in projectList" :key="proj">
+                    <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
+                </template>
+            </select>
+
+            <select x-model="activeGroup" @change="saveActiveGroup()">
+                <option value="">전체보기</option>
+                <template x-for="(group, idx) in groupList" :key="idx">
+                    <option :value="idx" x-text="group"></option>
+                </template>
+            </select>
+
+            <button type="button" @click="addGroup()">추가</button>
+            <button type="button" @click="editGroups()">편집</button>
+
+            <div>
+                <label><input type="checkbox" x-model="useBg1"> 색1</label>
+                <label><input type="checkbox" x-model="useBg2"> 색2</label>
+            </div>
+        </div>
+
+        <ul id="group-list">
+            <template x-for="(groupName, gIndex) in groupList" :key="gIndex">
+                <li x-show="activeGroup === '' || Number(activeGroup) === gIndex">
+
+                    <!-- 1. 대분류 (공종명 순서 변경 ▲/▼ 추가) -->
+                    <div>
+                        <span x-text="groupName" style="font-size: 19px; font-weight: bold;"></span>
+                        <div style="margin-left: auto; display: flex; gap: 4px; margin-bottom: 10px;">
+                            <button type=" button" @click="moveUpGroup(gIndex)" :disabled="gIndex === 0">▲</button>
+                            <button type="button" @click="moveDownGroup(gIndex)"
+                                :disabled="gIndex === (groupList.length - 1)">▼</button>
+                            <button type="button" @click="addLevel1(gIndex)">+ 하위 추가</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. 1차 하위 항목 리스트 (1차 항목 순서 변경 ▲/▼ 추가) -->
+                    <ul>
+                        <template x-for="(lvl1, l1Index) in (subGroupList[gIndex] || [])" :key="l1Index">
+                            <li style="margin-left: -20px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+
+                                    <input type="text" x-model="lvl1.name" @input="saveToStore()"
+                                        placeholder="1차 하위 항목 입력">
+
+                                    <button type="button" @click="moveUpLevel1(gIndex, l1Index)"
+                                        :disabled="l1Index === 0">▲</button>
+                                    <button type="button" @click="moveDownLevel1(gIndex, l1Index)"
+                                        :disabled="l1Index === (subGroupList[gIndex].length - 1)">▼</button>
+                                    <button type="button" @click="addLevel2(gIndex, l1Index)">+ 하위 추가</button>
+                                    <button type="button" @click="deleteLevel1(gIndex, l1Index)">삭제</button>
+                                </div>
+
+                                <!-- 3. 2차 세부 항목 리스트 (우측 정렬) -->
+                                
+                                <ul style="margin-left: -40px; margin-bottom: 50px;">
+                                    <template x-for="(lvl2, l2Index) in (lvl1.children || [])" :key="l2Index">
+                                        <li>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <!-- 1. 위아래 이동 컨트롤 -->
+                                                <div style="display: flex; gap: 4px; font-size: 13px; flex-shrink: 0;">
+                                                    <a href="#"
+                                                        @click.prevent="if (l2Index > 0) moveUpLevel2(gIndex, l1Index, l2Index)"
+                                                        :style="l2Index === 0 ? 'color: #ccc; cursor: default; text-decoration: none;' : 'color: #555; text-decoration: none;'">▲</a>
+                                                    <a href="#"
+                                                        @click.prevent="if (l2Index < lvl1.children.length - 1) moveDownLevel2(gIndex, l1Index, l2Index)"
+                                                        :style="l2Index === (lvl1.children.length - 1) ? 'color: #ccc; cursor: default; text-decoration: none;' : 'color: #555; text-decoration: none;'">▼</a>
+                                                </div>
+
+                                                <!-- 입력창들 (4개 모두 투명 밑줄 스타일 적용) -->
+                                                <input type="text" x-model="lvl2.name" @input="saveToStore()"
+                                                    style="width: 350px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none;"
+                                                    placeholder="2차 세부 항목 입력">
+
+                                                <input type="text" x-model="lvl2.detail" @input="saveToStore()"
+                                                    style="width: 300px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none;"
+                                                    placeholder="상세 내역 입력">
+
+                                                <input type="text" x-model="lvl2.spec" @input="saveToStore()"
+                                                    style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none; text-align: center;"
+                                                    placeholder="규격">
+
+                                                <input type="text" x-model="lvl2.unit" @input="saveToStore()"
+                                                    style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none; text-align: center;"
+                                                    placeholder="단위">
+
+                                                <!-- 4. 금액 / 삭제 컨트롤 -->
+                                                <div
+                                                    style="margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 13px; flex-shrink: 0;">
+                                                    <a href="#"
+                                                        @click.prevent="lvl2.showCost = !lvl2.showCost; saveToStore()"
+                                                        style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                                                        금액 <span x-text="lvl2.showCost ? '▲' : '▼'"
+                                                            style="font-size: 11px;"></span>
+                                                    </a>
+                                                    <a href="#" @click.prevent="deleteLevel2(gIndex, l1Index, l2Index)"
+                                                        style="color: #dc2626; text-decoration: none; font-weight: 500;">삭제</a>
+                                                </div>
+                                            </div>
+
+                                            <!-- 금액 토글 영역 -->
+                                            <div x-show="lvl2.showCost" style="margin-bottom: 116px;">
+                                                <label>
+                                                    재료비:
+                                                    <input type="number" x-model="lvl2.material" @input="saveToStore()"
+                                                        placeholder="0"> 원
+                                                </label>
+                                                <label>
+                                                    노무비:
+                                                    <input type="number" x-model="lvl2.labor" @input="saveToStore()"
+                                                        placeholder="0"> 원
+                                                </label>
+                                                <label>
+                                                    경비:
+                                                    <input type="number" x-model="lvl2.expense" @input="saveToStore()"
+                                                        placeholder="0"> 원
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+
+                            </li>
+                        </template>
+                    </ul>
+
+                </li>
+            </template>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function appData() {
+        const option = JSON.parse(localStorage.getItem('option')) || {};
+        const store = Alpine.store('dbStore');
+        const activeProject = option?.activeProject || '';
+
+        const formatData = (raw) => {
+            const result = {};
+            if (!raw) return result;
+            Object.keys(raw).forEach(k => {
+                if (Array.isArray(raw[k])) {
+                    result[k] = raw[k].map(item => {
+                        if (typeof item === 'string') {
+                            return { name: item, children: [] };
+                        } else if (item && typeof item === 'object') {
+                            const rawChildren = Array.isArray(item.children) ? item.children : [];
+                            const formattedChildren = rawChildren.map(c => {
+                                if (typeof c === 'string') {
+                                    return { name: c, showCost: false, material: '', labor: '', expense: '' };
+                                } else if (c && typeof c === 'object') {
+                                    return {
+                                        name: c.name || '',
+                                        showCost: !!c.showCost,
+                                        material: c.material ?? '',
+                                        labor: c.labor ?? '',
+                                        expense: c.expense ?? ''
+                                    };
+                                }
+                                return { name: '', showCost: false, material: '', labor: '', expense: '' };
+                            });
+                            return {
+                                name: item.name || '',
+                                children: formattedChildren
+                            };
+                        }
+                        return { name: '', children: [] };
+                    });
+                }
+            });
+            return result;
+        };
+
+        return {
+            init() { },
+
+            activeProject: activeProject,
+            projectList: option?.projectList || [],
+            store: store,
+            useBg1: false,
+            useBg2: false,
+
+            groupList: (activeProject && store.cost[activeProject]?.옵션?.그룹명) || [],
+            activeGroup: (activeProject && store.cost[activeProject]?.옵션?.activeGroup !== undefined) ? store.cost[activeProject].옵션.activeGroup : '',
+
+            subGroupList: formatData(activeProject && store.cost[activeProject]?.옵션?.하위공종),
+
+            saveActiveProject() {
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+                if (this.activeProject && store.cost[this.activeProject]?.옵션?.그룹명) {
+                    this.groupList = store.cost[this.activeProject].옵션.그룹명;
+                    this.subGroupList = formatData(store.cost[this.activeProject].옵션.하위공종);
+                } else {
+                    this.groupList = [];
+                    this.subGroupList = {};
+                }
+                this.activeGroup = '';
+            },
+
+            saveActiveGroup() {
+                option.activeGroup = this.activeGroup;
+                this.saveToStore();
+            },
+
+            addGroup() {
+                if (!this.activeProject) {
+                    alert('프로젝트를 먼저 선택해 주세요!');
+                    return;
+                }
+                if (this.activeGroup === '' || this.activeGroup === null || isNaN(this.activeGroup)) {
+                    alert('상단 콤보박스에서 그룹을 먼저 선택해 주세요!');
+                    return;
+                }
+                this.addLevel1(Number(this.activeGroup));
+            },
+
+            addLevel1(gIndex) {
+                if (!this.subGroupList[gIndex]) {
+                    this.subGroupList[gIndex] = [];
+                }
+                this.subGroupList[gIndex].push({ name: '', children: [] });
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            addLevel2(gIndex, l1Index) {
+                if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
+                if (!this.subGroupList[gIndex][l1Index].children) {
+                    this.subGroupList[gIndex][l1Index].children = [];
+                }
+                this.subGroupList[gIndex][l1Index].children.push({
+                    name: '',
+                    showCost: false,
+                    material: '',
+                    labor: '',
+                    expense: ''
+                });
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            deleteLevel1(gIndex, l1Index) {
+                if (!this.subGroupList[gIndex]) return;
+                this.subGroupList[gIndex].splice(l1Index, 1);
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            deleteLevel2(gIndex, l1Index, l2Index) {
+                if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
+                this.subGroupList[gIndex][l1Index].children.splice(l2Index, 1);
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 대분류(공종명) 위로 이동
+            moveUpGroup(gIndex) {
+                if (gIndex <= 0) return;
+
+                const tempG = this.groupList[gIndex];
+                this.groupList[gIndex] = this.groupList[gIndex - 1];
+                this.groupList[gIndex - 1] = tempG;
+
+                const tempSub = this.subGroupList[gIndex];
+                this.subGroupList[gIndex] = this.subGroupList[gIndex - 1];
+                this.subGroupList[gIndex - 1] = tempSub;
+
+                this.groupList = [...this.groupList];
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 대분류(공종명) 아래로 이동
+            moveDownGroup(gIndex) {
+                if (gIndex >= this.groupList.length - 1) return;
+
+                const tempG = this.groupList[gIndex];
+                this.groupList[gIndex] = this.groupList[gIndex + 1];
+                this.groupList[gIndex + 1] = tempG;
+
+                const tempSub = this.subGroupList[gIndex];
+                this.subGroupList[gIndex] = this.subGroupList[gIndex + 1];
+                this.subGroupList[gIndex + 1] = tempSub;
+
+                this.groupList = [...this.groupList];
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 1차 하위 항목 위로 이동
+            moveUpLevel1(gIndex, l1Index) {
+                if (l1Index <= 0) return;
+                const targetList = this.subGroupList[gIndex];
+                const temp = targetList[l1Index];
+                targetList[l1Index] = targetList[l1Index - 1];
+                targetList[l1Index - 1] = temp;
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 1차 하위 항목 아래로 이동
+            moveDownLevel1(gIndex, l1Index) {
+                const targetList = this.subGroupList[gIndex];
+                if (l1Index >= targetList.length - 1) return;
+                const temp = targetList[l1Index];
+                targetList[l1Index] = targetList[l1Index + 1];
+                targetList[l1Index + 1] = temp;
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 2차 세부 항목 위로 이동
+            moveUpLevel2(gIndex, l1Index, l2Index) {
+                if (l2Index <= 0) return;
+                const targetList = this.subGroupList[gIndex][l1Index].children;
+                const temp = targetList[l2Index];
+                targetList[l2Index] = targetList[l2Index - 1];
+                targetList[l2Index - 1] = temp;
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            // 🚀 2차 세부 항목 아래로 이동
+            moveDownLevel2(gIndex, l1Index, l2Index) {
+                const targetList = this.subGroupList[gIndex][l1Index].children;
+                if (l2Index >= targetList.length - 1) return;
+                const temp = targetList[l2Index];
+                targetList[l2Index] = targetList[l2Index + 1];
+                targetList[l2Index + 1] = temp;
+                this.subGroupList = { ...this.subGroupList };
+                this.saveToStore();
+            },
+
+            saveToStore() {
+                if (store.cost[this.activeProject]) {
+                    if (!store.cost[this.activeProject].옵션) store.cost[this.activeProject].옵션 = {};
+                    store.cost[this.activeProject].옵션.그룹명 = this.groupList;
+                    store.cost[this.activeProject].옵션.하위공종 = this.subGroupList;
+                    store.cost[this.activeProject].옵션.activeGroup = this.activeGroup;
+                    store._saveData(store.cost);
+                }
+            },
+
+            editGroups() {
+                const currentStr = this.groupList.join(', ');
+                const userInput = prompt('공종명 목록을 콤마(,)로 구분해서 수정해 주세요:', currentStr);
+
+                if (userInput !== null) {
+                    let newList = userInput.split(',').map(item => item.trim()).filter(item => item.length > 0);
+                    this.groupList = newList;
+                    this.activeGroup = '';
+                    this.saveToStore();
+                }
+            }
+        }
+    }
+</script>
