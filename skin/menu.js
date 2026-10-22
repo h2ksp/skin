@@ -3665,9 +3665,9 @@ const menuData = {
                   [
                     { text: "원가계산서", url: "#4-1" },
                     { text: "공종별 내역서", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
-                    { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html" },
+                    { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
                     { text: "중기단가산출", url: "#4-1" },
-                    { text: "단가목록표", url: "#4-1" },
+                    { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
                   ]
               },
 

@@ -279,10 +279,14 @@
                                                     </a>
                                                     <select x-model="lvl2.type" @change="handleTypeChange(lvl2)"
                                                         style="width: 100px;">
-                                                        <option value="일반">일반</option>
+                                                        <option value="자재">자재</option>
+                                                        <option value="노무">노무</option>
+                                                        <option value="경비">경비</option>
                                                         <option value="일위대가">일위대가</option>
                                                         <option value="건설기계">건설기계</option>
                                                         <option value="표준시장단가">표준시장단가</option>
+                                                        <option value="손료">손료</option>
+
                                                     </select>
                                                     <!-- 💡 option1(일반)일 때는 숨겨지고, option2/3/4 일 때만 나타나는 편집 버튼 -->
                                                     <a href="#"
@@ -679,7 +683,7 @@
 
                 this.subGroupList[gIndex][l1Index].children.push({
                     showCost: false,
-                    type: '',
+                    type: '자재',
                     name: '',
                     spec: '',
                     unit: '',
