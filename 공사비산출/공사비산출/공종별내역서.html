@@ -1,12 +1,162 @@
 <style>
-    /* 전체 버튼 크기 줄이기 및 디자인 통일 */
-    #print-container button {
-        padding: 2px 6px !important;
-        font-size: 12px !important;
-        line-height: 1.2 !important;
-        height: auto !important;
-        cursor: pointer;      
-        
+    /* 표 스타일 (.table-container 내부만 적용) */
+    .table-container {
+        overflow-x: auto;
+        margin-top: 15px;
+
+    }
+
+    /* 클릭 가능한 행 스타일 (마우스 호버 효과) */
+    .table-container tr.clickable-row {
+        cursor: pointer;
+    }
+
+    /* 마우스를 올렸을 때 연한 하늘색/배경 변경 */
+    .table-container tr.clickable-row:hover {
+        background-color: #e0f2fe !important;
+        /* 약간 밝은 파란색으로 선택 효과 */
+    }
+
+    /* .table-container 안의 table */
+    .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    /* .table-container 안의 th, td */
+    .table-container th,
+    .table-container td {
+        border-bottom: 1px solid #ddd;
+        padding-left: 8px;
+    }
+
+    /* .table-container 내부의 text-right 클래스에 우측 정렬 적용 */
+    .table-container .text-right {
+        text-align: right;
+    }
+
+    .mText {
+        font-size: 16px;
+        font-weight: 700;
+        color: #333333;
+        font-style: italic;
+        padding-left: 10px;
+        text-align: left;
+    }
+
+    /* 1. 모든 인풋 박스 기본 스타일 (밑줄 형태 + 폰트 설정) */
+    #print-container input[type="text"],
+    #print-container input[type="number"] {
+        font-size: 16px;
+        /* 글자 크기 16px */
+        font-weight: 600;
+        /* 글자 두께 700 (두껍게) */
+        color: #333333;
+        /* 글자 색상 */
+        font-style: italic;
+        /* 기울임꼴 */
+        padding-left: 9px;
+        /* 왼쪽 여백 33px */
+        text-align: left;
+
+        /* 인풋 배경 투명 & 밑줄 스타일 */
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #aaa;
+        outline: none;
+        border-radius: 0;
+        /* 기본 모서리 둥글기 제거 */
+        box-sizing: border-box;
+    }
+
+    /* 포커스(클릭) 시 밑줄 색상 강조 */
+    #print-container input[type="text"]:focus,
+    #print-container input[type="number"]:focus {
+        border-bottom: 1px solid #6c0a0a;
+    }
+
+    /* 단위/수량 등 중앙 정렬이 필요한 인풋 처리 */
+    #print-container input.text-center {
+        text-align: center;
+    }
+
+    /* 숫자 입력 화살표(스핀 버튼) 깔끔하게 제거 */
+    #print-container input[type="number"]::-webkit-outer-spin-button,
+    #print-container input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+
+    /* 2. placeholder 힌트 글자 스타일 */
+    #print-container input::placeholder {
+        color: #d1d5db;
+        /* 연한 회색 */
+        font-size: 13px;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    /* 3. 비활성화 링크 스타일 */
+    #print-container a.disabled {
+        color: #ccc !important;
+        cursor: default !important;
+        text-decoration: none;
+        pointer-events: none;
+    }
+
+    /* 4. 콤보박스(select) 투명 스타일 */
+    #print-container select {
+        border: 1px solid transparent;
+        background: transparent;
+        outline: none;
+        font-size: 12px;
+    }
+
+    /* 1. 기본 span 텍스트 스타일 */
+    #print-container span {
+        font-size: 13px;
+        font-weight: 500;
+        color: #4b5563;
+        /* 가독성 좋은 다크 회색 */
+        line-height: 1.4;
+        user-select: none;
+        /* 선택 영역 방지 (UI 깔끔하게) */
+    }
+
+    /* 2. 라벨 영역의 좌측/우측 span (단가:, 재료비:, 단위 등) */
+    #print-container label>span {
+        color: #374151;
+        /* 일반 텍스트보다 살짝 진한 색상 */
+        font-size: 13px;
+    }
+
+    /* 3. 트리 구조 화살표 및 기호 텍스트 (┕ 등) */
+    #print-container .tree-symbol,
+    #print-container span:contains("┕") {
+        color: #9ca3af;
+        /* 옅은 회색으로 주 보조 구분선 느낌 */
+        font-weight: normal;
+    }
+
+    /* 4. 일반 텍스트 (li, div 등의 기본 텍스트) */
+    #print-container {
+        color: #333333;
+        font-size: 13px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* 5. 강조용 span (필요시 class="fw-bold" 적용) */
+    #print-container span.fw-bold {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    /* 6. 연한 안내용 span (필요시 class="text-muted" 적용) */
+    #print-container span.text-muted {
+        color: #9ca3af;
+        font-size: 12px;
     }
 </style>
 
@@ -14,142 +164,311 @@
 <div id="print-container" x-data="appData()" x-init="init()">
     <div id="title">공종별 내역서</div>
 
-    <div style="width: 100%;">
+    <div style="width: 100%; margin-bottom: 800px;">
         <!-- 최상단 컨트롤 영역 -->
-        <div>
-            <select x-model="activeProject" @change="saveActiveProject()">
+        <div style="
+                background-color: #f9f9f9e7;
+                text-align: left; 
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 5px 16px;
+                margin: 16px 0;
+        ">
+
+            <select x-model="activeProject" @change="saveActiveProject()" style="width: 450px;">
                 <option value="">프로젝트 선택</option>
                 <template x-for="proj in projectList" :key="proj">
                     <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
                 </template>
             </select>
-
-            <select x-model="activeGroup" @change="saveActiveGroup()">
+            &nbsp;
+            <select x-model="activeGroup" @change="saveActiveGroup()" style="width: 250px;">
                 <option value="">전체보기</option>
                 <template x-for="(group, idx) in groupList" :key="idx">
                     <option :value="idx" x-text="group"></option>
                 </template>
             </select>
 
-            <button type="button" @click="addGroup()">추가</button>
             <button type="button" @click="editGroups()">편집</button>
-
-            <div>
-                <label><input type="checkbox" x-model="useBg1"> 색1</label>
-                <label><input type="checkbox" x-model="useBg2"> 색2</label>
-            </div>
+            <button type="button" @click="moneyView()">금액보기</button>
         </div>
 
-        <ul id="group-list">
+        <div x-show="showMoney" class="mText">
+            <div>재료비</div>
+            <div>재료비</div>
+            <div>재료비</div>
+        </div>
+
+        <ul id="group-list" style="margin-left: -30px;">
             <template x-for="(groupName, gIndex) in groupList" :key="gIndex">
                 <li x-show="activeGroup === '' || Number(activeGroup) === gIndex">
 
-                    <!-- 1. 대분류 (공종명 순서 변경 ▲/▼ 추가) -->
-                    <div>
-                        <span x-text="groupName" style="font-size: 19px; font-weight: bold;"></span>
-                        <div style="margin-left: auto; display: flex; gap: 4px; margin-bottom: 10px;">
-                            <button type=" button" @click="moveUpGroup(gIndex)" :disabled="gIndex === 0">▲</button>
-                            <button type="button" @click="moveDownGroup(gIndex)"
-                                :disabled="gIndex === (groupList.length - 1)">▼</button>
-                            <button type="button" @click="addLevel1(gIndex)">+ 하위 추가</button>
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div id="title" x-text="groupName"></div>
+
+                            <!-- 우측 정렬 컨트롤 -->
+                            <div
+                                style="margin-left: auto; display: flex; align-items: center; gap: 11px; font-size: 13px;">
+                                <a href="#" @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
+                                    :class="{ 'disabled': gIndex === 0 }">▲</a>
+                                <a href="#" @click.prevent="if (gIndex < groupList.length - 1) moveDownGroup(gIndex)"
+                                    :class="{ 'disabled': gIndex === (groupList.length - 1) }">▼</a>
+                                <a href="#" @click.prevent="addLevel1(gIndex)" style="font-weight: 500;">+ 공종 추가</a>
+                            </div>
                         </div>
+                        <hr style="margin-bottom: 8px;">
                     </div>
 
-                    <!-- 2. 1차 하위 항목 리스트 (1차 항목 순서 변경 ▲/▼ 추가) -->
                     <ul>
                         <template x-for="(lvl1, l1Index) in (subGroupList[gIndex] || [])" :key="l1Index">
                             <li style="margin-left: -20px;">
-                                <div style="display: flex; align-items: center; gap: 6px;">
-
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
                                     <input type="text" x-model="lvl1.name" @input="saveToStore()"
-                                        placeholder="1차 하위 항목 입력">
-
-                                    <button type="button" @click="moveUpLevel1(gIndex, l1Index)"
-                                        :disabled="l1Index === 0">▲</button>
-                                    <button type="button" @click="moveDownLevel1(gIndex, l1Index)"
-                                        :disabled="l1Index === (subGroupList[gIndex].length - 1)">▼</button>
-                                    <button type="button" @click="addLevel2(gIndex, l1Index)">+ 하위 추가</button>
-                                    <button type="button" @click="deleteLevel1(gIndex, l1Index)">삭제</button>
+                                        placeholder="1차 하위 항목 입력" style="width: 350px;">
+                                    <a href="#" @click.prevent="if (l1Index > 0) moveUpLevel1(gIndex, l1Index)"
+                                        :class="{ 'disabled': l1Index === 0 }">▲</a>
+                                    <a href="#"
+                                        @click.prevent="if (l1Index < subGroupList[gIndex].length - 1) moveDownLevel1(gIndex, l1Index)"
+                                        :class="{ 'disabled': l1Index === (subGroupList[gIndex].length - 1) }">▼</a>
+                                    <button type="button" @click="addLevel2(gIndex, l1Index)">+ 추가</button>
+                                    <a href="#" @click.prevent="deleteLevel1(gIndex, l1Index)"
+                                        style="color: #dc2626; font-weight: 500; margin-left: 4px; text-decoration: none;">x</a>
                                 </div>
 
-                                <!-- 3. 2차 세부 항목 리스트 (우측 정렬) -->
-                                
                                 <ul style="margin-left: -40px; margin-bottom: 50px;">
+                                    <div x-show="showMoney" class="mText">
+                                        <div>재료비</div>
+                                        <div>재료비</div>
+                                        <div>재료비</div>
+                                    </div>
                                     <template x-for="(lvl2, l2Index) in (lvl1.children || [])" :key="l2Index">
-                                        <li>
+                                        <div style="margin-left: -20px;">
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <!-- 1. 위아래 이동 컨트롤 -->
-                                                <div style="display: flex; gap: 4px; font-size: 13px; flex-shrink: 0;">
+                                                <div
+                                                    style="display: flex; align-items: center; gap: 6px; font-size: 11px; flex-shrink: 0;">
+                                                    <span style="flex-shrink: 0;">┕ &nbsp;</span>
                                                     <a href="#"
                                                         @click.prevent="if (l2Index > 0) moveUpLevel2(gIndex, l1Index, l2Index)"
-                                                        :style="l2Index === 0 ? 'color: #ccc; cursor: default; text-decoration: none;' : 'color: #555; text-decoration: none;'">▲</a>
+                                                        :class="{ 'disabled': l2Index === 0 }">▲</a>
                                                     <a href="#"
                                                         @click.prevent="if (l2Index < lvl1.children.length - 1) moveDownLevel2(gIndex, l1Index, l2Index)"
-                                                        :style="l2Index === (lvl1.children.length - 1) ? 'color: #ccc; cursor: default; text-decoration: none;' : 'color: #555; text-decoration: none;'">▼</a>
+                                                        :class="{ 'disabled': l2Index === (lvl1.children.length - 1) }">▼</a>
                                                 </div>
 
-                                                <!-- 입력창들 (4개 모두 투명 밑줄 스타일 적용) -->
+                                                <!-- 밑줄 스타일 일괄 적용 영역 -->
                                                 <input type="text" x-model="lvl2.name" @input="saveToStore()"
-                                                    style="width: 350px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none;"
-                                                    placeholder="2차 세부 항목 입력">
-
-                                                <input type="text" x-model="lvl2.detail" @input="saveToStore()"
-                                                    style="width: 300px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none;"
-                                                    placeholder="상세 내역 입력">
-
+                                                    style="width: 350px;" placeholder="품명">
                                                 <input type="text" x-model="lvl2.spec" @input="saveToStore()"
-                                                    style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none; text-align: center;"
-                                                    placeholder="규격">
+                                                    style="width: 300px;" placeholder="규격">
+                                                <input type="text" class="text-center" x-model="lvl2.unit"
+                                                    @input="saveToStore()" style="width: 50px;" placeholder="단위">
 
-                                                <input type="text" x-model="lvl2.unit" @input="saveToStore()"
-                                                    style="width: 50px; background: transparent; border: none; border-bottom: 1px solid #aaa; outline: none; text-align: center;"
-                                                    placeholder="단위">
+                                                <input type="text" class="text-center" x-model="lvl2.qty"
+                                                    @input="calcItems(lvl2, 'unit', $event)" style="width: 60px;"
+                                                    placeholder="수량">
 
-                                                <!-- 4. 금액 / 삭제 컨트롤 -->
+
                                                 <div
-                                                    style="margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 13px; flex-shrink: 0;">
+                                                    style="margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 12px; flex-shrink: 0;">
                                                     <a href="#"
                                                         @click.prevent="lvl2.showCost = !lvl2.showCost; saveToStore()"
-                                                        style="color: #2563eb; text-decoration: none; font-weight: 500;">
-                                                        금액 <span x-text="lvl2.showCost ? '▲' : '▼'"
+                                                        style="text-decoration: none; font-weight: 500;">
+                                                        금액 &nbsp;<span x-text="lvl2.showCost ? '▲' : '▼'"
                                                             style="font-size: 11px;"></span>
                                                     </a>
+                                                    <select x-model="lvl2.type" @change="handleTypeChange(lvl2)"
+                                                        style="width: 100px;">
+                                                        <option value="일반">일반</option>
+                                                        <option value="일위대가">일위대가</option>
+                                                        <option value="건설기계">건설기계</option>
+                                                        <option value="표준시장단가">표준시장단가</option>
+                                                    </select>
+                                                    <!-- 💡 option1(일반)일 때는 숨겨지고, option2/3/4 일 때만 나타나는 편집 버튼 -->
+                                                    <a href="#"
+                                                        :style="lvl2.type && lvl2.type !== '일반' ? 'visibility: visible;' : 'visibility: hidden; pointer-events: none;'"
+                                                        @click.prevent="handleOptionLink(lvl2)"
+                                                        style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                                                        편집
+                                                    </a>
                                                     <a href="#" @click.prevent="deleteLevel2(gIndex, l1Index, l2Index)"
-                                                        style="color: #dc2626; text-decoration: none; font-weight: 500;">삭제</a>
+                                                        style="color: #dc2626; text-decoration: none; font-weight: 500;">x</a>
                                                 </div>
                                             </div>
 
-                                            <!-- 금액 토글 영역 -->
+
+                                            <!-- 금액 입력 단가 그리드 영역 -->
                                             <div x-show="lvl2.showCost" style="margin-bottom: 116px;">
-                                                <label>
-                                                    재료비:
-                                                    <input type="number" x-model="lvl2.material" @input="saveToStore()"
-                                                        placeholder="0"> 원
-                                                </label>
-                                                <label>
-                                                    노무비:
-                                                    <input type="number" x-model="lvl2.labor" @input="saveToStore()"
-                                                        placeholder="0"> 원
-                                                </label>
-                                                <label>
-                                                    경비:
-                                                    <input type="number" x-model="lvl2.expense" @input="saveToStore()"
-                                                        placeholder="0"> 원
-                                                </label>
+                                                <div
+                                                    style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px 16px; align-items: center; margin-top: 9px;">
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item1"
+                                                            @input="calcItems(lvl2, 'item1', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item2"
+                                                            @input="calcItems(lvl2, 'item2', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item3"
+                                                            @input="calcItems(lvl2, 'item3', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span
+                                                            style="width: 75px; flex-shrink: 0; text-align: right;">단가합계
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item4"
+                                                            @input="calcItems(lvl2, 'item4', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span
+                                                            style="width: 65px; flex-shrink: 0; text-align: right;">재료비
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item5"
+                                                            @input="calcItems(lvl2, 'item5', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span
+                                                            style="width: 65px; flex-shrink: 0; text-align: right;">노무비
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item6"
+                                                            @input="calcItems(lvl2, 'item6', $event)" placeholder="0"
+                                                            style="text-align: right; width: 100%;">
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span style="width: 65px; flex-shrink: 0; text-align: right;">경비
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item7" placeholder="0"
+                                                            style="text-align: right; width: 100%;" readonly>
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <span style="width: 75px; flex-shrink: 0; text-align: right;">합계
+                                                            :</span>
+                                                        <input type="text" :value="lvl2.item8" placeholder="0"
+                                                            style="text-align: right; width: 100%;" readonly>
+                                                    </label>
+                                                    <label
+                                                        style="display: flex; align-items: center; gap: 6px; width: 100%; grid-column: span 2;">
+                                                        <span style="width: 65px; flex-shrink: 0; text-align: right;">비고
+                                                            :</span>
+                                                        <input type="text" x-model="lvl2.item9" @input="saveToStore()"
+                                                            placeholder="비고" style="text-align: left; width: 100%;">
+                                                    </label>
+                                                </div>
                                             </div>
-                                        </li>
+
+
+                                        </div>
                                     </template>
                                 </ul>
+
 
                             </li>
                         </template>
                     </ul>
 
+
                 </li>
             </template>
+
+            <div class="bottom-love-bar" x-ref="bottomBar" style="visibility: hidden; opacity: 0;">
+
+                <div x-data="materialSearch()">
+                    <!-- 검색 및 카테고리 선택 영역 -->
+                    <div class="input-group" style="
+                                background-color: #f9f9f9e7;
+                                text-align: left;
+                                width: 600px;
+                                border: 1px solid #e2e8f0;
+                                border-radius: 12px;
+                                padding: 5px 16px;
+                                margin-top: 116px;
+                                margin-bottom: 16px;
+                    ">
+                        <label for="apiSelect">분류:</label>
+                        <select id="apiSelect" x-model="selectedApiId" @change="loadData()" style="width: 200px;">
+                            <template x-for="api in apiList" :key="api.id">
+                                <option :value="api.id" x-text="api.name"></option>
+                            </template>
+                        </select>
+
+                        <label for="searchNm">　검색 품명:</label>
+                        <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm"
+                            @keyup.enter="filterItems()">
+
+                        <button @click="filterItems()" :disabled="loading">검색하기</button>
+                    </div>
+
+
+
+                    <div class="input-group" style="margin-top: 10px; display: flex; align-items: center; gap: 15px;">
+                        <h3 style="margin: 0; font-size: 1.1rem; white-space: nowrap;">응답 결과</h3>
+                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="all"
+                                x-model="columnMode" @change="updateDisplayKeys()" checked> 전체 보기</label>
+                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="basic"
+                                x-model="columnMode" @change="updateDisplayKeys()"> 기본 정보</label>
+                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="price"
+                                x-model="columnMode" @change="updateDisplayKeys()"> 가격/조건</label>
+                    </div>
+
+                    <div id="status" x-text="statusMessage"></div>
+
+                    <!-- 결과 표 영역 -->
+                    <div class="table-container" x-show="displayKeys.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <template x-for="key in displayKeys" :key="key">
+                                        <td x-text="getColumnHeader(key)"></td>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(item, idx) in filteredItems" :key="idx">
+                                    <!-- 💡 tr 전체에 클릭 이벤트를 달고, hover 및 클릭 가능 스타일 적용 -->
+                                    <tr @click="selectItem(item)" class="clickable-row">
+                                        <template x-for="key in displayKeys" :key="key">
+                                            <td :class="{ 'text-right': key === 'prce' }"
+                                                x-text="formatValue(key, item[key])"></td>
+                                        </template>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+
+            </div>
+
         </ul>
+
+
     </div>
+
 </div>
+
 
 <script>
     function appData() {
@@ -157,39 +476,41 @@
         const store = Alpine.store('dbStore');
         const activeProject = option?.activeProject || '';
 
+        // 💡 1. 자식 항목(Level 2) 기본 템플릿
+        const defaultChild = {
+            showCost: false, type: '', name: '', spec: '', unit: '', qty: 0,
+            item1: '', item2: '', item3: '', item4: 0,
+            item5: 0, item6: 0, item7: 0, item8: 0, item9: ''
+        };
+
+        // 💡 2. 자식 항목 단일 정제 함수
+        const formatChild = (c) => {
+            if (typeof c === 'string') return { ...defaultChild, name: c };
+            if (c && typeof c === 'object') return { ...defaultChild, ...c, showCost: !!c.showCost };
+            return { ...defaultChild };
+        };
+
+        // 💡 3. 메인 formatData 함수 (훨씬 짧아짐)
         const formatData = (raw) => {
+            if (!raw) return {};
+
             const result = {};
-            if (!raw) return result;
             Object.keys(raw).forEach(k => {
-                if (Array.isArray(raw[k])) {
-                    result[k] = raw[k].map(item => {
-                        if (typeof item === 'string') {
-                            return { name: item, children: [] };
-                        } else if (item && typeof item === 'object') {
-                            const rawChildren = Array.isArray(item.children) ? item.children : [];
-                            const formattedChildren = rawChildren.map(c => {
-                                if (typeof c === 'string') {
-                                    return { name: c, showCost: false, material: '', labor: '', expense: '' };
-                                } else if (c && typeof c === 'object') {
-                                    return {
-                                        name: c.name || '',
-                                        showCost: !!c.showCost,
-                                        material: c.material ?? '',
-                                        labor: c.labor ?? '',
-                                        expense: c.expense ?? ''
-                                    };
-                                }
-                                return { name: '', showCost: false, material: '', labor: '', expense: '' };
-                            });
-                            return {
-                                name: item.name || '',
-                                children: formattedChildren
-                            };
-                        }
-                        return { name: '', children: [] };
-                    });
-                }
+                if (!Array.isArray(raw[k])) return;
+
+                result[k] = raw[k].map(item => {
+                    if (typeof item === 'string') return { name: item, children: [] };
+                    if (item && typeof item === 'object') {
+                        const rawChildren = Array.isArray(item.children) ? item.children : [];
+                        return {
+                            name: item.name || '',
+                            children: rawChildren.map(formatChild)
+                        };
+                    }
+                    return { name: '', children: [] };
+                });
             });
+
             return result;
         };
 
@@ -199,20 +520,19 @@
             activeProject: activeProject,
             projectList: option?.projectList || [],
             store: store,
-            useBg1: false,
-            useBg2: false,
 
             groupList: (activeProject && store.cost[activeProject]?.옵션?.그룹명) || [],
-            activeGroup: (activeProject && store.cost[activeProject]?.옵션?.activeGroup !== undefined) ? store.cost[activeProject].옵션.activeGroup : '',
+            activeGroup: (activeProject && store.cost[activeProject]?.옵션?.activeGroup !== undefined)
+                ? store.cost[activeProject].옵션.activeGroup : '',
 
-            subGroupList: formatData(activeProject && store.cost[activeProject]?.옵션?.하위공종),
+            subGroupList: formatData(activeProject && store.cost[activeProject]?.공종별내역서),
 
             saveActiveProject() {
                 option.activeProject = this.activeProject;
                 localStorage.setItem('option', JSON.stringify(option));
                 if (this.activeProject && store.cost[this.activeProject]?.옵션?.그룹명) {
                     this.groupList = store.cost[this.activeProject].옵션.그룹명;
-                    this.subGroupList = formatData(store.cost[this.activeProject].옵션.하위공종);
+                    this.subGroupList = formatData(store.cost[this.activeProject].공종별내역서);
                 } else {
                     this.groupList = [];
                     this.subGroupList = {};
@@ -220,51 +540,160 @@
                 this.activeGroup = '';
             },
 
-            saveActiveGroup() {
-                option.activeGroup = this.activeGroup;
+            handleOptionLink(lvl2) {
+                switch (lvl2.type) {
+                    case '일반':
+                        console.log('옵션 1 실행', lvl2);
+                        break;
+                    case '일위대가':
+                        console.log('옵션 2 실행', lvl2);
+                        break;
+                    case '건설기계':
+                        console.log('옵션 3 실행', lvl2);
+                        break;
+                    case '표준시장단가':
+                        console.log('옵션 4 실행', lvl2);
+                        break;
+                }
+            },
+
+            handleTypeChange(lvl2) {
+                console.log("선택된 타입:", lvl2);
+                switch (lvl2.type) {
+                    case '일반':
+                        console.log("일반 타입 처리");
+                        break;
+                    case '일위대가':
+                        console.log("일위대가 타입 처리");
+                        break;
+                    case '건설기계':
+                        console.log("건설기계 타입 처리");
+                        break;
+                    case '표준시장단가':
+                        console.log("표준시장단가 타입 처리");
+                        break;
+                }
                 this.saveToStore();
             },
 
-            addGroup() {
-                if (!this.activeProject) {
-                    alert('프로젝트를 먼저 선택해 주세요!');
-                    return;
+            saveActiveGroup() {
+                option.activeGroup = this.activeGroup;
+                const bottomBar = this.$refs.bottomBar;
+
+                if (bottomBar) {
+                    if (!this.activeGroup && this.activeGroup !== 0) {
+                        bottomBar.style.visibility = 'hidden';
+                        bottomBar.style.opacity = '0';
+                        bottomBar.style.pointerEvents = 'none';
+                    } else {
+                        bottomBar.style.visibility = 'visible';
+                        bottomBar.style.opacity = '1';
+                        bottomBar.style.pointerEvents = 'auto';
+                    }
                 }
-                if (this.activeGroup === '' || this.activeGroup === null || isNaN(this.activeGroup)) {
-                    alert('상단 콤보박스에서 그룹을 먼저 선택해 주세요!');
-                    return;
-                }
-                this.addLevel1(Number(this.activeGroup));
+                this.saveToStore();
             },
 
+            moneyView() {
+                this.showMoney = !this.showMoney;
+            },
+
+            // 💡 2. 입력시 실시간 계산 전용 함수 추가! (HTML에서 @input="calcItems(lvl2)" 호출)
+            // appData() 리턴 객체 내부
+            calcItems(lvl2, field, event) {
+                // 💡 1. 사용자가 입력한 값 처리 (콤마 제거 후 콤마 재적용)
+                let rawVal = event.target.value.replace(/,/g, '');
+
+                if (isNaN(rawVal) || rawVal === '') {
+                    lvl2[field] = '';
+                    event.target.value = '';
+                } else {
+                    lvl2[field] = Number(rawVal).toLocaleString('ko-KR');
+                    event.target.value = lvl2[field];
+                }
+
+                // 💡 2. 계산용 순수 숫자 변환 함수
+                const getNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
+
+                const unit = getNum(lvl2.unit);
+                const i1 = getNum(lvl2.item1);
+                const i2 = getNum(lvl2.item2);
+                const i3 = getNum(lvl2.item3);
+
+                // 💡 3. 계산 수행 후 결과값들에 콤마(,) 포맷팅 적용!
+                const item4Val = i1 + i2 + i3;
+                const item5Val = i1 * unit;
+                const item6Val = i2 * unit;
+                const item7Val = i3 * unit;
+                const item8Val = item5Val + item6Val + item7Val;
+
+                // 콤마 붙여서 데이터 모델에 저장 (0일 경우 빈값 '' 처리 원하면 조정 가능)
+                lvl2.item4 = item4Val ? item4Val.toLocaleString('ko-KR') : '0';
+                lvl2.item5 = item5Val ? item5Val.toLocaleString('ko-KR') : '0';
+                lvl2.item6 = item6Val ? item6Val.toLocaleString('ko-KR') : '0';
+                lvl2.item7 = item7Val ? item7Val.toLocaleString('ko-KR') : '0';
+                lvl2.item8 = item8Val ? item8Val.toLocaleString('ko-KR') : '0';
+
+                // 데이터 저장
+                this.saveToStore();
+            },
+
+            // appData() 리턴 객체 내부에 추가
+            formatNumber(val) {
+                if (val === null || val === undefined || val === '') return '0';
+                // 숫자 타입으로 변환 후 3자리마다 콤마 찍기
+                return Number(val).toLocaleString('ko-KR');
+            },
+
+            // 1차 항목 추가 시 계산식 (상위 1차 합계)
             addLevel1(gIndex) {
                 if (!this.subGroupList[gIndex]) {
                     this.subGroupList[gIndex] = [];
                 }
-                this.subGroupList[gIndex].push({ name: '', children: [] });
-                this.subGroupList = { ...this.subGroupList };
-                this.saveToStore();
-            },
-
-            addLevel2(gIndex, l1Index) {
-                if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
-                if (!this.subGroupList[gIndex][l1Index].children) {
-                    this.subGroupList[gIndex][l1Index].children = [];
-                }
-                this.subGroupList[gIndex][l1Index].children.push({
+                this.subGroupList[gIndex].push({
                     name: '',
-                    showCost: false,
-                    material: '',
-                    labor: '',
-                    expense: ''
+                    children: [],
+                    get 재료비() {
+                        return this.children.reduce((sum, c) => sum + (Number(c.item5) || 0), 0);
+                    },
+                    get 노무비() {
+                        return this.children.reduce((sum, c) => sum + (Number(c.item6) || 0), 0);
+                    },
+                    get 경비() {
+                        return this.children.reduce((sum, c) => sum + (Number(c.item7) || 0), 0);
+                    },
+                    get 합계() {
+                        return this.재료비 + this.노무비 + this.경비;
+                    },
                 });
                 this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
-            deleteLevel1(gIndex, l1Index) {
-                if (!this.subGroupList[gIndex]) return;
-                this.subGroupList[gIndex].splice(l1Index, 1);
+            // 💡 3. addLevel2에서도 get 속성을 제거하고 기본값 세팅
+            addLevel2(gIndex, l1Index) {
+                if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
+                if (!this.subGroupList[gIndex][l1Index].children) {
+                    this.subGroupList[gIndex][l1Index].children = [];
+                }
+
+                this.subGroupList[gIndex][l1Index].children.push({
+                    showCost: false,
+                    type: '',
+                    name: '',
+                    spec: '',
+                    unit: '',
+                    qty: 0,
+                    item1: '',
+                    item2: '',
+                    item3: '',
+                    item4: 0,
+                    item5: 0,
+                    item6: 0,
+                    item7: 0,
+                    item8: 0,
+                    item9: '',
+                });
                 this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
@@ -276,41 +705,42 @@
                 this.saveToStore();
             },
 
-            // 🚀 대분류(공종명) 위로 이동
+            deleteLevel1(gIndex, l1Index) {
+                if (!this.subGroupList[gIndex]) return;
+                const targetName = this.subGroupList[gIndex][l1Index]?.name || '1차 하위 항목';
+                if (confirm(`'${targetName}' 항목을 삭제하겠습니까?\n(하위 품목도 함께 삭제됩니다)`)) {
+                    this.subGroupList[gIndex].splice(l1Index, 1);
+                    this.subGroupList = { ...this.subGroupList };
+                    this.saveToStore();
+                }
+            },
+
             moveUpGroup(gIndex) {
                 if (gIndex <= 0) return;
-
                 const tempG = this.groupList[gIndex];
                 this.groupList[gIndex] = this.groupList[gIndex - 1];
                 this.groupList[gIndex - 1] = tempG;
-
                 const tempSub = this.subGroupList[gIndex];
                 this.subGroupList[gIndex] = this.subGroupList[gIndex - 1];
                 this.subGroupList[gIndex - 1] = tempSub;
-
                 this.groupList = [...this.groupList];
                 this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
-            // 🚀 대분류(공종명) 아래로 이동
             moveDownGroup(gIndex) {
                 if (gIndex >= this.groupList.length - 1) return;
-
                 const tempG = this.groupList[gIndex];
                 this.groupList[gIndex] = this.groupList[gIndex + 1];
                 this.groupList[gIndex + 1] = tempG;
-
                 const tempSub = this.subGroupList[gIndex];
                 this.subGroupList[gIndex] = this.subGroupList[gIndex + 1];
                 this.subGroupList[gIndex + 1] = tempSub;
-
                 this.groupList = [...this.groupList];
                 this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
-            // 🚀 1차 하위 항목 위로 이동
             moveUpLevel1(gIndex, l1Index) {
                 if (l1Index <= 0) return;
                 const targetList = this.subGroupList[gIndex];
@@ -321,7 +751,6 @@
                 this.saveToStore();
             },
 
-            // 🚀 1차 하위 항목 아래로 이동
             moveDownLevel1(gIndex, l1Index) {
                 const targetList = this.subGroupList[gIndex];
                 if (l1Index >= targetList.length - 1) return;
@@ -332,7 +761,6 @@
                 this.saveToStore();
             },
 
-            // 🚀 2차 세부 항목 위로 이동
             moveUpLevel2(gIndex, l1Index, l2Index) {
                 if (l2Index <= 0) return;
                 const targetList = this.subGroupList[gIndex][l1Index].children;
@@ -343,7 +771,6 @@
                 this.saveToStore();
             },
 
-            // 🚀 2차 세부 항목 아래로 이동
             moveDownLevel2(gIndex, l1Index, l2Index) {
                 const targetList = this.subGroupList[gIndex][l1Index].children;
                 if (l2Index >= targetList.length - 1) return;
@@ -356,10 +783,12 @@
 
             saveToStore() {
                 if (store.cost[this.activeProject]) {
-                    if (!store.cost[this.activeProject].옵션) store.cost[this.activeProject].옵션 = {};
+                    if (!store.cost[this.activeProject].옵션) {
+                        store.cost[this.activeProject].옵션 = {};
+                    }
                     store.cost[this.activeProject].옵션.그룹명 = this.groupList;
-                    store.cost[this.activeProject].옵션.하위공종 = this.subGroupList;
                     store.cost[this.activeProject].옵션.activeGroup = this.activeGroup;
+                    store.cost[this.activeProject].공종별내역서 = this.subGroupList;
                     store._saveData(store.cost);
                 }
             },
@@ -367,14 +796,231 @@
             editGroups() {
                 const currentStr = this.groupList.join(', ');
                 const userInput = prompt('공종명 목록을 콤마(,)로 구분해서 수정해 주세요:', currentStr);
-
                 if (userInput !== null) {
-                    let newList = userInput.split(',').map(item => item.trim()).filter(item => item.length > 0);
+                    const newList = userInput.split(',')
+                        .map(item => item.trim())
+                        .filter(item => item.length > 0);
                     this.groupList = newList;
                     this.activeGroup = '';
                     this.saveToStore();
                 }
             }
-        }
+        };
+    }
+</script>
+
+<script>
+    function materialSearch() {
+        return {
+            // API 엔드포인트 객체 배열 (각 항목마다 excludeKeys, keyMap 독립 보유)
+            apiList: [
+                {
+                    id: "civil",
+                    name: "1. 토목 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/1.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    // 💡 토목 전용 제외 키
+                    excludeKeys: [
+                        "prceNticeNo", "bsnsDivCd", "bsnsDivNm", "prdctClsfcNo", "prdctIdntNo", "invstDeptNm", "invstDeptTelNo", "invstOfclNm",
+                        "cntrctCorpNm", "cntrctCorpTelNo", "splyJrsdctRgnNm", "etcCntnts", "mtrlcst", "lbrcst", "gnrlexpns", "prodctFld", "distbStep",
+                        "payCndtn", "treekndNo", "specThtLen", "specWtrtbBtLen", "specWtrtbLen", "specBhtDmLen", "specRootDmLen"
+                    ],
+                    // 💡 토목 전용 한글 컬럼 매핑
+                    keyMap: {
+                        "nticeDt": "공고일",
+                        "prdctClsfcNoNm": "품명",
+                        "krnPrdctNm": "규격",
+                        "unit": "단위",
+                        "prce": "가격(원)",
+                        "vatYnNm": "부가세 여부",
+                        "prceDiv": "가격구분",
+                        "dlvryCndtnNm": "납품조건"
+                    }
+                },
+                {
+                    id: "architecture",
+                    name: "2. 건축 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/2.건축자재URL.json",
+                    // 💡 건축 전용 제외 키 (예시)
+                    excludeKeys: [
+                        "bsnsDivCd", "invstDeptNm", "etcCntnts"
+                    ],
+                    // 💡 건축 전용 한글 컬럼 매핑 (예시)
+                    keyMap: {
+                        "prdctClsfcNoNm": "건축 자재명",
+                        "specNm": "건축 규격",
+                        "prce": "단가"
+                    }
+                }
+            ],
+
+            selectedApiId: "civil",
+            searchNm: "",
+            statusMessage: "검색 버튼을 누르거나 분류를 선택하면 데이터를 불러옵니다.",
+            loading: false,
+            allItems: [],
+            filteredItems: [],
+            displayKeys: [],
+            columnMode: "all",
+
+            init() {
+                if (this.apiList.length > 0) {
+                    this.selectedApiId = this.apiList[0].id;
+                    this.loadData();
+                }
+            },
+
+            // 현재 선택된 API 객체 전체 가져오기
+            get currentApi() {
+                return this.apiList.find(api => api.id === this.selectedApiId) || this.apiList[0];
+            },
+
+            // 선택된 API의 keyMap 기준으로 컬럼 이름 반환
+            getColumnHeader(key) {
+                const map = this.currentApi.keyMap || {};
+                return map[key] || key; // 매핑된 이름 없으면 기본 키명 출력
+            },
+
+
+            // 💡 키값에 따라 표시 데이터를 가공하는 포맷터 함수 (switch 문 작성)
+            formatValue(key, val) {
+                if (val === undefined || val === null || val === "") return "";
+
+                switch (key) {
+                    case "prce": {
+                        const num = Number(val);
+                        return isNaN(num) ? val : num.toLocaleString("ko-KR");
+                    }
+
+                    case "nticeDt":
+                        return String(val).split(" ")[0];
+
+                    default:
+                        return val;
+                }
+            },
+
+
+            // 데이터 로드
+            async loadData() {
+                const api = this.currentApi;
+                if (!api || !api.url) return;
+
+                this.loading = true;
+                this.statusMessage = "GitHub 데이터 요청 중...";
+                this.filteredItems = [];
+                this.displayKeys = [];
+
+                const targetUrl = `${api.url}?v=${new Date().getTime()}`;
+
+                try {
+                    const response = await fetch(targetUrl);
+                    if (!response.ok) throw new Error(`HTTP 에러! 상태 코드: ${response.status}`);
+
+                    const jsonObj = await response.json();
+                    let rawItems = jsonObj?.response?.body?.items || jsonObj;
+
+                    if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
+                        this.statusMessage = "데이터가 비어있거나 불러올 수 없어.";
+                        this.loading = false;
+                        return;
+                    }
+
+                    this.allItems = Array.isArray(rawItems) ? rawItems : [rawItems];
+                    this.filterItems();
+
+                } catch (error) {
+                    console.error("오류 발생:", error);
+                    this.statusMessage = "데이터 로드 실패: " + error.message;
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            // 검색어 필터링 및 현재 API 기준 제외 키 반영
+            filterItems() {
+                if (this.allItems.length === 0) return;
+
+                const query = this.searchNm.trim().toLowerCase();
+                const api = this.currentApi;
+
+                // 💡 1. 검색어가 비어있으면 결과 및 키 목록 비우기
+                if (!query) {
+                    this.filteredItems = [];
+                    this.displayKeys = [];
+                    this.statusMessage = "검색어를 입력해줘.";
+                    return;
+                }
+
+                // 💡 2. 검색어가 있을 때만 필터링 수행
+                this.filteredItems = this.allItems.filter(
+                    item => item.prdctClsfcNoNm && item.prdctClsfcNoNm.toLowerCase().includes(query)
+                );
+
+                // 💡 3. 검색 결과가 없을 때 처리
+                if (this.filteredItems.length === 0) {
+                    this.statusMessage = `'${query}' 검색 결과가 없어.`;
+                    this.displayKeys = [];
+                    return;
+                }
+
+                this.statusMessage = `총 ${this.filteredItems.length}건 출력 완료 (전체 ${this.allItems.length}건 중)`;
+
+                // 💡 4. 하드코딩된 컬럼 계산 대신 라디오 버튼 상태를 반영하는 함수 호출!
+                this.updateDisplayKeys();
+            },
+
+
+            // 💡 1. 개별 항목 객체 전체를 전달받는 함수
+            selectItem(item) {
+                // 품명 또는 규격을 가져와서 메시지 구성
+                const title = item.prdctClsfcNoNm || '해당 자재';
+                const spec = item.krnPrdctNm ? ` (${item.krnPrdctNm})` : '';
+                const price = item.prce ? ` - ${this.formatValue('prce', item.prce)}원` : '';
+
+                // 💡 브라우저 기본 confirm 팝업
+                const isConfirmed = confirm(`'${title}${spec}' 자재를 추가/선택하시겠습니까?`);
+
+                if (isConfirmed) {
+                    // [확인] 누르면 실행될 로직
+                    console.log("선택된 자재:", item);
+                    alert(`'${title}' 항목이 등록되었습니다!`);
+
+                    // 예시: 내 장바구니/선택목록 배열이 있다면 추가
+                    // this.selectedList.push(item);
+                } else {
+                    // [취소] 누르면 아무 작업도 하지 않고 대화상자 닫힘
+                    console.log("선택 취소됨");
+                }
+            },
+
+            // updateDisplayKeys() 함수 내부
+            updateDisplayKeys() {
+                if (this.filteredItems.length === 0) return;
+
+                // 1. 항상 고정으로 보여줄 필수 키들
+                const fixedKeys = ["nticeDt", "prdctClsfcNoNm", "krnPrdctNm", "unit", "prce"];
+
+                // 2. 라디오 버튼 선택에 따라 뒤에 추가할 키들
+                let extraKeys = [];
+
+                switch (this.columnMode) {
+                    case "basic": // 거래/납품 조건
+                        extraKeys = ["vatYnNm", "dlvryCndtnNm"];
+                        break;
+
+                    case "price": // 가격 상세
+                        extraKeys = ["prceDiv", "vatYnNm"];
+                        break;
+
+                    case "all": // 전체 보기
+                    default:
+                        extraKeys = ["vatYnNm", "prceDiv", "dlvryCndtnNm"];
+                        break;
+                }
+
+                // 3. 고정 키 + 추가 키 합쳐서 displayKeys 설정
+                this.displayKeys = [...fixedKeys, ...extraKeys];
+            }
+        };
     }
 </script>

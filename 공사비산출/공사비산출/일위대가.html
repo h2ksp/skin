@@ -1,0 +1,354 @@
+<style>
+    /* 1. Base Container & Utility Classes */
+    .unit-price-list {
+        color: #333;
+        font-size: 13px;
+        text-align: right;
+    }
+
+    /* 2. Toolbar & Status Bar */
+    .unit-price-list .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px 0;
+        padding: 8px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background-color: rgba(249, 249, 249, 0.9);
+    }
+
+    .unit-price-list select {
+        min-width: 240px;
+        padding: 5px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        font-size: 13px;
+    }
+
+    .unit-price-list .status-bar {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+    }
+
+    .unit-price-list .status {
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .unit-price-list .view-options {
+        display: flex;
+        gap: 16px;
+        margin-left: 50px;
+        align-items: center;
+    }
+
+    .unit-price-list .view-options label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    /* 3. Table Layout */
+    .unit-price-list .table-container {
+        overflow-x: auto;
+        margin-top: 10px;
+    }
+
+    .unit-price-list table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .unit-price-list td {
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .unit-price-list thead th,
+    .unit-price-list thead td {
+        text-align: center !important;
+    }
+
+    /* 4. Inputs & Typography */
+    .unit-price-list input[type="text"] {
+        border: none;
+        border-bottom: 1px solid #ccc;
+        background: transparent;
+        font-size: 15px;
+        font-style: italic;
+
+        line-height: 1.2;
+        outline: none;
+        padding-left: 8px;
+        box-sizing: border-box;
+    }
+
+    .unit-price-list input[type="text"]:focus {
+        border-bottom: 2px solid #2563eb;
+    }
+
+    .unit-price-list input[type="text"][readonly] {
+        border-bottom: 1px solid #e5e7eb;
+        color: #4b5563;
+    }
+
+
+    /* Helper Classes */
+    .unit-price-list .text-center {
+        text-align: center;
+    }
+
+    .unit-price-list .text-right {
+        text-align: right;
+    }
+
+    .unit-price-list .text-left {
+        text-align: left;
+    }
+
+    .unit-price-list .w-full {
+        width: 90%;
+    }
+
+    .unit-price-list .w-unit {
+        width: 35px;
+    }
+
+    .unit-price-list .w-read {
+        width: 80px;
+    }
+
+    /* 비고 컬럼 너비 지정 (셀 + 내부 input 100% 채움) */
+    .unit-price-list .col-remark {
+        width: 200px;
+    }
+
+    .unit-price-list .col-remark input[type="text"] {
+        width: 90% !important;
+    }
+
+    .unit-price-list .edit-btn {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+    }
+</style>
+
+<div id="title">일위대가 목록</div>
+
+<div class="unit-price-list" x-data="unitPriceList()" x-init="init()">
+    <!-- 툴바: 프로젝트 선택 -->
+    <div class="toolbar">
+        <label for="unitPriceProject">프로젝트 선택:</label>
+        <select id="unitPriceProject" x-model="activeProject" @change="saveActiveProject()">
+            <option value="">프로젝트 선택</option>
+            <template x-for="project in projectList" :key="project">
+                <option :value="project" x-text="project"></option>
+            </template>
+        </select>
+    </div>
+
+    <!-- 상태 바: 건수 표시 및 보기 옵션 -->
+    <div class="status-bar">
+        <div class="status" x-text="statusMessage"></div>
+        <div class="view-options" x-show="rows.length > 0">
+            <label>
+                <input type="radio" name="viewMode" value="option1" x-model="viewMode"> 금액보기
+            </label>
+            <label>
+                <input type="radio" name="viewMode" value="option2" x-model="viewMode"> 비고
+            </label>
+        </div>
+    </div>
+
+    <!-- 데이터 테이블 -->
+    <div class="table-container" x-show="rows.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <td>-</td>
+                    <td>품명</td>
+                    <td>규격</td>
+                    <td>단위</td>
+
+                    <!-- 동적 헤더 -->
+                    <template x-for="col in columns" :key="col.key">
+                        <td :class="{ 'col-remark': col.key === 'item9' }" x-text="col.label"></td>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(row, index) in rows" :key="`${row.group}-${index}`">
+                    <tr>
+                        <!-- 수정 버튼 -->
+                        <td class="text-center">
+                            <a href="#" class="edit-btn"
+                                :style="row.item.type && row.item.type !== '일반' ? 'visibility: visible;' : 'visibility: hidden; pointer-events: none;'"
+                                @click.prevent="handleOptionLink(row.item)">
+                                ✎ &nbsp;
+                            </a>
+                        </td>
+
+                        <!-- 💡 품명: calcRow 하나로 묶어서 실시간 처리 + 스토어 저장 -->
+                        <td>
+                            <input type="text" class="w-full" :value="row.item.name ?? ''"
+                                @input="calcRow(row.item, 'name', $event)">
+                        </td>
+
+                        <!-- 규격, 단위 -->
+                        <td><input type="text" class="w-full" x-model="row.item.spec" @change="calcRow(row.item)"></td>
+                        <td><input type="text" class="w-unit" x-model="row.item.unit" @change="calcRow(row.item)"></td>
+
+                        <!-- 동적 데이터 컬럼 (재료비, 노무비, 경비, 단가합계, 비고) -->
+                        <template x-for="col in columns" :key="col.key">
+                            <td class="cha" :class="{ 'col-remark': col.key === 'item9' }">
+                                <template x-if="col.readonly">
+                                    <input type="text" class="w-read text-right" :value="row.item[col.key] ?? ''"
+                                        readonly>
+                                </template>
+                                <template x-if="!col.readonly">
+                                    <input type="text" class="w-full"
+                                        :class="col.key === 'item9' ? 'text-left' : 'text-right'"
+                                        :value="row.item[col.key] ?? ''" @input="calcRow(row.item, col.key, $event)"
+                                        style="width: 75px;">
+                                </template>
+                            </td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function unitPriceList() {
+        return {
+            projectList: [],
+            activeProject: '',
+            store: null,
+            viewMode: 'option1',
+
+            init() {
+                this.store = Alpine.store('dbStore');
+                if (!this.store) {
+                    throw new Error('dbStore를 찾을 수 없습니다.');
+                }
+
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                const projects = Array.isArray(option.projectList)
+                    ? option.projectList
+                    : Object.keys(this.store.cost || {});
+
+                this.projectList = projects;
+                this.activeProject = option.activeProject || '';
+
+                if (!this.projectList.includes(this.activeProject)) {
+                    this.activeProject = this.projectList[0] || '';
+                }
+            },
+
+            saveActiveProject() {
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+            },
+
+            // 수량 및 단가 입력 시 실시간 자동계산
+            calcRow(item, field, event) {
+                if (field && event) {
+                    // 1. 텍스트 컬럼 (품명, 비고)
+                    if (field === 'name' || field === 'item9') {
+                        item[field] = event.target.value;
+                    }
+                    // 2. 숫자 컬럼 (재료비, 노무비, 경비)
+                    else {
+                        const rawVal = event.target.value.replace(/,/g, '');
+                        if (isNaN(rawVal) || rawVal === '') {
+                            item[field] = '';
+                            event.target.value = '';
+                        } else {
+                            item[field] = Number(rawVal).toLocaleString('ko-KR');
+                            event.target.value = item[field];
+                        }
+                    }
+                }
+
+                // 3. 단가합계(item4) 계산 (재료비 + 노무비 + 경비)
+                const getNum = (val) => Number(String(val || '').replace(/,/g, '')) || 0;
+                const sum = getNum(item.item1) + getNum(item.item2) + getNum(item.item3);
+                item.item4 = sum ? sum.toLocaleString('ko-KR') : '0';
+
+                // 4. 스토어 일괄 자동 저장 (새로고침해도 다 유지됨!)
+                if (this.store?.cost) {
+                    this.store._saveData(this.store.cost);
+                }
+            },
+
+            editItem(row) {
+                console.log('편집할 항목:', row);
+            },
+
+            handleOptionLink(item) {
+                console.log('옵션 링크 클릭:', item);
+            },
+
+            get columns() {
+                const option1 = [
+                    { label: '재료비', key: 'item1', readonly: false },
+                    { label: '노무비', key: 'item2', readonly: false },
+                    { label: '경 비', key: 'item3', readonly: false },
+                    { label: '단가합계', key: 'item4', readonly: true },
+                ];
+
+                const option2 = [
+                    { label: '비고', key: 'item9', readonly: false },
+                ];
+
+                return this.viewMode === 'option2' ? option2 : option1;
+            },
+
+            get rows() {
+                if (!this.store || !this.activeProject) return [];
+
+                const project = this.store.cost?.[this.activeProject];
+                const data = project?.공종별내역서;
+                if (!data || typeof data !== 'object') return [];
+
+                const groupNames = project?.옵션?.그룹명 || [];
+
+                return Object.entries(data).flatMap(([groupKey, level1List]) => {
+                    if (!Array.isArray(level1List)) return [];
+
+                    const groupName = groupNames[Number(groupKey)] || groupKey;
+
+                    return level1List.flatMap(level1 => {
+                        if (!level1?.children || !Array.isArray(level1.children)) return [];
+
+                        return level1.children
+                            .filter(item => item?.type === '일위대가')
+                            .map(item => ({
+                                group: groupName,
+                                subGroup: level1.name || '',
+                                item
+                            }));
+                    });
+                });
+            },
+
+            get statusMessage() {
+                if (!this.activeProject) return '프로젝트를 선택해 주세요.';
+                return this.rows.length
+                    ? `일위대가 ${this.rows.length}건`
+                    : '등록된 일위대가 항목이 없습니다.';
+            }
+        };
+    }
+</script>

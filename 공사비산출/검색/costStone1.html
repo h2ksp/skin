@@ -1,115 +1,107 @@
 <style>
+  /* 애플리케이션 전체 폰트 및 기본 여백 통일 */
   .cost-app {
-    font-family: sans-serif;
-    font-size: 0.8em;
-    margin-left: -80px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      color: #333333;
+      line-height: 1.5;
   }
 
-  /* 테이블 전체는 기본 100% 유지 */
+  /* 상단 상태창 정렬 */
+  .cost-app #status {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+  }
+
+  /* 검색 입력창과 버튼 높이 및 레이아웃 정렬 */
+  .cost-app input[type="text"] {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      box-sizing: border-box;
+      vertical-align: middle;
+  }
+
+  .cost-app input[type="text"]:focus {
+      border-color: #2563eb;
+  }
+
+  .cost-app button {
+      height: 32px;
+      padding: 0 16px;
+      font-size: 13px;
+      background-color: #f3f4f6;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 4px;
+      box-sizing: border-box;
+  }
+
+  .cost-app button:hover {
+      background-color: #e5e7eb;
+  }
+
+  /* 테이블 구조 및 줄바꿈 방지 통일 */
   .cost-app table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 5px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed; /* 컬럼 너비 안정적 유지 */
   }
 
   .cost-app th,
   .cost-app td {
-    border: 1px solid #999;
-    padding: 2px 4px;
-    text-align: left;
-    white-space: nowrap;
-    /* 글자가 길어져도 아래로 줄바꿈 안 하고 우측으로 쭉 늘림 */
+      border: 1px solid #e5e7eb;
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
   }
 
+  /* 테이블 헤더 배경 및 폰트 */
   .cost-app th {
-    background: #eee;
-    font-weight: normal;
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #475569;
   }
 
+  /* 숫자 열 정렬 및 수치 간격 통일 */
   .cost-app .num {
-    text-align: right;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
   }
 
+  /* 부모 행 호버 효과 */
   .cost-app .parent-row {
-    cursor: pointer;
+      cursor: pointer;
   }
 
   .cost-app .parent-row:hover {
-    background: #f5f5f5;
+      background-color: #f1f5f9;
   }
 
-  /* 부모 행의 좌우 선만 투명하게 */
-  .cost-app .parent-row td:first-child {
-    border-left: 1px solid transparent;
-  }
-
-  .cost-app .parent-row td:last-child {
-    border-right: 1px solid transparent;
-  }
-
-  /* 자식 박스 숨김 처리 */
+  /* 자식 상세 영역 구분 */
   .cost-app .child-box {
-    display: none;
+      display: none;
+      background-color: #fafafa;
   }
 
-  /* 1. 자식 표를 감싸는 바깥쪽 컨테이너(td) 설정: 배경 흰색, 좌우 선 투명 */
-  .cost-app tr.child-box>td {
-    background: #fff !important;
-    border-left: 1px solid transparent !important;
-    border-right: 1px solid transparent !important;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
-    padding: 8px;
-  }
-
-  /* 2. 자식 내부에 들어가는 진짜 표의 th, td: 격자 선 다 있게 설정 */
-  .cost-app .child-box table th,
-  .cost-app .child-box table td {
-    border: 1px solid #999 !important;
-    padding: 4px;
-
+  .cost-app .child-box table {
+      margin: 6px 0;
+      background-color: #ffffff;
   }
 
   .cost-app .child-box table th {
-    background: #e0e0e0;
-  }
-
-  /* 하위 표 아래쪽에 100px 여백 추가 */
-  .cost-app .child-box table {
-    margin-bottom: 100px;
-  }
-
-  .cost-app input[type="text"],
-  .cost-app button {
-    box-sizing: border-box;
-    height: 26px;
-    /* 원하는 높이로 통일 */
-    padding: 0 8px;
-    font-size: 12px;
-    vertical-align: middle;
-    border: 1px solid #999;
-    /* 테두리 두께도 똑같이 맞춤 */
-  }
-
-  .cost-app button {
-    width: 9%;
-    background: #eee;
-    cursor: pointer;
-  }
-
-  .cost-app #status {
-    font-size: 11px;
-    margin-bottom: 5px;
-    color: #555;
-  }
-
-  /* 검색어를 입력하세요 안내 행의 좌우 선을 투명하게 처리 */
-  .cost-app #listBody tr td[colspan] {
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
+      background-color: #f1f5f9;
   }
 </style>
-
 
 <div class="cost-app">
   <script>
