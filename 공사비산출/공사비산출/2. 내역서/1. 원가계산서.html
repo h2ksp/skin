@@ -1,0 +1,745 @@
+<style>
+    /* 💡 쉼표(,)를 사용해서 .my-table과 .my-table2 둘 다 지정 */
+    .my-table,
+    .my-table2 {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width: 100%;
+        /* 너비도 채워주면 더 깔끔함 */
+    }
+
+    .my-table th,
+    .my-table td,
+    .my-table2 th,
+    .my-table2 td {
+        border: 1px solid black;
+        padding: 2px;
+    }
+
+    .tables-wrapper {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 6px;
+        align-items: start;
+    }
+
+    /* 1번째 칸: 우측 정렬 */
+    .my-table2 tbody tr td:first-child {
+        text-align: right;
+    }
+
+    /* 2번째 칸: 가운데 정렬 */
+    .my-table2 tbody tr td:nth-child(2) {
+        text-align: center;
+    }
+
+    /* 3번째 칸부터 끝까지: 좌측 정렬 */
+    .my-table2 tbody tr td:nth-child(n+3) {
+        text-align: left;
+    }
+</style>
+
+
+
+<div id="title">원가계산서</div>
+
+<div class="cost-estimate" x-data="costEstimate()" x-init="init()">
+    <div class="toolbar">
+        <label for="costEstimateProject">프로젝트 선택:</label>
+        <select id="costEstimateProject" x-model="activeProject" @change="saveActiveProject()">
+            <option value="">프로젝트 선택</option>
+            <template x-for="project in projectList" :key="project">
+                <option :value="project" x-text="project"></option>
+            </template>
+        </select>
+    </div>
+
+    <div class="status" x-text="statusMessage"></div>
+
+
+
+
+
+
+    <div class="tables-wrapper">
+
+        <table class="my-table">
+            <thead>
+                <tr>
+                    <td colspan="3">비 목</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="25">&nbsp;&nbsp;</td>
+                    <td rowspan="4">재<br>료<br>비</td>
+                    <td>직접재료비</td>
+                </tr>
+                <tr>
+                    <td>간접재료비</td>
+                </tr>
+                <tr>
+                    <td>작업설,부산물</td>
+                </tr>
+                <tr>
+                    <td>[ 소계 ]</td>
+                </tr>
+
+                <tr>
+                    <td rowspan="3">노<br>무<br>비</td>
+                    <td>직접노무비</td>
+                </tr>
+                <tr>
+                    <td>간접노무비</td>
+                </tr>
+                <tr>
+                    <td>[ 소계 ]</td>
+                </tr>
+
+                <tr>
+                    <td rowspan="18">경<br>비</td>
+                </tr>
+                <tr>
+                    <td>산출경비</td>
+                </tr>
+                <tr>
+                    <td>기계경비</td>
+                </tr>
+                <tr>
+                    <td>산재보험료</td>
+                </tr>
+                <tr>
+                    <td>고용보험료</td>
+                </tr>
+                <tr>
+                    <td>건강보험료</td>
+                </tr>
+                <tr>
+                    <td>연급보험료</td>
+                </tr>
+                <tr>
+                    <td>노인장기요양보험료</td>
+                </tr>
+                <tr>
+                    <td>퇴직공제부금비</td>
+                </tr>
+                <tr>
+                    <td>산업안전보건관리비</td>
+                </tr>
+                <tr>
+                    <td>　</td>
+                </tr>
+                <tr>
+                    <td>환경보전비</td>
+                </tr>
+                <tr>
+                    <td>기타경비</td>
+                </tr>
+                <tr>
+                    <td>건설하도급대금 발급수수료</td>
+                </tr>
+                <tr>
+                    <td>건설기계대여대금 발급금액</td>
+                </tr>
+                <tr>
+                    <td>공사이행보증수수료</td>
+                </tr>
+                <tr>
+                    <td>추가경비</td>
+                </tr>
+                <tr>
+                    <td>소계</td>
+                </tr>
+                <tr>
+                    <td colspan="3">순 공사원가</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">직접 공사비</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2">간접 공사비</td>
+                </tr>
+
+                <tr>
+                    <td colspan="3">일반관리비</td>
+                </tr>
+                <tr>
+                    <td colspan="3">이 윤</td>
+                </tr>
+                <tr>
+                    <td colspan="3">부가세 미포함</td>
+                </tr>
+                <tr>
+                    <td colspan="3">**공급가액</td>
+                </tr>
+                <tr>
+                    <td colspan="3">낙찰률 제외</td>
+                </tr>
+                <tr>
+                    <td colspan="3">낙찰률적용 공금가액</td>
+                </tr>
+                <tr>
+                    <td colspan="3">부가가치세</td>
+                </tr>
+                <tr>
+                    <td colspan="3">부가세포함 항목</td>
+                </tr>
+                <tr>
+                    <td colspan="3">총 공사비</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="my-table2">
+            <thead>
+                <tr>
+                    <td style="width: 130px;">금 액</td>
+                    <td style="width: 60px;">요율(%)</td>
+                    <td>구 성 비</td>
+                    <td>비고</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>111,100,000,000</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>일반관리비</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    function costEstimate() {
+        const createDefaultEstimate = () => ({
+            순공사원가: {
+                재료비: {
+                    직접재료비: '',
+                    간접재료비: '',
+                    작업설부산물: '',
+                    소계: ''
+                },
+                노무비: {
+                    직접노무비: '',
+                    간접노무비: '',
+                    소계: ''
+                },
+                경비: {
+                    '*산출경비': '',
+                    기계경비: '',
+                    산재보험료: {
+                        보험료1: '',
+                        보험료2: ''
+                    },
+                    고용보험료: '',
+                    건강보험료: '',
+                    연금보험료: '',
+                    노인장기요양보험료: '',
+                    퇴직공제부금비: '',
+                    산업안전보건관리비: '',
+                    환경보전비: '',
+                    기타경비: '',
+                    지급보증수수료: '',
+                    지급보증액발급금액: '',
+                    공사이행보증수수료: '',
+                    추가경비: [],
+                    소계: ''
+                }
+            },
+            일반관리비: '',
+            이윤: '',
+            부가세미포함: [],
+            '*공급가액': '',
+            '*낙찰률제외': '',
+            낙찰률적용금액: '',
+            부가가치세: '',
+            부가세포함항목: [],
+            총공사비: ''
+        });
+
+        const mergeDefaults = (defaults, saved) => {
+            if (Array.isArray(defaults)) {
+                return Array.isArray(saved) ? saved : defaults;
+            }
+
+            if (defaults && typeof defaults === 'object') {
+                const result = { ...defaults };
+                if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+                    Object.keys(saved).forEach(key => {
+                        result[key] = key in defaults
+                            ? mergeDefaults(defaults[key], saved[key])
+                            : saved[key];
+                    });
+                }
+                return result;
+            }
+
+            return saved ?? defaults;
+        };
+
+        return {
+            projectList: [],
+            activeProject: '',
+            store: null,
+
+            init() {
+                this.store = Alpine.store('dbStore');
+                if (!this.store) {
+                    throw new Error('dbStore를 찾을 수 없습니다.');
+                }
+
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                this.projectList = Array.isArray(option.projectList)
+                    ? option.projectList
+                    : Object.keys(this.store.cost || {});
+
+                this.activeProject = option.activeProject || '';
+                if (!this.projectList.includes(this.activeProject)) {
+                    this.activeProject = this.projectList[0] || '';
+                }
+
+                if (this.activeProject) {
+                    this.ensureEstimate();
+                }
+            },
+
+            get statusMessage() {
+                return this.activeProject
+                    ? '소계와 순공사원가 합계는 하위 금액을 자동 합산합니다.'
+                    : '프로젝트를 선택해 주세요.';
+            },
+
+            get estimate() {
+                return this.store?.cost?.[this.activeProject]?.원가계산서 || {};
+            },
+
+            get flatRows() {
+                if (!this.activeProject) return [];
+
+                const rows = [];
+                const walk = (object, path = [], depth = 0) => {
+                    Object.entries(object || {}).forEach(([key, value]) => {
+                        const currentPath = [...path, key];
+                        const id = JSON.stringify(currentPath);
+
+                        if (Array.isArray(value)) {
+                            rows.push({ id, path: currentPath, label: key, depth, kind: 'array-section' });
+                            value.forEach((item, index) => {
+                                rows.push({
+                                    id: `${id}[${index}]`,
+                                    path: [...currentPath, index],
+                                    label: typeof item === 'string' ? item : item?.항목명 || item?.name || '',
+                                    depth: depth + 1,
+                                    kind: 'array-item'
+                                });
+                            });
+                        } else if (value && typeof value === 'object') {
+                            rows.push({ id, path: currentPath, label: key, depth, kind: 'section' });
+                            walk(value, currentPath, depth + 1);
+
+                            if (key === '순공사원가') {
+                                rows.push({
+                                    id: `${id}-subtotal`,
+                                    path: currentPath,
+                                    label: '순공사원가 합계',
+                                    depth,
+                                    kind: 'total'
+                                });
+                            }
+                        } else {
+                            rows.push({
+                                id,
+                                path: currentPath,
+                                label: key,
+                                depth,
+                                kind: key === '소계' ? 'subtotal' : 'input'
+                            });
+                        }
+                    });
+                };
+
+                walk(this.estimate);
+                return rows;
+            },
+
+            ensureEstimate() {
+                const project = this.store.cost[this.activeProject];
+                const defaults = createDefaultEstimate();
+                const saved = project.원가계산서 || {};
+
+                project.원가계산서 = mergeDefaults(defaults, saved);
+                this.saveData();
+            },
+
+            saveActiveProject() {
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+
+                if (this.activeProject) {
+                    this.ensureEstimate();
+                }
+            },
+
+            getPathValue(path) {
+                return path.reduce((value, key) => value?.[key], this.estimate);
+            },
+
+            setPathValue(path, value) {
+                let target = this.estimate;
+                for (const key of path.slice(0, -1)) {
+                    target = target[key];
+                }
+                target[path[path.length - 1]] = value;
+            },
+
+            numberValue(value) {
+                const raw = String(value ?? '').replace(/,/g, '').trim();
+                if (!raw) return 0;
+                const number = Number(raw);
+                return Number.isFinite(number) ? number : 0;
+            },
+
+            sumValues(value) {
+                if (Array.isArray(value)) {
+                    return value.reduce((sum, item) => sum + this.sumValues(item), 0);
+                }
+
+                if (value && typeof value === 'object') {
+                    return Object.entries(value).reduce((sum, [key, child]) => {
+                        if (key === '소계') return sum;
+                        if (key === '항목명' || key === 'name') return sum;
+                        return sum + this.sumValues(child);
+                    }, 0);
+                }
+
+                return this.numberValue(value);
+            },
+
+            amountFor(row) {
+                if (row.label === '순공사원가 합계') {
+                    return this.sumValues(this.getPathValue(row.path));
+                }
+
+                const path = row.path;
+                const parentPath = path.slice(0, -1);
+                const parent = parentPath.reduce((value, key) => value?.[key], this.estimate) || {};
+                return Object.entries(parent).reduce((sum, [key, value]) => {
+                    if (key === '소계') return sum;
+                    return sum + this.sumValues(value);
+                }, 0);
+            },
+
+            formatAmount(value) {
+                if (value === '' || value === null || value === undefined) return '';
+                return this.numberValue(value).toLocaleString('ko-KR');
+            },
+
+            saveAmount(path, event) {
+                const raw = event.target.value.replace(/,/g, '').trim();
+
+                if (raw !== '' && !Number.isFinite(Number(raw))) {
+                    event.target.value = this.formatAmount(this.getPathValue(path));
+                    return;
+                }
+
+                const value = raw === '' ? '' : Number(raw).toLocaleString('ko-KR');
+                this.setPathValue(path, value);
+                event.target.value = value;
+                this.saveData();
+            },
+
+            addArrayItem(path) {
+                const list = this.getPathValue(path);
+                if (!Array.isArray(list)) return;
+
+                list.push({ 항목명: '', 금액: '' });
+                this.saveData();
+            },
+
+            arrayItemName(row) {
+                const item = this.getPathValue(row.path);
+                return typeof item === 'string' ? item : item?.항목명 || item?.name || '';
+            },
+
+            arrayItemAmount(row) {
+                const item = this.getPathValue(row.path);
+                return item && typeof item === 'object' ? item.금액 ?? '' : '';
+            },
+
+            saveArrayItem(row, field, value) {
+                const item = this.getPathValue(row.path);
+                if (typeof item === 'string') {
+                    this.setPathValue(row.path, { 항목명: item, 금액: '' });
+                }
+
+                this.getPathValue(row.path)[field] = value;
+                this.saveData();
+            },
+
+            saveArrayItemAmount(row, event) {
+                const raw = event.target.value.replace(/,/g, '').trim();
+
+                if (raw !== '' && !Number.isFinite(Number(raw))) {
+                    event.target.value = this.formatAmount(this.arrayItemAmount(row));
+                    return;
+                }
+
+                const value = raw === '' ? '' : Number(raw).toLocaleString('ko-KR');
+                let item = this.getPathValue(row.path);
+
+                if (typeof item === 'string') {
+                    item = { 항목명: item, 금액: '' };
+                    this.setPathValue(row.path, item);
+                }
+
+                item.금액 = value;
+                event.target.value = value;
+                this.saveData();
+            },
+
+            deleteArrayItem(row) {
+                const listPath = row.path.slice(0, -1);
+                const index = row.path[row.path.length - 1];
+                this.getPathValue(listPath).splice(index, 1);
+                this.saveData();
+            },
+
+            noteFor(row) {
+                const notes = this.store.cost[this.activeProject].원가계산서비고 || {};
+                return notes[JSON.stringify(row.path)] || '';
+            },
+
+            saveNote(row, value) {
+                const project = this.store.cost[this.activeProject];
+                if (!project.원가계산서비고) {
+                    project.원가계산서비고 = {};
+                }
+
+                project.원가계산서비고[JSON.stringify(row.path)] = value;
+                this.saveData();
+            },
+
+            saveData() {
+                this.store._saveData(this.store.cost);
+            }
+        };
+    }
+</script>

@@ -1,0 +1,487 @@
+<style>
+    /* 1. Base Container (글자 크기, 두께, 폰트 완전히 일체화) */
+    .xml-editor-container {
+        color: #334155;
+        font-size: 14px;
+        font-weight: 400; /* 전체 기본 굵기 */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 900px;
+    }
+
+    #title {
+        font-size: 14px; /* 타이틀 크기 통일 */
+        font-weight: 400; /* 타이틀 굵기 통일 */
+        margin-bottom: 16px;
+        color: #334155;
+    }
+
+    /* 2. Toolbar & Status Bar (볼드 제거 및 크기 통일) */
+    .xml-editor-container .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background-color: #f8fafc;
+    }
+
+    .xml-editor-container select {
+        min-width: 200px;
+        padding: 6px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #ffffff;
+        font-size: 14px;
+        font-weight: 400;
+        color: #334155;
+    }
+
+    .xml-editor-container .status-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .xml-editor-container .status {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    /* 3. Pure Vertical List Layout */
+    .xml-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* [라벨 + 인풋/셀렉트 + 단위 + 설명] 한 줄 세트 */
+    .xml-field-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* 라벨: 굵기 제거 및 일반 텍스트화 */
+    .xml-field-row label {
+        width: 180px;
+        font-weight: 400; /* 볼드 해제 */
+        color: #334155;
+        font-size: 14px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* 인풋 박스 & 셀렉트 박스 */
+    .xml-field-row input[type="text"],
+    .xml-field-row select.field-select {
+        width: 180px;
+        height: 34px;
+        padding: 0 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #334155;
+        background-color: #ffffff;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .xml-field-row input[type="text"]:focus,
+    .xml-field-row select.field-select:focus {
+        border-color: #64748b;
+    }
+
+    /* 인풋 우측 단위 표기 (<sup> 볼드도 함께 제거됨) */
+    .field-unit {
+        width: 40px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #334155;
+        white-space: nowrap;
+    }
+
+    .field-unit sup {
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    /* 우측 설명 */
+    .field-desc {
+        font-size: 14px;
+        font-weight: 400;
+        color: #64748b;
+        margin-left: 8px;
+        white-space: nowrap;
+    }
+
+    .empty-message {
+        padding: 30px 0;
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 400;
+    }
+</style>
+
+<div id="title">건축공사 사업내용</div>
+
+<div class="xml-editor-container" x-data="xmlEditor()" x-init="init()">
+
+    <!-- 툴바: 프로젝트/문서 선택 -->
+    <div class="toolbar">
+        <label for="xmlProjectSelect">문서 선택:</label>
+        <select id="xmlProjectSelect" x-model="activeProject" @change="onProjectChange()">
+            <option value="">문서 선택</option>
+            <template x-for="project in projectList" :key="project">
+                <option :value="project" x-text="project"></option>
+            </template>
+        </select>
+    </div>
+
+    <!-- 상태 바 및 리스트 영역 -->
+    <div class="status-bar">
+        <div class="status" x-text="statusMessage"></div>
+    </div>
+
+    <!-- XML 필드 세로 리스트 -->
+    <div class="xml-list" x-show="xmlFields.length > 0">
+        <template x-for="(field, index) in xmlFields" :key="field.key || index">
+            <div class="xml-field-row">
+                <!-- 1. 라벨 -->
+                <label x-text="field.label || field.key"></label>
+
+                <!-- 2-A. 불리언/옵션 선택 (Select) -->
+                <template x-if="getSchema(field.key).type === 'boolean' || getSchema(field.key).type === 'select'">
+                    <select class="field-select" :value="field.value ?? ''"
+                        @change="updateValue(field.key, $event.target.value)">
+                        <option value="">선택</option>
+                        <template x-for="opt in getSchema(field.key).options" :key="opt">
+                            <option :value="opt" x-text="opt" :selected="field.value === opt"></option>
+                        </template>
+                    </select>
+                </template>
+
+                <!-- 2-B. 텍스트 및 숫자 입력 (Input) -->
+                <template x-if="getSchema(field.key).type !== 'boolean' && getSchema(field.key).type !== 'select'">
+                    <input type="text" :value="formatDisplayValue(field.key, field.value)"
+                        @input="handleInput(field.key, $event)"
+                        :placeholder="getSchema(field.key).hint || `<${field.label}> 입력`">
+                </template>
+
+                <!-- 3. 인풋 우측 단위(unit) 표기 -->
+                <span class="field-unit" x-html="getSchema(field.key).unit || ''"></span>
+
+                <!-- 4. 제일 우측 설명(desc) 표기 -->
+                <span class="field-desc" x-text="getSchema(field.key).desc || ''"
+                    x-show="getSchema(field.key).desc"></span>
+            </div>
+        </template>
+    </div>
+
+    <!-- 데이터가 없을 때 안내 -->
+    <div class="empty-message" x-show="xmlFields.length === 0 && activeProject">
+        등록된 XML 항목이 없습니다.
+    </div>
+</div>
+
+<script>
+    function xmlEditor() {
+        const TYPES = {
+            DOUBLE: (precision = 9, decimals = 2, unit = '', desc = '') => ({
+                type: 'number',
+                precision: precision,
+                decimals: decimals,
+                unit: unit,
+                desc: desc,
+                hint: decimals > 0 ? `소수점 ${decimals}자리 이하` : '정수 입력'
+            }),
+
+            INT: (precision = 3, unit = '', desc = '') => ({
+                type: 'number',
+                precision: precision,
+                decimals: 0,
+                allowNegative: false,
+                unit: unit,
+                desc: desc,
+                hint: `${precision}자리 정수`
+            }),
+
+            INT_POSITIVE: (precision = 5, unit = '', desc = '') => ({
+                type: 'number',
+                precision: precision,
+                decimals: 0,
+                min: 1,
+                unit: unit,
+                desc: desc,
+                hint: `1~${'9'.repeat(precision)} 정수`
+            }),
+
+            BOOL_YN: (desc = '') => ({
+                type: 'boolean',
+                options: ['Y', 'N'],
+                unit: '',
+                desc: desc,
+                hint: 'Y / N 선택'
+            }),
+
+            STRING: (maxLen = 50, desc = '') => ({
+                type: 'text',
+                maxLen: maxLen,
+                unit: '',
+                desc: desc,
+                hint: `${maxLen}자 이하`
+            }),
+        };
+
+        // m² 단위태그 볼드(font-weight: bold) 스타일 전부 제거
+        const M2_UNIT = 'm<sup>2</sup>';
+
+        return {
+            targetKey: '건축공사사업내용',
+
+            fieldSchemas: {
+                '연면적': TYPES.DOUBLE(9, 2, M2_UNIT, '기존 부지에 별동 증축하는 경우 금회 증축분'),
+                '대지면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '건축면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '조경면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '지하층연면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '용적률': TYPES.DOUBLE(5, 2, '%'),
+                '건폐율': TYPES.DOUBLE(5, 2, '%'),
+                '기준층층고': TYPES.DOUBLE(2, 2, 'M'),
+                '최고높이': TYPES.DOUBLE(4, 2, 'M'),
+                '최대지하층수': TYPES.INT(3, '층'),
+                '최대지상층수': TYPES.INT(3, '층'),
+                '공사일수': TYPES.INT_POSITIVE(5, '일', '공사일수'),
+                '공사현장지역코드': TYPES.STRING(5, '별표13 작성기준 참조'),
+                '공사현장주소': TYPES.STRING(100, '현장 도로명/지번 주소'),
+                '주차대수': TYPES.INT(5, '대'),
+                '외피면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '주요외부마감재': TYPES.STRING(50),
+                '전용면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '공용면적': TYPES.DOUBLE(9, 2, M2_UNIT),
+                '건축법상용도': TYPES.STRING(50),
+                '설계특이사항': TYPES.STRING(200),
+                '조감도': TYPES.STRING(100),
+                '시설물유형': TYPES.STRING(50),
+                '철거공사포함여부': TYPES.BOOL_YN('기존 구조물 철거 여부'),
+                '지역구분': TYPES.STRING(20),
+                '지반공사, 지반형태': TYPES.STRING(50),
+                '지반공사, 흙막이공사': TYPES.STRING(50),
+                '구조형식': TYPES.STRING(50),
+                '내진등급': TYPES.STRING(20),
+                '건축물인증, 신재생에너지': TYPES.STRING(50),
+                '건축물인증, 녹색건축인증': TYPES.STRING(50),
+                '건축물인증, BF인증': TYPES.STRING(50),
+                '건물외형': TYPES.STRING(50),
+                '외부마감자재등급': TYPES.STRING(20),
+                '냉난방방식': TYPES.STRING(50),
+            },
+
+            projectList: [],
+            activeProject: '',
+            store: null,
+
+            getSchema(key) {
+                const schema = this.fieldSchemas[key];
+                return (schema && typeof schema === 'object') ? schema : TYPES.STRING(100);
+            },
+
+            init() {
+                this.store = Alpine.store('dbStore');
+                if (!this.store) {
+                    throw new Error('dbStore를 찾을 수 없습니다.');
+                }
+
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                this.projectList = Object.keys(this.store.cost || {});
+                this.activeProject = option.activeProject || this.projectList[0] || '';
+
+                if (!this.projectList.includes(this.activeProject)) {
+                    this.activeProject = this.projectList[0] || '';
+                }
+
+                this.ensureXmlObject();
+            },
+
+            onProjectChange() {
+                this.saveActiveProject();
+                this.ensureXmlObject();
+            },
+
+            saveActiveProject() {
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+            },
+
+            ensureXmlObject() {
+                if (this.activeProject && this.store.cost?.[this.activeProject]) {
+                    const projectObj = this.store.cost[this.activeProject];
+
+                    if (!projectObj.xml) projectObj.xml = {};
+
+                    if (!projectObj.xml[this.targetKey]) {
+                        projectObj.xml[this.targetKey] = {
+                            '연면적': '',
+                            '대지면적': '',
+                            '건축면적': '',
+                            '조경면적': '',
+                            '지하층연면적': '',
+                            '용적률': '',
+                            '건폐율': '',
+                            '기준층층고': '',
+                            '최고높이': '',
+                            '최대지하층수': '',
+                            '최대지상층수': '',
+                            '공사일수': '',
+                            '공사현장지역코드': '',
+                            '공사현장주소': '',
+                            '주차대수': '',
+                            '외피면적': '',
+                            '주요외부마감재': '',
+                            '전용면적': '',
+                            '공용면적': '',
+                            '건축법상용도': '',
+                            '설계특이사항': '',
+                            '조감도': '',
+                            '시설물유형': '',
+                            '철거공사포함여부': '',
+                            '지역구분': '',
+                            '지반공사, 지반형태': '',
+                            '지반공사, 흙막이공사': '',
+                            '구조형식': '',
+                            '내진등급': '',
+                            '건축물인증, 신재생에너지': '',
+                            '건축물인증, 녹색건축인증': '',
+                            '건축물인증, BF인증': '',
+                            '건물외형': '',
+                            '외부마감자재등급': '',
+                            '냉난방방식': '',
+                        };
+
+                        if (typeof this.store._saveData === 'function') {
+                            this.store._saveData(this.store.cost);
+                        }
+                    }
+                }
+            },
+
+            formatDisplayValue(key, val) {
+                if (val === null || val === undefined || val === '') return '';
+
+                const schema = this.getSchema(key);
+                const strVal = String(val);
+
+                if (schema.type === 'text') return strVal;
+
+                const parts = strVal.split('.');
+                parts[0] = Number(parts[0] || 0).toLocaleString('ko-KR');
+
+                if (schema.decimals !== undefined && parts[1]) {
+                    parts[1] = parts[1].substring(0, schema.decimals);
+                }
+
+                return parts.length > 1 ? parts.join('.') : parts[0];
+            },
+
+            handleInput(key, event) {
+                const inputEl = event.target;
+                const schema = this.getSchema(key);
+                let inputValue = inputEl.value;
+
+                if (schema.type === 'text') {
+                    if (schema.maxLen && inputValue.length > schema.maxLen) {
+                        inputValue = inputValue.substring(0, schema.maxLen);
+                        inputEl.value = inputValue;
+                    }
+                    this.updateValue(key, inputValue);
+                    return;
+                }
+
+                let rawVal = inputValue.replace(/[^\d.]/g, '');
+
+                const parts = rawVal.split('.');
+                if (parts.length > 2) {
+                    rawVal = parts[0] + '.' + parts.slice(1).join('');
+                }
+
+                if (rawVal !== '') {
+                    const currentParts = rawVal.split('.');
+
+                    if (schema.precision && schema.decimals === 0) {
+                        if (currentParts[0].length > schema.precision) {
+                            currentParts[0] = currentParts[0].substring(0, schema.precision);
+                        }
+                        rawVal = currentParts[0];
+                    } else if (schema.precision && schema.decimals) {
+                        const maxIntegerDigits = schema.precision - schema.decimals;
+                        if (currentParts[0].length > maxIntegerDigits) {
+                            currentParts[0] = currentParts[0].substring(0, maxIntegerDigits);
+                        }
+                    }
+
+                    if (schema.decimals !== undefined && currentParts.length > 1) {
+                        if (schema.decimals === 0) {
+                            rawVal = currentParts[0];
+                        } else {
+                            currentParts[1] = currentParts[1].substring(0, schema.decimals);
+                            rawVal = currentParts.join('.');
+                        }
+                    } else {
+                        rawVal = currentParts.join('.');
+                    }
+
+                    const displayParts = rawVal.split('.');
+                    displayParts[0] = Number(displayParts[0] || 0).toLocaleString('ko-KR');
+
+                    inputEl.value = displayParts.length > 1 ? displayParts.join('.') : displayParts[0];
+                } else {
+                    inputEl.value = '';
+                }
+
+                this.updateValue(key, rawVal);
+            },
+
+            get xmlFields() {
+                if (!this.store || !this.activeProject) return [];
+
+                const targetData = this.store.cost?.[this.activeProject]?.xml?.[this.targetKey];
+
+                if (!targetData || typeof targetData !== 'object') return [];
+
+                return Object.entries(targetData).map(([key, val]) => ({
+                    key: key,
+                    label: key,
+                    value: val
+                }));
+            },
+
+            updateValue(key, newValue) {
+                if (!this.activeProject || !this.store) return;
+
+                const projectObj = this.store.cost?.[this.activeProject];
+                if (!projectObj) return;
+
+                if (!projectObj.xml) projectObj.xml = {};
+                if (!projectObj.xml[this.targetKey]) projectObj.xml[this.targetKey] = {};
+
+                projectObj.xml[this.targetKey][key] = newValue;
+
+                if (typeof this.store._saveData === 'function') {
+                    this.store._saveData(this.store.cost);
+                }
+            },
+
+            get statusMessage() {
+                if (!this.activeProject) return '프로젝트를 선택해 주세요.';
+                return this.xmlFields.length
+                    ? `총 ${this.xmlFields.length}개 XML 항목`
+                    : '등록된 XML 항목이 없습니다.';
+            }
+        };
+    }
+</script>

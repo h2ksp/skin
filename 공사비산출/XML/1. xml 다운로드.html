@@ -1,0 +1,258 @@
+<style>
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px 0;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background-color: #f8fafc;
+        max-width: 900px;
+    }
+
+    .toolbar label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #334155;
+    }
+
+    .toolbar select {
+        min-width: 200px;
+        padding: 6px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #ffffff;
+        font-size: 14px;
+        font-weight: 400;
+        color: #334155;
+    }
+</style>
+
+
+<div id="title">XML 다운로드</div>
+
+<div class="toolbar" x-data="xmlDownloaderComponent()" x-init="init()">
+    <label for="xmlProjectSelect">문서 선택:</label>
+    <select id="xmlProjectSelect" x-model="activeProject" @change="onProjectChange()">
+        <option value="">프로젝트 선택</option>
+        <template x-for="project in projectList" :key="project">
+            <option :value="project" x-text="project"></option>
+        </template>
+    </select>
+
+    <!-- 문서를 선택하지 않았을 때는 버튼 비활성화 (:disabled) -->
+    <button type="button" class="download-btn" :disabled="!activeProject" @click="downloadXml()">XML 다운로드</button>
+</div>
+
+<ul>
+    <li>
+        <a href="https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" target="_blank"
+            rel="noopener noreferrer">
+            C3R 호환성검증 ↗
+        </a>
+    </li>
+</ul>
+
+<script>
+    function xmlDownloaderComponent() {
+        return {
+            projectList: [],
+            activeProject: '',
+            xml: {},
+
+            init() {
+                const store = Alpine.store('dbStore') || { cost: {} };
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                this.projectList = Object.keys(store.cost || {});
+                this.activeProject = option.activeProject || this.projectList[0] || '';
+                this.xml = store?.cost?.[this.activeProject]?.xml || {};
+            },
+
+            onProjectChange() {
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+
+                const store = Alpine.store('dbStore');
+                this.xml = store?.cost?.[this.activeProject]?.xml || {};
+            },
+
+            downloadXml() {
+                // 1. 선택된 문서가 없을 경우 차단
+                if (!this.activeProject) {
+                    alert('다운로드할 문서를 선택해 주세요.');
+                    return;
+                }
+
+                const type2 = `
+                        <작성정보>\n
+                            <작성업체명>${this.xml?.작성정보?.작성업체명 || ''}</작성업체명>
+                            <프로그램명>ㅁㄴㅇㄻㄴㅇㄹ</프로그램명>
+                            <프로그램버전>ㅁㄴㅇㄻㄴㅇㄹ</프로그램버전>
+                            <파일제작일>ㅁㄴㅇㄻㄴㅇㄹ</파일제작일>
+                            <파일검증여부>ㅁㄴㅇㄻㄴㅇㄹ</파일검증여부>
+                            <건축공사사업내용작성여부>ㅁㄴㅇㄻㄴㅇㄹ</건축공사사업내용작성여부>
+                            <공공주택공사여부>ㅁㄴㅇㄻㄴㅇㄹ</공공주택공사여부>
+                        \n</작성정보>
+                    `;
+
+                const type3 = `
+                        <공사정보>\n
+                            <공사관리번호>ㅁㄴㅇㄻㄴㅇㄹ</공사관리번호>
+                            <주공사>ㅁㄴㅇㄻㄴㅇㄹ</주공사>
+                            <공사명>ㅁㄴㅇㄻㄴㅇㄹ</공사명>
+                            <비고>ㅁㄴㅇㄻㄴㅇㄹ</비고>
+                            <기계경비산출>\n
+                                <환율>\n
+                                    <미국_1USD>두 번째 내용</미국_1USD>
+                                    <유럽연합_1EUR>두 번째 내용</유럽연합_1EUR>
+                                    <일본_100엔>두 번째 내용</일본_100엔>
+                                \n</환율>
+                                <시간당손료산출>\n
+                                    <E0-주간>두 번째 내용</E0-주간>
+                                    <E1-야간>두 번째 내용</E1-야간>
+                                    <E2-주야간2교대>두 번째 내용</E2-주야간2교대>
+                                    <E3-주야간3교대>두 번째 내용</E3-주야간3교대>
+                                \n</시간당손료산출>
+                                <시간당노임산출>\n
+                                    <H0-일반구간>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H0-일반구간>
+                                    <H1-터널구간>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H1-터널구간>
+                                    <H2-장대터널>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H2-장대터널>
+                                    <H3-펌프준설선>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H3-펌프준설선>
+                                    <H4-그래브준설선>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H4-그래브준설선>
+                                    <H5-버킷준설선>\n
+                                        <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                        <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                        <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                    \n</H5-버킷준설선>
+                                    <H_-사용자정의>\n
+                                        <사용자정의코드>ㅁㄴㅇㄻㄴㅇㄹ</사용자정의코드>
+                                        <노임산출>\n
+                                            <산출식>ㅁㄴㅇㄻㄴㅇㄹ</산출식>
+                                            <계산값>ㅁㄴㅇㄻㄴㅇㄹ</계산값>
+                                            <적용구분>ㅁㄴㅇㄻㄴㅇㄹ</적용구분>
+                                        \n</노임산출>
+                                    \n</H_-사용자정의>
+                                \n</시간당노임산출>
+                            \n</기계경비산출>
+
+                            <건축공사사업내용>\n
+                                <연면적>${this.xml?.건축공사사업내용?.연면적 || ''}</연면적>
+                                <대지면적>${this.xml?.건축공사사업내용?.대지면적 || ''}</대지면적>
+                                <건축면적>${this.xml?.건축공사사업내용?.건축면적 || ''}</건축면적>
+                                <조경면적>${this.xml?.건축공사사업내용?.조경면적 || ''}</조경면적>
+                                <지하층연면적>${this.xml?.건축공사사업내용?.지하층연면적 || ''}</지하층연면적>
+                                <용적률>${this.xml?.건축공사사업내용?.용적률 || ''}</용적률>
+                                <건폐율>${this.xml?.건축공사사업내용?.건폐율 || ''}</건폐율>
+                                <기준층층고>${this.xml?.건축공사사업내용?.기준층층고 || ''}</기준층층고>
+                                <최고높이>${this.xml?.건축공사사업내용?.최고높이 || ''}</최고높이>
+                                <최대지하층수>${this.xml?.건축공사사업내용?.최대지하층수 || ''}</최대지하층수>
+                                <최대지상층수>${this.xml?.건축공사사업내용?.최대지상층수 || ''}</최대지상층수>
+                                <공사일수>${this.xml?.건축공사사업내용?.공사일수 || ''}</공사일수>
+                                <공사현장지역코드>${this.xml?.건축공사사업내용?.공사현장지역코드 || ''}</공사현장지역코드>
+                                <공사현장주소>${this.xml?.건축공사사업내용?.공사현장주소 || ''}</공사현장주소>
+                                <주차대수>${this.xml?.건축공사사업내용?.주차대수 || ''}</주차대수>
+                                <외피면적>${this.xml?.건축공사사업내용?.외피면적 || ''}</외피면적>
+                                <주요외부마감재>${this.xml?.건축공사사업내용?.주요외부마감재 || ''}</주요외부마감재>
+                                <전용면적>${this.xml?.건축공사사업내용?.전용면적 || ''}</전용면적>
+                                <공용면적>${this.xml?.건축공사사업내용?.공용면적 || ''}</공용면적>
+                                <건축법상용도>${this.xml?.건축공사사업내용?.건축법상용도 || ''}</건축법상용도>
+                                <설계특이사항>${this.xml?.건축공사사업내용?.설계특이사항 || ''}</설계특이사항>
+                                <조감도>${this.xml?.건축공사사업내용?.조감도 || ''}</조감도>
+                                <시설물유형>${this.xml?.건축공사사업내용?.시설물유형 || ''}</시설물유형>
+                                <철거공사포함여부>${this.xml?.건축공사사업내용?.철거공사포함여부 || ''}</철거공사포함여부>
+                                <지역구분>${this.xml?.건축공사사업내용?.지역구분 || ''}</지역구분>
+                                <지반공사.지반형태>${this.xml?.건축공사사업내용?.지반공사?.지반형태 || ''}</지반공사.지반형태>
+                                <지반공사.흙막이공사>${this.xml?.건축공사사업내용?.지반공사?.흙막이공사 || ''}</지반공사.흙막이공사>
+                                <구조형식>${this.xml?.건축공사사업내용?.구조형식 || ''}</구조형식>
+                                <내진등급>${this.xml?.건축공사사업내용?.내진등급 || ''}</내진등급>
+                                <건축물인증.신재생에너지>${this.xml?.건축공사사업내용?.건축물인증?.신재생에너지 || ''}</건축물인증.신재생에너지>
+                                <건축물인증.녹색건축인증>${this.xml?.건축공사사업내용?.건축물인증?.녹색건축인증 || ''}</건축물인증.녹색건축인증>
+                                <건축물인증.BF인증>${this.xml?.건축공사사업내용?.건축물인증?.BF인증 || ''}</건축물인증.BF인증>
+                                <건물외형>${this.xml?.건축공사사업내용?.건물외형 || ''}</건물외형>
+                                <외부마감자재등급>${this.xml?.건축공사사업내용?.외부마감자재등급 || ''}</외부마감자재등급>
+                                <냉난방방식>${this.xml?.건축공사사업내용?.냉난방방식 || ''}</냉난방방식>
+                            \n</건축공사사업내용>
+
+                            <작업분류정보>\n
+                                <작업분류기준>\n
+                                    <작업분류기준명>두 번째 내용</작업분류기준명>
+                                    <작업분류기준버전>두 번째 내용</작업분류기준버전>
+                                    <표준작업분류기준코드>두 번째 내용</표준작업분류기준코드>
+                                \n</작업분류기준>
+                                    <작업분류단계수>두 번째 내용</작업분류단계수>
+                                    <작업분류단계명>두 번째 내용</작업분류단계명>
+                                <작업분류단계>\n
+                                \n</작업분류단계>
+                                <작업분류>\n
+                                    <작업분류식별번호>두 번째 내용</작업분류식별번호>
+                                    <작업분류1단계코드>두 번째 내용</작업분류1단계코드>
+                                    <작업분류10단계코드>두 번째 내용</작업분류10단계코드>
+                                    <작업분류1단계명>두 번째 내용</작업분류1단계명>
+                                    <작업분류10단계명>두 번째 내용</작업분류10단계명>
+                                    <작업예정시작일자>두 번째 내용</작업예정시작일자>
+                                    <작업예정종료일자>두 번째 내용</작업예정종료일자>
+                                    <작업예정일수>두 번째 내용</작업예정일수>
+                                \n</작업분류>
+                            \n</작업분류정보>
+                        \n</공사정보>
+                    `;
+
+                const type4 = `
+                        <공사제경비>\n
+                            <Data>네 번째 내용</Data>
+                        \n</공사제경비>
+                    `;
+
+                const masterXml = `<?xml version="1.0" encoding="UTF-8"?>
+                    <공사원가호환규정 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://npccs.g2b.go.kr:8785/schema/validationcheck.xsd">
+                    <스키마버전></스키마버전>
+                    ${type2}
+                    ${type3}
+                    <공사내역서>\n
+                        ${type4}
+                        <단일공사내역서>\n
+
+                        \n</단일공사내역서>
+                    \n</공사내역서>
+                    
+                    </공사원가호환규정>`;
+
+                // 파일 생성 및 다운로드 실행
+                const blob = new Blob([masterXml], { type: 'application/xml;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+
+                // 2. 선택한 프로젝트명으로 파일명 지정
+                link.download = `${this.activeProject}.xml`;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        };
+    }
+</script>

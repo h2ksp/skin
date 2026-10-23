@@ -3723,10 +3723,17 @@ const menuData = {
             sections: [
 
               {
-                secTitle: "-",
+                secTitle: "참고자료",
                 items:
                   [
-                    { text: "1. 스키마버전", url: "#4-1" },
+                    { text: "공사현장 지역코드", url: "https://study-with-words.blogspot.com/2026/10/blog-post_23.html?group=group3&sub=sub5" },
+                  ]
+              },
+              {
+                secTitle: "1. 스키마버전 ver1.2.0 ",
+                items:
+                  [
+                    { text: "XML 다운로드", url: "https://study-with-words.blogspot.com/2026/10/xml.html?group=group3&sub=sub5" },
                     { text: "2. 작성정보", url: "#4-1" },
                   ]
               },
@@ -3799,20 +3806,10 @@ const menuData = {
             catTitle: "-",
             sections: [
               {
-                secTitle: "도움말",
-                items:
-                  [
-                    { text: "원문", url: "#4-1" },
-                    { text: "작성법", url: "#4-1" },
-                  ]
-              },
-
-              {
                 secTitle: "내보내기 및 검증",
                 items:
                   [
-                    { text: "XML 다운로드", url: "#4-1" },
-                    { text: "C3R 호환성검증", url: "https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" },
+
                   ]
               },
             ]
