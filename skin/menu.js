@@ -2590,6 +2590,7 @@ const menuData = {
     }
   },
 
+
   // 표준시장단가
   group2: {
     title: "건설공사 표준시장단가 적용공종 및 단가(2026)",
@@ -3298,7 +3299,80 @@ const menuData = {
     title: "공사비 산출하기",
     hasSubTabs: true,
     subTabs: {
+
+      // 공사비산출 메뉴
       sub1: {
+        name: "공사비산출",
+        categories: [
+          {
+            catTitle: "WORK",
+            sections: [
+              {
+                secTitle: "당신의 프로젝트",
+                items:
+                  [
+                    { text: "새 프로젝트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_296.html" },
+                    { text: "적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_09.html" },
+                  ]
+              },
+              {
+                secTitle: "내역서",
+                items:
+                  [
+                    { text: "원가계산서", url: "https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&sub=sub4" },
+                    { text: "공종별 내역서 (☆)", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
+                    { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
+                    { text: "중기단가산출", url: "#4-1" },
+                    { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
+                  ]
+              },
+
+              {
+                secTitle: "내보내기",
+                items:
+                  [
+                    { text: "Excel 다운로드", url: "#4-1" },
+                  ]
+              },
+
+            ]
+          },
+
+          {
+            catTitle: "기준",
+            sections: [
+              {
+                secTitle: "최신",
+                items:
+                  [
+                    { text: "연료가격", url: "https://study-with-words.blogspot.com/2026/10/blog-post_08.html" },
+                    { text: "노임단가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
+                  ]
+              },
+
+
+            ]
+          },
+          {
+            catTitle: "편의기능",
+            sections: [
+
+
+              {
+                secTitle: "네트워크",
+                items:
+                  [
+                    { text: "작성자연결", url: "#4-1" },
+                  ]
+              },
+            ]
+          },
+
+        ]
+      },
+
+      // 샘플 공사비 메뉴
+      sub4: {
         name: "샘플 공사비",
         categories: [
           {
@@ -3316,24 +3390,7 @@ const menuData = {
         ]
       },
 
-      sub2: {
-        name: "물량산출",
-        categories: [
-          {
-            catTitle: "대분류 1",
-            sections: [
-              {
-                secTitle: "소제목 1",
-                items:
-                  [
-                    { text: "글자4 1파트 글1", url: "#4-1" }
-                  ]
-              }
-            ]
-          }
-        ]
-      },
-
+      // 기계경비 메뉴
       sub3: {
         name: "기계경비",
         categories: [
@@ -3645,76 +3702,26 @@ const menuData = {
         ]
       },
 
-      sub4: {
-        name: "공사비산출",
+      // 물량산출 메뉴
+      sub2: {
+        name: "물량산출",
         categories: [
           {
-            catTitle: "WORK",
+            catTitle: "대분류 1",
             sections: [
               {
-                secTitle: "당신의 프로젝트",
+                secTitle: "소제목 1",
                 items:
                   [
-                    { text: "새 프로젝트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_296.html" },
-                    { text: "적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_09.html" },
+                    { text: "글자4 1파트 글1", url: "#4-1" }
                   ]
-              },
-              {
-                secTitle: "내역서",
-                items:
-                  [
-                    { text: "원가계산서", url: "#4-1" },
-                    { text: "공종별 내역서", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
-                    { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
-                    { text: "중기단가산출", url: "#4-1" },
-                    { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
-                  ]
-              },
-
-              {
-                secTitle: "내보내기",
-                items:
-                  [
-                    { text: "Excel 다운로드", url: "#4-1" },
-                  ]
-              },
-
+              }
             ]
-          },
-
-          {
-            catTitle: "기준",
-            sections: [
-              {
-                secTitle: "최신",
-                items:
-                  [
-                    { text: "연료가격", url: "https://study-with-words.blogspot.com/2026/10/blog-post_08.html" },
-                    { text: "노임단가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
-                  ]
-              },
-
-
-            ]
-          },
-          {
-            catTitle: "편의기능",
-            sections: [
-
-
-              {
-                secTitle: "네트워크",
-                items:
-                  [
-                    { text: "작성자연결", url: "#4-1" },
-                  ]
-              },
-            ]
-          },
-
+          }
         ]
       },
 
+      // XML파일 메뉴
       sub5: {
         name: "XML파일",
         categories: [
@@ -3764,7 +3771,7 @@ const menuData = {
                 secTitle: "건축공사사업내용",
                 items:
                   [
-                    { text: "건축공사사업내용", url: "#4-1" },
+                    { text: "건축공사사업내용", url: "https://study-with-words.blogspot.com/2026/10/xml_01039107655.html?group=group3&sub=sub5" },
                   ]
               },
               {
@@ -3802,23 +3809,8 @@ const menuData = {
             ]
           },
 
-          {
-            catTitle: "-",
-            sections: [
-              {
-                secTitle: "내보내기 및 검증",
-                items:
-                  [
-
-                  ]
-              },
-            ]
-          },
-
-
         ]
       },
-
 
     }
   },
