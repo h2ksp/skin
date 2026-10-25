@@ -2346,8 +2346,8 @@ const menuData = {
                 items: [
                   { text: "1-2-1　교통통제 및 안전처리", url: "https://study-with-words.blogspot.com/2026/10/blog-post_210.html?group=group1&sub=sub5" },
                   { text: "1-2-2　일반전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_250.html?group=group1&sub=sub5" },
-                  { text: "1-2-3　조형전정", url: "#1-2" },
-                  { text: "1-2-4　가로수 전정", url: "#1-2" },
+                  { text: "1-2-3　조형전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_557.html?group=group1&sub=sub5" },
+                  { text: "1-2-4　가로수 전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_528.html?group=group1&sub=sub5" },
                   { text: "1-2-5　관목 전정", url: "#1-2" },
                   { text: "1-2-6　수간보호", url: "#1-2" },
                   { text: "1-2-7　줄기싸주기", url: "#1-2" },

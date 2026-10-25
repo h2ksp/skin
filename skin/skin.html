@@ -371,7 +371,7 @@
             // 로컬스토리지에 'cost' 데이터가 없으면 sample.json을 가져와서 세팅
             if (!this.cost) {
               try {
-                const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample.json');
+                const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample_Project.json');
                 if (!res.ok) throw new Error('sample.json 로드 실패');
 
                 const data = await res.json();

@@ -60,7 +60,7 @@
 
 /* 표 상단 우측 단위 표시용 */
 .tbl caption {
-  text-align: right !important;
+  text-align: right;
   caption-side: top;
   margin-bottom: 4px;
 }
