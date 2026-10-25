@@ -46,25 +46,25 @@ const menuData = {
                   { text: "1-4-1　적용기준", url: "https://study-with-words.blogspot.com/2026/09/blog-post_515.html" },
                   { text: "1-4-2　할증의 중복가산요령", url: "https://study-with-words.blogspot.com/2026/09/blog-post_410.html" },
                   { text: "1-4-3　작업지연", url: "https://study-with-words.blogspot.com/2026/09/blog-post_548.html" },
-                  { text: "1-4-3　지세/지형", url: "#1-1" },
-                  { text: "1-4-5　위험", url: "#1-1" },
-                  { text: "1-4-6　작업제한", url: "#1-1" },
-                  { text: "1-4-7　작업환경", url: "#1-1" },
+                  { text: "1-4-3　지세/지형", url: "https://study-with-words.blogspot.com/2026/10/blog-post_24.html" },
+                  { text: "1-4-5　위험", url: "https://study-with-words.blogspot.com/2026/10/blog-post_629.html" },
+                  { text: "1-4-6　작업제한", url: "https://study-with-words.blogspot.com/2026/10/blog-post_882.html" },
+                  { text: "1-4-7　작업환경", url: "https://study-with-words.blogspot.com/2026/10/blog-post_25.html" },
                 ]
               },
               {
                 secTitle: "1-5　기타",
                 items: [
-                  { text: "1-5-1　품질관리비", url: "#1-1" },
-                  { text: "1-5-2　산업안전보건관리비", url: "#1-1" },
-                  { text: "1-5-3　산업재해보상 보험료 및 기타", url: "#1-1" },
-                  { text: "1-5-4　환경관리비", url: "#1-1" },
-                  { text: "1-5-5　안전관리비", url: "#1-1" },
-                  { text: "1-5-6　사용료", url: "#1-1" },
-                  { text: "1-5-7　현장시공상세도면의 작성", url: "#1-1" },
-                  { text: "1-5-8　종합시운전 및 조정비", url: "#1-1" },
-                  { text: "1-5-9　시공측량비", url: "#1-1" },
-                  { text: "1-5-10　표준품셈 보완실사", url: "#1-1" },
+                  { text: "1-5-1　품질관리비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_998.html" },
+                  { text: "1-5-2　산업안전보건관리비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_36.html" },
+                  { text: "1-5-3　산업재해보상 보험료 및 기타", url: "https://study-with-words.blogspot.com/2026/10/blog-post_88.html" },
+                  { text: "1-5-4　환경관리비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_893.html" },
+                  { text: "1-5-5　안전관리비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_437.html" },
+                  { text: "1-5-6　사용료", url: "https://study-with-words.blogspot.com/2026/10/blog-post_572.html" },
+                  { text: "1-5-7　현장시공상세도면의 작성", url: "https://study-with-words.blogspot.com/2026/10/blog-post_521.html" },
+                  { text: "1-5-8　종합시운전 및 조정비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_994.html" },
+                  { text: "1-5-9　시공측량비", url: "https://study-with-words.blogspot.com/2026/10/blog-post_181.html" },
+                  { text: "1-5-10　표준품셈 보완실사", url: "https://study-with-words.blogspot.com/2026/10/blog-post_920.html" },
                 ]
               },
             ]
@@ -75,7 +75,7 @@ const menuData = {
               {
                 secTitle: "2-1　가설물의 한도",
                 items: [
-                  { text: "2-1-1　현장사무소 등의 규모(토목)", url: "#1-1" },
+                  { text: "2-1-1　현장사무소 등의 규모(토목)", url: "https://study-with-words.blogspot.com/2026/10/blog-post_308.html" },
                   { text: "2-1-2　현장사무소 등의 규모(건축 및 기계설비)", url: "#1-1" },
                 ]
               },
@@ -555,10 +555,10 @@ const menuData = {
                   { text: "8-1-1　건설기계 선정기준", url: "https://study-with-words.blogspot.com/2026/09/blog-post_201.html" },
                   { text: "8-1-2　공사규모별 표준건설기계", url: "https://study-with-words.blogspot.com/2026/09/blog-post_763.html" },
                   { text: "8-1-3　운반 및 수송", url: "https://study-with-words.blogspot.com/2026/09/blog-post_812.html" },
-                  { text: "8-1-4　시공능력 산정 기본식", url: "#1-1" },
-                  { text: "8-1-5　기계경비 용어와 정의", url: "#1-1" },
-                  { text: "8-1-6　기계경비 적산요령", url: "#1-1" },
-                  { text: "8-1-7　손료보정 등", url: "#1-1" },
+                  { text: "8-1-4　시공능력 산정 기본식", url: "https://study-with-words.blogspot.com/2026/10/blog-post_664.html" },
+                  { text: "8-1-5　기계경비 용어와 정의", url: "https://study-with-words.blogspot.com/2026/10/blog-post_225.html#1-1" },
+                  { text: "8-1-6　기계경비 적산요령", url: "https://study-with-words.blogspot.com/2026/10/blog-post_856.html" },
+                  { text: "8-1-7　손료보정 등", url: "https://study-with-words.blogspot.com/2026/10/blog-post_257.html" },
                 ]
               },
               {
@@ -2336,16 +2336,16 @@ const menuData = {
               {
                 secTitle: "1-1　토공사",
                 items: [
-                  { text: "1-1-1　비탈면 보강공", url: "https://study-with-words.blogspot.com/2026/09/blog-post.html" },
-                  { text: "1-1-2　지압핀블록 설치", url: "#1-1" },
-                  { text: "1-1-3　비탈면 점검로 설치", url: "#1-1" },
+                  { text: "1-1-1　비탈면 보강공", url: "https://study-with-words.blogspot.com/2026/09/blog-post.html?group=group1&sub=sub5" },
+                  { text: "1-1-2　지압핀블록 설치", url: "https://study-with-words.blogspot.com/2026/10/blog-post_476.html?group=group1&sub=sub5" },
+                  { text: "1-1-3　비탈면 점검로 설치", url: "https://study-with-words.blogspot.com/2026/10/blog-post_278.html?group=group1&sub=sub5" },
                 ]
               },
               {
                 secTitle: "1-2　조경공사",
                 items: [
-                  { text: "1-2-1　교통통제 및 안전처리", url: "#1-2" },
-                  { text: "1-2-2　일반전정", url: "#1-2" },
+                  { text: "1-2-1　교통통제 및 안전처리", url: "https://study-with-words.blogspot.com/2026/10/blog-post_210.html?group=group1&sub=sub5" },
+                  { text: "1-2-2　일반전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_250.html?group=group1&sub=sub5" },
                   { text: "1-2-3　조형전정", url: "#1-2" },
                   { text: "1-2-4　가로수 전정", url: "#1-2" },
                   { text: "1-2-5　관목 전정", url: "#1-2" },

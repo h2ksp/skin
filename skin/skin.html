@@ -362,62 +362,27 @@
 
     <script>
       document.addEventListener('alpine:init', () => {
-        // 1. 최상위를 cost로 하는 기본 데이터 구조 정의 (앱 초기화용)
-        const defaultCostData = {
-          '교육용 샘플프로젝트': {
-            공종별내역서: 
-            [
-              [
-                {
-                  name: '',
-                  children: [
-                    {
-                      type: '',
-                      name: 'ㅁㄴㅇㄻㄴㅇㄻㄴㅇㄹ',
-                      spec: '',
-                      unit: '',
-                      qty: '',
-                      item1: '',
-                      item2: '',
-                      item3: '',
-                      item4: '',
-                      item5: '',
-                      item6: '',
-                      item7: '',
-                      item8: '',
-                      item9: '',
-                      showCost: '',
-                    },
-                    {}
-                  ]
-                }
-              ]
-            ],
-
-            
-            일위대가: [],
-            중기단가산출근거: [],
-            적용기준: {
-              환율: { 달러: '', 엔: '' },
-              유류단가: { 휘발유: '', 경유: '', 선박용경유: '', 중유: '' },
-            },
-            옵션: {
-              그룹명: ['건축', '토목', '전기', '기계', '조경', '소방', '통신', '기타']
-            }
-          }
-        };
-
-        // 2. 스크립트 실행되자마자 로컬스토리지에 'cost'가 없으면 기본값 박기
-        if (!localStorage.getItem('cost')) {
-          localStorage.setItem('cost', JSON.stringify(defaultCostData));
-        }
-
+        // 스토어 정의
         Alpine.store('dbStore', {
-          // 알파인 스토어가 바라보는 실시간 데이터 (로컬스토리지의 'cost'를 파싱해서 담음)
-          cost: JSON.parse(localStorage.getItem('cost')),
+          cost: JSON.parse(localStorage.getItem('cost') || 'null'),
           currentProject: 'projectA',
 
-          // 공종별내역서 등의 데이터가 바뀔 때 합계를 실시간으로 계산해 주는 Getter
+          async init() {
+            // 로컬스토리지에 'cost' 데이터가 없으면 sample.json을 가져와서 세팅
+            if (!this.cost) {
+              try {
+                const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample.json');
+                if (!res.ok) throw new Error('sample.json 로드 실패');
+
+                const data = await res.json();
+                this.cost = data;
+                localStorage.setItem('cost', JSON.stringify(data));
+              } catch (err) {
+                console.error('기본 데이터 로드 에러:', err);
+              }
+            }
+          },
+
           get 원가계산서() {
             const proj = this.cost?.[this.currentProject] || {};
 
@@ -859,9 +824,10 @@
       renderSidebar(currentGroup, currentSub);
     }
 
-    // 2. 사이드바 렌더링 함수
+    
     function renderSidebar(groupKey, subKey) {
       if (typeof menuData === "undefined") return;
+
       const data = menuData[groupKey];
       if (!data) return;
 
@@ -873,95 +839,204 @@
       if (titleElem) titleElem.textContent = data.title;
       ul.innerHTML = "";
 
-      if (data.hasSubTabs && subTabsContainer) {
-        subTabsContainer.style.display = "block";
-        subTabsContainer.innerHTML = "";
+      if (!data.hasSubTabs || !subTabsContainer) return;
 
-        if (!subKey || !data.subTabs[subKey]) {
-          subKey = Object.keys(data.subTabs)[0];
+      subTabsContainer.style.display = "block";
+      subTabsContainer.innerHTML = "";
+
+      if (!subKey || !data.subTabs[subKey]) {
+        subKey = Object.keys(data.subTabs)[0];
+      }
+
+      const searchEnabled = groupKey === "group1" || groupKey === "group2";
+      const searchStorageKey = `toc-search:${groupKey}:${subKey}`;
+
+      for (const sKey in data.subTabs) {
+        const btn = document.createElement("button");
+        btn.textContent = data.subTabs[sKey].name;
+        btn.style.marginRight = "5px";
+        btn.style.cursor = "pointer";
+
+        if (sKey === subKey) {
+          btn.style.fontWeight = "bold";
+          btn.style.backgroundColor = "#ddd";
         }
 
+        btn.addEventListener("click", function () {
+          const newUrl = new URL(window.location);
+          newUrl.searchParams.set("group", groupKey);
+          newUrl.searchParams.set("sub", sKey);
+          window.history.pushState({}, "", newUrl);
+          initSidebar();
+        });
+
+        subTabsContainer.appendChild(btn);
+      }
+
+      let searchInput = null;
+
+      if (searchEnabled) {
+        searchInput = document.createElement("input");
+        searchInput.type = "search";
+        searchInput.placeholder = "목차 검색";
+        searchInput.setAttribute("aria-label", "목차 검색");
+
+        const savedOption = JSON.parse(localStorage.getItem("option") || "{}");
+        searchInput.value =
+          savedOption["toc-search"]?.[searchStorageKey] || "";
+
+        searchInput.style.display = "block";
+        searchInput.style.boxSizing = "border-box";
+        searchInput.style.width = "88%";
+        searchInput.style.marginTop = "8px";
+        searchInput.style.padding = "8px 10px";
+        searchInput.style.border = "1px solid #ccc";
+        searchInput.style.borderRadius = "4px";
+        searchInput.style.fontSize = "14px";
+
+        subTabsContainer.appendChild(searchInput);
+        subTabsContainer.style.marginBottom = "10px";
+      } else {
         subTabsContainer.style.marginBottom = "-20px";
-        for (let sKey in data.subTabs) {
-          const btn = document.createElement("button");
-          btn.textContent = data.subTabs[sKey].name;
-          btn.style.marginRight = "5px";
-          btn.style.cursor = "pointer";
+      }
 
-          if (sKey === subKey) {
-            btn.style.fontWeight = "bold";
-            btn.style.backgroundColor = "#ddd";
-          }
+      const subData = data.subTabs[subKey];
+      if (!subData || !subData.categories) return;
 
-          btn.addEventListener("click", function () {
-            const newUrl = new URL(window.location);
-            newUrl.searchParams.set("group", groupKey);
-            newUrl.searchParams.set("sub", sKey);
-            window.history.pushState({}, '', newUrl);
+      const categoryEntries = [];
 
-            initSidebar();
-          });
-          subTabsContainer.appendChild(btn);
-        }
+      subData.categories.forEach(cat => {
+        const catLi = document.createElement("li");
+        catLi.textContent = "📁 " + cat.catTitle;
+        catLi.style.fontWeight = "bold";
+        catLi.style.marginTop = "50px";
+        catLi.style.color = "#234";
+        catLi.style.listStyle = "none";
+        catLi.style.paddingLeft = "0";
+        ul.appendChild(catLi);
 
-        const subData = data.subTabs[subKey];
-        if (subData && subData.categories) {
-          subData.categories.forEach(cat => {
-            const catLi = document.createElement("li");
-            catLi.textContent = "📁 " + cat.catTitle;
-            catLi.style.fontWeight = "bold";
-            catLi.style.marginTop = "50px";
-            catLi.style.color = "#234";
-            catLi.style.listStyle = "none";
-            catLi.style.paddingLeft = "0";
-            ul.appendChild(catLi);
+        const categoryEntry = {
+          element: catLi,
+          sections: []
+        };
 
-            cat.sections.forEach(sec => {
-              const titleLi = document.createElement("li");
-              titleLi.textContent = "📂 " + sec.secTitle;
-              titleLi.style.fontWeight = "bold";
-              titleLi.style.marginTop = "5px";
-              titleLi.style.marginLeft = "20px";
-              titleLi.style.color = "#456";
-              titleLi.style.listStyle = "none";
-              titleLi.style.paddingLeft = "0";
-              ul.appendChild(titleLi);
+        cat.sections.forEach(sec => {
+          const sectionLi = document.createElement("li");
+          sectionLi.textContent = "📂 " + sec.secTitle;
+          sectionLi.style.fontWeight = "bold";
+          sectionLi.style.marginTop = "5px";
+          sectionLi.style.marginLeft = "20px";
+          sectionLi.style.color = "#456";
+          sectionLi.style.listStyle = "none";
+          sectionLi.style.paddingLeft = "0";
+          ul.appendChild(sectionLi);
 
-              sec.items.forEach(item => {
-                const li = document.createElement("li");
-                li.style.marginLeft = "45px";
+          const sectionEntry = {
+            element: sectionLi,
+            items: []
+          };
 
-                const a = document.createElement("a");
+          sec.items.forEach(item => {
+            const li = document.createElement("li");
+            li.style.marginLeft = "45px";
 
-                let finalItemUrl = item.url;
-                if (finalItemUrl && !finalItemUrl.startsWith("#")) {
-                  const sep = finalItemUrl.includes("?") ? "&" : "?";
-                  finalItemUrl = `${finalItemUrl}${sep}group=${groupKey}&sub=${subKey}`;
-                }
+            const a = document.createElement("a");
 
-                a.href = finalItemUrl;
-                a.textContent = item.text;
+            let finalItemUrl = item.url;
+            if (finalItemUrl && !finalItemUrl.startsWith("#")) {
+              const sep = finalItemUrl.includes("?") ? "&" : "?";
+              finalItemUrl = `${finalItemUrl}${sep}group=${groupKey}&sub=${subKey}`;
+            }
 
-                a.onclick = function (e) {
-                  e.preventDefault();
-                  e.stopPropagation();
+            a.href = finalItemUrl;
+            a.textContent = item.text;
 
-                  if (finalItemUrl.startsWith("#")) {
-                    window.location.hash = finalItemUrl;
-                  } else {
-                    window.location.href = finalItemUrl;
-                  }
-                };
+            a.onclick = function (e) {
+              e.preventDefault();
+              e.stopPropagation();
 
-                li.appendChild(a);
-                ul.appendChild(li);
-              });
+              if (finalItemUrl.startsWith("#")) {
+                window.location.hash = finalItemUrl;
+              } else {
+                window.location.href = finalItemUrl;
+              }
+            };
+
+            li.appendChild(a);
+            ul.appendChild(li);
+
+            const codeMatch = item.text.match(/^\s*(\d+(?:-\d+)*)/);
+
+            sectionEntry.items.push({
+              element: li,
+              code: codeMatch ? codeMatch[1] : "",
+              searchText: `${cat.catTitle} ${sec.secTitle} ${item.text}`.toLowerCase()
             });
           });
-        }
+
+          categoryEntry.sections.push(sectionEntry);
+        });
+
+        categoryEntries.push(categoryEntry);
+      });
+
+      if (searchInput) {
+        const applySearch = () => {
+          const query = searchInput.value.trim().toLowerCase();
+          const isCodeQuery = /^\d+(?:-\d+)*$/.test(query);
+
+          const savedOption = JSON.parse(localStorage.getItem("option") || "{}");
+          savedOption["toc-search"] ??= {};
+          savedOption["toc-search"][searchStorageKey] = searchInput.value;
+          localStorage.setItem("option", JSON.stringify(savedOption));
+
+          if (!query) {
+            categoryEntries.forEach(category => {
+              category.element.style.removeProperty("display");
+
+              category.sections.forEach(section => {
+                section.element.style.removeProperty("display");
+
+                section.items.forEach(item => {
+                  item.element.style.removeProperty("display");
+                });
+              });
+            });
+
+            return;
+          }
+
+          categoryEntries.forEach(category => {
+            let categoryHasMatch = false;
+
+            category.sections.forEach(section => {
+              const sectionHasMatch = section.items.some(item => {
+                if (isCodeQuery) {
+                  return item.code === query || item.code.startsWith(`${query}-`);
+                }
+
+                return item.searchText.includes(query);
+              });
+
+              section.items.forEach(item => {
+                item.element.style.display = sectionHasMatch ? "" : "none";
+              });
+
+              section.element.style.display = sectionHasMatch ? "" : "none";
+
+              if (sectionHasMatch) {
+                categoryHasMatch = true;
+              }
+            });
+
+            category.element.style.display = categoryHasMatch ? "" : "none";
+          });
+        };
+
+        searchInput.addEventListener("input", applySearch);
+        applySearch();
       }
     }
-
     document.querySelectorAll(".cat-tab").forEach(tab => {
       tab.addEventListener("click", function (e) {
         e.preventDefault();
