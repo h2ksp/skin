@@ -76,19 +76,19 @@ const menuData = {
                 secTitle: "2-1　가설물의 한도",
                 items: [
                   { text: "2-1-1　현장사무소 등의 규모(토목)", url: "https://study-with-words.blogspot.com/2026/10/blog-post_308.html" },
-                  { text: "2-1-2　현장사무소 등의 규모(건축 및 기계설비)", url: "#1-1" },
+                  { text: "2-1-2　현장사무소 등의 규모(건축 및 기계설비)", url: "https://study-with-words.blogspot.com/2026/10/2-1-2.html" },
                 ]
               },
               {
                 secTitle: "2-2　손율",
                 items: [
-                  { text: "2-2-1　적용기준", url: "#1-2" },
-                  { text: "2-2-2　주요자재", url: "#1-2" },
-                  { text: "2-2-3　가설시설물", url: "#1-2" },
-                  { text: "2-2-4　구조물 동바리", url: "#1-2" },
-                  { text: "2-2-5　구조물 비계", url: "#1-2" },
-                  { text: "2-2-6　축중계", url: "#1-2" },
-                  { text: "2-2-7　규준틀", url: "#1-2" },
+                  { text: "2-2-1　적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_27.html?group=group1&sub=sub1" },
+                  { text: "2-2-2　주요자재", url: "https://study-with-words.blogspot.com/2026/10/blog-post_514.html" },
+                  { text: "2-2-3　가설시설물", url: "https://study-with-words.blogspot.com/2026/10/blog-post_937.html" },
+                  { text: "2-2-4　구조물 동바리", url: "https://study-with-words.blogspot.com/2026/10/blog-post_867.html" },
+                  { text: "2-2-5　구조물 비계", url: "https://study-with-words.blogspot.com/2026/10/blog-post_494.html" },
+                  { text: "2-2-6　축중계", url: "https://study-with-words.blogspot.com/2026/10/blog-post_650.html" },
+                  { text: "2-2-7　규준틀", url: "https://study-with-words.blogspot.com/2026/10/blog-post_264.html" },
                 ]
               },
               {
@@ -3345,6 +3345,7 @@ const menuData = {
                 secTitle: "최신",
                 items:
                   [
+                    { text: "단가검색", url: "https://study-with-words.blogspot.com/2026/10/blog-post_778.html?group=group3&sub=sub1" },
                     { text: "연료가격", url: "https://study-with-words.blogspot.com/2026/10/blog-post_08.html" },
                     { text: "노임단가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
                   ]
