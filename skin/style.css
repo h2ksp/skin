@@ -1,7 +1,10 @@
 /* 한글 공문서/품셈용 HCR Batang(함초롬바탕) 웹폰트 */
 @import url('https://cdn.jsdelivr.net/gh/webfontworld/hancom/HCRBatang.css');
 
-/* 전체 컨테이너: 폰트 일괄 통일 */
+
+/* ========================================
+   전체 컨테이너: 폰트 일괄 통일
+======================================== */
 #print-container {
   width: 100%;
   box-sizing: border-box;
@@ -12,10 +15,13 @@
 }
 
 
-/* 기본 테두리 + 가운데 정렬 */
+/* ========================================
+   기본 표: 사방 테두리 표시
+======================================== */
 .tbl {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid #000;
   text-align: center;
 }
 
@@ -23,30 +29,57 @@
 .tbl td {
   border: 1px solid #000;
   padding: 2px 6px;
+  box-sizing: border-box;
 }
 
-/* 헤더 회색 배경 */
+
+/* ========================================
+   표 헤더: 회색 배경
+======================================== */
 .tbl thead th {
   background-color: #e9e9e9;
   font-weight: normal;
 }
 
-/* 스타일 2: 좌우 선 없는 표 */
-.tbl.open th:first-child,
-.tbl.open td:first-child {
+
+/* ========================================
+   open 표: 바깥쪽 좌우 테두리 제거
+
+   중요:
+   .tbl.open 바로 아래의 행에 속한 셀에만 적용.
+   내부 td 안에 중첩된 .tbl에는 적용하지 않음.
+======================================== */
+
+/* 첫 번째 열의 왼쪽 테두리 제거 */
+.tbl.open>thead>tr>th:first-child,
+.tbl.open>tbody>tr>td:first-child,
+.tbl.open>tbody>tr>th:first-child,
+.tbl.open>tfoot>tr>td:first-child,
+.tbl.open>tfoot>tr>th:first-child {
   border-left: none;
 }
 
-.tbl.open th:last-child,
-.tbl.open td:last-child {
+/* 마지막 열의 오른쪽 테두리 제거 */
+.tbl.open>thead>tr>th:last-child,
+.tbl.open>tbody>tr>td:last-child,
+.tbl.open>tbody>tr>th:last-child,
+.tbl.open>tfoot>tr>td:last-child,
+.tbl.open>tfoot>tr>th:last-child {
   border-right: none;
 }
 
-/* 왼쪽 정렬 */
+
+/* ========================================
+   왼쪽 정렬
+======================================== */
 .tbl .tl {
   text-align: left;
 }
 
+
+/* ========================================
+   참고사항용 표
+======================================== */
 .tbl-note {
   border-collapse: collapse;
   margin-top: 8px;
@@ -58,14 +91,23 @@
   padding: 2px 3px;
 }
 
-/* 표 상단 우측 단위 표시용 */
+
+/* ========================================
+   표 상단 우측 단위 표시
+======================================== */
 .tbl caption {
   text-align: right;
   caption-side: top;
   margin-bottom: 4px;
 }
 
+
+/* ========================================
+   표 관련 텍스트
+======================================== */
 .tbl-text {
   font-size: 16px;
   margin: 6px 0;
 }
+
+```

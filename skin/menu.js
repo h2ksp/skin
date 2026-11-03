@@ -2348,37 +2348,37 @@ const menuData = {
                   { text: "1-2-2　일반전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_250.html?group=group1&sub=sub5" },
                   { text: "1-2-3　조형전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_557.html?group=group1&sub=sub5" },
                   { text: "1-2-4　가로수 전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_528.html?group=group1&sub=sub5" },
-                  { text: "1-2-5　관목 전정", url: "#1-2" },
-                  { text: "1-2-6　수간보호", url: "#1-2" },
-                  { text: "1-2-7　줄기싸주기", url: "#1-2" },
-                  { text: "1-2-8　인력관수", url: "#1-2" },
-                  { text: "1-2-9　살수차관수", url: "#1-2" },
-                  { text: "1-2-10　제초", url: "#1-2" },
-                  { text: "1-2-11　잔디깍기", url: "#1-2" },
-                  { text: "1-2-12　예초", url: "#1-2" },
-                  { text: "1-2-13　교목시비(喬木施肥)", url: "#1-2" },
-                  { text: "1-2-14　관목시비(灌木施肥)", url: "#1-2" },
-                  { text: "1-2-15　잔디시비", url: "#1-2" },
-                  { text: "1-2-16　약제살포(기계)", url: "#1-2" },
-                  { text: "1-2-17　약제살포(인력)", url: "#1-2" },
-                  { text: "1-2-18　방풍벽 설치(거적세우기)", url: "#1-2" },
-                  { text: "1-2-19　은행나무 과실채취", url: "#1-2" },
-                  { text: "1-2-20　가로수 제거", url: "#1-2" },
+                  { text: "1-2-5　관목 전정", url: "https://study-with-words.blogspot.com/2026/10/blog-post_28.html?group=group1&sub=sub5" },
+                  { text: "1-2-6　수간보호", url: "https://study-with-words.blogspot.com/2026/10/blog-post_499.html?group=group1&sub=sub5" },
+                  { text: "1-2-7　줄기싸주기", url: "https://study-with-words.blogspot.com/2026/10/blog-post_103.html?group=group1&sub=sub5" },
+                  { text: "1-2-8　인력관수", url: "https://study-with-words.blogspot.com/2026/10/blog-post_420.html?group=group1&sub=sub5" },
+                  { text: "1-2-9　살수차관수", url: "https://study-with-words.blogspot.com/2026/10/blog-post_104.html?group=group1&sub=sub5" },
+                  { text: "1-2-10　제초", url: "https://study-with-words.blogspot.com/2026/10/blog-post_41.html?group=group1&sub=sub5" },
+                  { text: "1-2-11　잔디깍기", url: "https://study-with-words.blogspot.com/2026/10/blog-post_187.html?group=group1&sub=sub5" },
+                  { text: "1-2-12　예초", url: "https://study-with-words.blogspot.com/2026/10/blog-post_353.html?group=group1&sub=sub5" },
+                  { text: "1-2-13　교목시비(喬木施肥)", url: "https://study-with-words.blogspot.com/2026/10/blog-post_717.html?group=group1&sub=sub5" },
+                  { text: "1-2-14　관목시비(灌木施肥)", url: "https://study-with-words.blogspot.com/2026/11/1-2-14.html?group=group1&sub=sub5" },
+                  { text: "1-2-15　잔디시비", url: "https://study-with-words.blogspot.com/2026/11/1-2-15.html?group=group1&sub=sub5" },
+                  { text: "1-2-16　약제살포(기계)", url: "https://study-with-words.blogspot.com/2026/11/1-2-16.html?group=group1&sub=sub5" },
+                  { text: "1-2-17　약제살포(인력)", url: "https://study-with-words.blogspot.com/2026/11/1-2-17.html?group=group1&sub=sub5" },
+                  { text: "1-2-18　방풍벽 설치(거적세우기)", url: "https://study-with-words.blogspot.com/2026/11/1-2-20_0542575597.html?group=group1&sub=sub5" },
+                  { text: "1-2-19　은행나무 과실채취", url: "https://study-with-words.blogspot.com/2026/11/1-2-19.html?group=group1&sub=sub5" },
+                  { text: "1-2-20　가로수 제거", url: "https://study-with-words.blogspot.com/2026/11/1-2-20.html?group=group1&sub=sub5" },
                 ]
               },
               {
                 secTitle: "1-3　철근콘크리트공사",
                 items: [
-                  { text: "1-3-1　콘크리트 균열 보수(표면처리공법)", url: "#1-1" },
-                  { text: "1-3-2　콘크리트 균열 보수(주입공법)", url: "#1-1" },
-                  { text: "1-3-3　콘크리트 균열 보수(패커주입공법)", url: "#1-1" },
-                  { text: "1-3-4　콘크리트 균열 보수(충전공법)", url: "#1-1" },
-                  { text: "1-3-5　콘크리트 단면처리", url: "#1-1" },
-                  { text: "1-3-6　콘크리트 단면복구", url: "#1-1" },
-                  { text: "1-3-7　워터젯 치핑", url: "#1-1" },
-                  { text: "1-3-8　교량받침 교체", url: "#1-1" },
-                  { text: "1-3-9　교량신축이음 교체", url: "#1-1" },
-                  { text: "1-3-10　플륨관 해체", url: "#1-1" },
+                  { text: "1-3-1　콘크리트 균열 보수(표면처리공법)", url: "https://study-with-words.blogspot.com/2026/11/1-3-1.html?group=group1&sub=sub5" },
+                  { text: "1-3-2　콘크리트 균열 보수(주입공법)", url: "https://study-with-words.blogspot.com/2026/11/1-3-2.html?group=group1&sub=sub5" },
+                  { text: "1-3-3　콘크리트 균열 보수(패커주입공법)", url: "https://study-with-words.blogspot.com/2026/11/1-3-3.html?group=group1&sub=sub5" },
+                  { text: "1-3-4　콘크리트 균열 보수(충전공법)", url: "https://study-with-words.blogspot.com/2026/11/1-3-4.html?group=group1&sub=sub5" },
+                  { text: "1-3-5　콘크리트 단면처리", url: "https://study-with-words.blogspot.com/2026/11/1-3-5.html?group=group1&sub=sub5" },
+                  { text: "1-3-6　콘크리트 단면복구", url: "https://study-with-words.blogspot.com/2026/11/1-3-6.html?group=group1&sub=sub5" },
+                  { text: "1-3-7　워터젯 치핑", url: "https://study-with-words.blogspot.com/2026/11/1-3-7.html?group=group1&sub=sub5" },
+                  { text: "1-3-8　교량받침 교체", url: "https://study-with-words.blogspot.com/2026/11/1-3-8.html?group=group1&sub=sub5" },
+                  { text: "1-3-9　교량신축이음 교체", url: "https://study-with-words.blogspot.com/2026/11/1-3-9.html?group=group1&sub=sub5" },
+                  { text: "1-3-10　플륨관 해체", url: "https://study-with-words.blogspot.com/2026/11/1-3-10.html?group=group1&sub=sub5" },
                 ]
               },
 
@@ -2556,8 +2556,8 @@ const menuData = {
               {
                 secTitle: "4-3　수선 및 보수공사",
                 items: [
-                  { text: "4-3-1　유량계 교체", url: "#1-1" },
-                  { text: "4-3-2　관갱생공", url: "#1-1" },
+                  { text: "4-3-1　유량계 교체", url: "https://study-with-words.blogspot.com/2026/11/4-3-1.html?group=group1&sub=sub5" },
+                  { text: "4-3-2　관갱생공", url: "https://study-with-words.blogspot.com/2026/11/4-3-2.html?group=group1&sub=sub5" },
                   { text: "4-3-3　배관누수 검사", url: "#1-1" },
                 ]
               },
@@ -3372,24 +3372,6 @@ const menuData = {
         ]
       },
 
-      // 샘플 공사비 메뉴
-      sub4: {
-        name: "샘플 공사비",
-        categories: [
-          {
-            catTitle: "익스테리어",
-            sections: [
-              {
-                secTitle: "소제목 1",
-                items:
-                  [
-                    { text: "글자4 1파트 글1", url: "#4-1" }
-                  ]
-              }
-            ]
-          }
-        ]
-      },
 
       // 기계경비 메뉴
       sub3: {
@@ -3703,24 +3685,6 @@ const menuData = {
         ]
       },
 
-      // 물량산출 메뉴
-      sub2: {
-        name: "물량산출",
-        categories: [
-          {
-            catTitle: "대분류 1",
-            sections: [
-              {
-                secTitle: "소제목 1",
-                items:
-                  [
-                    { text: "글자4 1파트 글1", url: "#4-1" }
-                  ]
-              }
-            ]
-          }
-        ]
-      },
 
       // XML파일 메뉴
       sub5: {
