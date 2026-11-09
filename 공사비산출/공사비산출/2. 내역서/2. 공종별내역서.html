@@ -473,50 +473,11 @@
 
 </div>
 
-
 <script>
     function appData() {
         const option = JSON.parse(localStorage.getItem('option')) || {};
         const store = Alpine.store('dbStore');
         const activeProject = option?.activeProject || '';
-
-        // 💡 1. 자식 항목(Level 2) 기본 템플릿
-        const defaultChild = {
-            showCost: false, type: '', name: '', spec: '', unit: '', qty: 0,
-            item1: '', item2: '', item3: '', item4: 0,
-            item5: 0, item6: 0, item7: 0, item8: 0, item9: ''
-        };
-
-        // 💡 2. 자식 항목 단일 정제 함수
-        const formatChild = (c) => {
-            if (typeof c === 'string') return { ...defaultChild, name: c };
-            if (c && typeof c === 'object') return { ...defaultChild, ...c, showCost: !!c.showCost };
-            return { ...defaultChild };
-        };
-
-        // 💡 3. 메인 formatData 함수 (훨씬 짧아짐)
-        const formatData = (raw) => {
-            if (!raw) return {};
-
-            const result = {};
-            Object.keys(raw).forEach(k => {
-                if (!Array.isArray(raw[k])) return;
-
-                result[k] = raw[k].map(item => {
-                    if (typeof item === 'string') return { name: item, children: [] };
-                    if (item && typeof item === 'object') {
-                        const rawChildren = Array.isArray(item.children) ? item.children : [];
-                        return {
-                            name: item.name || '',
-                            children: rawChildren.map(formatChild)
-                        };
-                    }
-                    return { name: '', children: [] };
-                });
-            });
-
-            return result;
-        };
 
         return {
             init() { },
@@ -525,18 +486,22 @@
             projectList: option?.projectList || [],
             store: store,
 
+            // 현재 프로젝트의 그룹 목록 가져오기
             groupList: (activeProject && store.cost[activeProject]?.옵션?.그룹명) || [],
             activeGroup: (activeProject && store.cost[activeProject]?.옵션?.activeGroup !== undefined)
                 ? store.cost[activeProject].옵션.activeGroup : '',
 
-            subGroupList: formatData(activeProject && store.cost[activeProject]?.공종별내역서),
+            // 공종별 내역서 데이터 (없으면 빈 객체)
+            subGroupList: (activeProject && store.cost[activeProject]?.공종별내역서) || {},
 
+            // [역할] 선택한 프로젝트를 변경하고 로컬스토리지 및 관련 데이터를 세팅하는 함수
             saveActiveProject() {
                 option.activeProject = this.activeProject;
                 localStorage.setItem('option', JSON.stringify(option));
+
                 if (this.activeProject && store.cost[this.activeProject]?.옵션?.그룹명) {
                     this.groupList = store.cost[this.activeProject].옵션.그룹명;
-                    this.subGroupList = formatData(store.cost[this.activeProject].공종별내역서);
+                    this.subGroupList = store.cost[this.activeProject].공종별내역서 || {};
                 } else {
                     this.groupList = [];
                     this.subGroupList = {};
@@ -544,42 +509,23 @@
                 this.activeGroup = '';
             },
 
+            // [역할] 2차 항목의 타입(일반, 일위대가 등)에 따른 분기 처리 함수
             handleOptionLink(lvl2) {
                 switch (lvl2.type) {
-                    case '일반':
-                        console.log('옵션 1 실행', lvl2);
-                        break;
-                    case '일위대가':
-                        console.log('옵션 2 실행', lvl2);
-                        break;
-                    case '건설기계':
-                        console.log('옵션 3 실행', lvl2);
-                        break;
-                    case '표준시장단가':
-                        console.log('옵션 4 실행', lvl2);
-                        break;
+                    case '일반': console.log('옵션 1 실행', lvl2); break;
+                    case '일위대가': console.log('옵션 2 실행', lvl2); break;
+                    case '건설기계': console.log('옵션 3 실행', lvl2); break;
+                    case '표준시장단가': console.log('옵션 4 실행', lvl2); break;
                 }
             },
 
+            // [역할] 타입 변경 시 콘솔 로그를 남기고 스토어에 저장하는 함수
             handleTypeChange(lvl2) {
                 console.log("선택된 타입:", lvl2);
-                switch (lvl2.type) {
-                    case '일반':
-                        console.log("일반 타입 처리");
-                        break;
-                    case '일위대가':
-                        console.log("일위대가 타입 처리");
-                        break;
-                    case '건설기계':
-                        console.log("건설기계 타입 처리");
-                        break;
-                    case '표준시장단가':
-                        console.log("표준시장단가 타입 처리");
-                        break;
-                }
                 this.saveToStore();
             },
 
+            // [역할] 활성 그룹 저장 및 하단 바(Bottom Bar)의 UI 표시 여부를 제어하는 함수
             saveActiveGroup() {
                 option.activeGroup = this.activeGroup;
                 const bottomBar = this.$refs.bottomBar;
@@ -598,14 +544,8 @@
                 this.saveToStore();
             },
 
-            moneyView() {
-                this.showMoney = !this.showMoney;
-            },
-
-            // 💡 2. 입력시 실시간 계산 전용 함수 추가! (HTML에서 @input="calcItems(lvl2)" 호출)
-            // appData() 리턴 객체 내부
+            // [역할] 입력창에 숫자를 입력할 때 콤마(,)를 적용하고 실시간으로 금액을 계산해 주는 함수
             calcItems(lvl2, field, event) {
-                // 💡 1. 사용자가 입력한 값 처리 (콤마 제거 후 콤마 재적용)
                 let rawVal = event.target.value.replace(/,/g, '');
 
                 if (isNaN(rawVal) || rawVal === '') {
@@ -616,7 +556,6 @@
                     event.target.value = lvl2[field];
                 }
 
-                // 💡 2. 계산용 순수 숫자 변환 함수
                 const getNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
 
                 const unit = getNum(lvl2.unit);
@@ -624,57 +563,54 @@
                 const i2 = getNum(lvl2.item2);
                 const i3 = getNum(lvl2.item3);
 
-                // 💡 3. 계산 수행 후 결과값들에 콤마(,) 포맷팅 적용!
                 const item4Val = i1 + i2 + i3;
                 const item5Val = i1 * unit;
                 const item6Val = i2 * unit;
                 const item7Val = i3 * unit;
                 const item8Val = item5Val + item6Val + item7Val;
 
-                // 콤마 붙여서 데이터 모델에 저장 (0일 경우 빈값 '' 처리 원하면 조정 가능)
                 lvl2.item4 = item4Val ? item4Val.toLocaleString('ko-KR') : '0';
                 lvl2.item5 = item5Val ? item5Val.toLocaleString('ko-KR') : '0';
                 lvl2.item6 = item6Val ? item6Val.toLocaleString('ko-KR') : '0';
                 lvl2.item7 = item7Val ? item7Val.toLocaleString('ko-KR') : '0';
                 lvl2.item8 = item8Val ? item8Val.toLocaleString('ko-KR') : '0';
 
-                // 데이터 저장
                 this.saveToStore();
             },
 
-            // appData() 리턴 객체 내부에 추가
+            // [역할] 숫자에 3자리마다 콤마(,)를 찍어주는 포맷터 함수
             formatNumber(val) {
                 if (val === null || val === undefined || val === '') return '0';
-                // 숫자 타입으로 변환 후 3자리마다 콤마 찍기
                 return Number(val).toLocaleString('ko-KR');
             },
 
-            // 1차 항목 추가 시 계산식 (상위 1차 합계)
+            // [역할] 1차 항목을 추가하고 하위 합계 계산용 get 속성을 부여하는 함수
             addLevel1(gIndex) {
                 if (!this.subGroupList[gIndex]) {
                     this.subGroupList[gIndex] = [];
                 }
+                
                 this.subGroupList[gIndex].push({
                     name: '',
                     children: [],
                     get 재료비() {
-                        return this.children.reduce((sum, c) => sum + (Number(c.item5) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.item5).replace(/,/g, '')) || 0), 0);
                     },
                     get 노무비() {
-                        return this.children.reduce((sum, c) => sum + (Number(c.item6) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.item6).replace(/,/g, '')) || 0), 0);
                     },
                     get 경비() {
-                        return this.children.reduce((sum, c) => sum + (Number(c.item7) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.item7).replace(/,/g, '')) || 0), 0);
                     },
                     get 합계() {
                         return this.재료비 + this.노무비 + this.경비;
-                    },
+                    }
                 });
-                this.subGroupList = { ...this.subGroupList };
+
                 this.saveToStore();
             },
 
-            // 💡 3. addLevel2에서도 get 속성을 제거하고 기본값 세팅
+            // [역할] 특정 1차 항목 아래에 새로운 2차(자식) 항목을 추가하는 함수
             addLevel2(gIndex, l1Index) {
                 if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
                 if (!this.subGroupList[gIndex][l1Index].children) {
@@ -696,95 +632,98 @@
                     item6: 0,
                     item7: 0,
                     item8: 0,
-                    item9: '',
+                    item9: ''
                 });
-                this.subGroupList = { ...this.subGroupList };
+
                 this.saveToStore();
             },
 
+            // [역할] 특정 2차 항목을 삭제하는 함수
             deleteLevel2(gIndex, l1Index, l2Index) {
                 if (!this.subGroupList[gIndex] || !this.subGroupList[gIndex][l1Index]) return;
                 this.subGroupList[gIndex][l1Index].children.splice(l2Index, 1);
-                this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
+            // [역할] 확인 팝업을 띄운 뒤 특정 1차 항목(하위 품목 포함)을 삭제하는 함수
             deleteLevel1(gIndex, l1Index) {
                 if (!this.subGroupList[gIndex]) return;
                 const targetName = this.subGroupList[gIndex][l1Index]?.name || '1차 하위 항목';
                 if (confirm(`'${targetName}' 항목을 삭제하겠습니까?\n(하위 품목도 함께 삭제됩니다)`)) {
                     this.subGroupList[gIndex].splice(l1Index, 1);
-                    this.subGroupList = { ...this.subGroupList };
                     this.saveToStore();
                 }
             },
 
+            // [역할] 그룹의 순서를 위로 한 칸 올리는 함수
             moveUpGroup(gIndex) {
                 if (gIndex <= 0) return;
                 const tempG = this.groupList[gIndex];
                 this.groupList[gIndex] = this.groupList[gIndex - 1];
                 this.groupList[gIndex - 1] = tempG;
+
                 const tempSub = this.subGroupList[gIndex];
                 this.subGroupList[gIndex] = this.subGroupList[gIndex - 1];
                 this.subGroupList[gIndex - 1] = tempSub;
-                this.groupList = [...this.groupList];
-                this.subGroupList = { ...this.subGroupList };
+
                 this.saveToStore();
             },
 
+            // [역할] 그룹의 순서를 아래로 한 칸 내리는 함수
             moveDownGroup(gIndex) {
                 if (gIndex >= this.groupList.length - 1) return;
                 const tempG = this.groupList[gIndex];
                 this.groupList[gIndex] = this.groupList[gIndex + 1];
                 this.groupList[gIndex + 1] = tempG;
+
                 const tempSub = this.subGroupList[gIndex];
                 this.subGroupList[gIndex] = this.subGroupList[gIndex + 1];
                 this.subGroupList[gIndex + 1] = tempSub;
-                this.groupList = [...this.groupList];
-                this.subGroupList = { ...this.subGroupList };
+
                 this.saveToStore();
             },
 
+            // [역할] 1차 항목의 순서를 위로 한 칸 올리는 함수
             moveUpLevel1(gIndex, l1Index) {
                 if (l1Index <= 0) return;
                 const targetList = this.subGroupList[gIndex];
                 const temp = targetList[l1Index];
                 targetList[l1Index] = targetList[l1Index - 1];
                 targetList[l1Index - 1] = temp;
-                this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
+            // [역할] 1차 항목의 순서를 아래로 한 칸 내리는 함수
             moveDownLevel1(gIndex, l1Index) {
                 const targetList = this.subGroupList[gIndex];
                 if (l1Index >= targetList.length - 1) return;
                 const temp = targetList[l1Index];
                 targetList[l1Index] = targetList[l1Index + 1];
                 targetList[l1Index + 1] = temp;
-                this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
+            // [역할] 2차 항목의 순서를 위로 한 칸 올리는 함수
             moveUpLevel2(gIndex, l1Index, l2Index) {
                 if (l2Index <= 0) return;
                 const targetList = this.subGroupList[gIndex][l1Index].children;
                 const temp = targetList[l2Index];
                 targetList[l2Index] = targetList[l2Index - 1];
                 targetList[l2Index - 1] = temp;
-                this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
+            // [역할] 2차 항목의 순서를 아래로 한 칸 내리는 함수
             moveDownLevel2(gIndex, l1Index, l2Index) {
                 const targetList = this.subGroupList[gIndex][l1Index].children;
                 if (l2Index >= targetList.length - 1) return;
                 const temp = targetList[l2Index];
                 targetList[l2Index] = targetList[l2Index + 1];
                 targetList[l2Index + 1] = temp;
-                this.subGroupList = { ...this.subGroupList };
                 this.saveToStore();
             },
 
+            // [역할] 현재 변경된 데이터를 스토어에 반영하고 store.save()를 호출해 로컬스토리지에 저장하는 공통 함수
             saveToStore() {
                 if (store.cost[this.activeProject]) {
                     if (!store.cost[this.activeProject].옵션) {
@@ -793,10 +732,13 @@
                     store.cost[this.activeProject].옵션.그룹명 = this.groupList;
                     store.cost[this.activeProject].옵션.activeGroup = this.activeGroup;
                     store.cost[this.activeProject].공종별내역서 = this.subGroupList;
-                    store._saveData(store.cost);
+                    
+                    // 💡 스토어의 가벼운 save() 함수 호출로 일원화!
+                    store.save();
                 }
             },
 
+            // [역할] 프롬프트 창을 띄워 공종명 목록을 콤마(,) 기준으로 수정하는 함수
             editGroups() {
                 const currentStr = this.groupList.join(', ');
                 const userInput = prompt('공종명 목록을 콤마(,)로 구분해서 수정해 주세요:', currentStr);
@@ -808,222 +750,6 @@
                     this.activeGroup = '';
                     this.saveToStore();
                 }
-            }
-        };
-    }
-</script>
-
-<script>
-    function materialSearch() {
-        return {
-            // API 엔드포인트 객체 배열 (각 항목마다 excludeKeys, keyMap 독립 보유)
-            apiList: [
-                {
-                    id: "civil",
-                    name: "1. 토목 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/1.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
-                    // 💡 토목 전용 제외 키
-                    excludeKeys: [
-                        "prceNticeNo", "bsnsDivCd", "bsnsDivNm", "prdctClsfcNo", "prdctIdntNo", "invstDeptNm", "invstDeptTelNo", "invstOfclNm",
-                        "cntrctCorpNm", "cntrctCorpTelNo", "splyJrsdctRgnNm", "etcCntnts", "mtrlcst", "lbrcst", "gnrlexpns", "prodctFld", "distbStep",
-                        "payCndtn", "treekndNo", "specThtLen", "specWtrtbBtLen", "specWtrtbLen", "specBhtDmLen", "specRootDmLen"
-                    ],
-                    // 💡 토목 전용 한글 컬럼 매핑
-                    keyMap: {
-                        "nticeDt": "공고일",
-                        "prdctClsfcNoNm": "품명",
-                        "krnPrdctNm": "규격",
-                        "unit": "단위",
-                        "prce": "가격(원)",
-                        "vatYnNm": "부가세 여부",
-                        "prceDiv": "가격구분",
-                        "dlvryCndtnNm": "납품조건"
-                    }
-                },
-                {
-                    id: "architecture",
-                    name: "2. 건축 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/2.건축자재URL.json",
-                    // 💡 건축 전용 제외 키 (예시)
-                    excludeKeys: [
-                        "bsnsDivCd", "invstDeptNm", "etcCntnts"
-                    ],
-                    // 💡 건축 전용 한글 컬럼 매핑 (예시)
-                    keyMap: {
-                        "prdctClsfcNoNm": "건축 자재명",
-                        "specNm": "건축 규격",
-                        "prce": "단가"
-                    }
-                }
-            ],
-
-            selectedApiId: "civil",
-            searchNm: "",
-            statusMessage: "검색 버튼을 누르거나 분류를 선택하면 데이터를 불러옵니다.",
-            loading: false,
-            allItems: [],
-            filteredItems: [],
-            displayKeys: [],
-            columnMode: "all",
-
-            init() {
-                if (this.apiList.length > 0) {
-                    this.selectedApiId = this.apiList[0].id;
-                    this.loadData();
-                }
-            },
-
-            // 현재 선택된 API 객체 전체 가져오기
-            get currentApi() {
-                return this.apiList.find(api => api.id === this.selectedApiId) || this.apiList[0];
-            },
-
-            // 선택된 API의 keyMap 기준으로 컬럼 이름 반환
-            getColumnHeader(key) {
-                const map = this.currentApi.keyMap || {};
-                return map[key] || key; // 매핑된 이름 없으면 기본 키명 출력
-            },
-
-
-            // 💡 키값에 따라 표시 데이터를 가공하는 포맷터 함수 (switch 문 작성)
-            formatValue(key, val) {
-                if (val === undefined || val === null || val === "") return "";
-
-                switch (key) {
-                    case "prce": {
-                        const num = Number(val);
-                        return isNaN(num) ? val : num.toLocaleString("ko-KR");
-                    }
-
-                    case "nticeDt":
-                        return String(val).split(" ")[0];
-
-                    default:
-                        return val;
-                }
-            },
-
-
-            // 데이터 로드
-            async loadData() {
-                const api = this.currentApi;
-                if (!api || !api.url) return;
-
-                this.loading = true;
-                this.statusMessage = "GitHub 데이터 요청 중...";
-                this.filteredItems = [];
-                this.displayKeys = [];
-
-                const targetUrl = `${api.url}?v=${new Date().getTime()}`;
-
-                try {
-                    const response = await fetch(targetUrl);
-                    if (!response.ok) throw new Error(`HTTP 에러! 상태 코드: ${response.status}`);
-
-                    const jsonObj = await response.json();
-                    let rawItems = jsonObj?.response?.body?.items || jsonObj;
-
-                    if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
-                        this.statusMessage = "데이터가 비어있거나 불러올 수 없어.";
-                        this.loading = false;
-                        return;
-                    }
-
-                    this.allItems = Array.isArray(rawItems) ? rawItems : [rawItems];
-                    this.filterItems();
-
-                } catch (error) {
-                    console.error("오류 발생:", error);
-                    this.statusMessage = "데이터 로드 실패: " + error.message;
-                } finally {
-                    this.loading = false;
-                }
-            },
-
-            // 검색어 필터링 및 현재 API 기준 제외 키 반영
-            filterItems() {
-                if (this.allItems.length === 0) return;
-
-                const query = this.searchNm.trim().toLowerCase();
-                const api = this.currentApi;
-
-                // 💡 1. 검색어가 비어있으면 결과 및 키 목록 비우기
-                if (!query) {
-                    this.filteredItems = [];
-                    this.displayKeys = [];
-                    this.statusMessage = "검색어를 입력해줘.";
-                    return;
-                }
-
-                // 💡 2. 검색어가 있을 때만 필터링 수행
-                this.filteredItems = this.allItems.filter(
-                    item => item.prdctClsfcNoNm && item.prdctClsfcNoNm.toLowerCase().includes(query)
-                );
-
-                // 💡 3. 검색 결과가 없을 때 처리
-                if (this.filteredItems.length === 0) {
-                    this.statusMessage = `'${query}' 검색 결과가 없어.`;
-                    this.displayKeys = [];
-                    return;
-                }
-
-                this.statusMessage = `총 ${this.filteredItems.length}건 출력 완료 (전체 ${this.allItems.length}건 중)`;
-
-                // 💡 4. 하드코딩된 컬럼 계산 대신 라디오 버튼 상태를 반영하는 함수 호출!
-                this.updateDisplayKeys();
-            },
-
-
-            // 💡 1. 개별 항목 객체 전체를 전달받는 함수
-            selectItem(item) {
-                // 품명 또는 규격을 가져와서 메시지 구성
-                const title = item.prdctClsfcNoNm || '해당 자재';
-                const spec = item.krnPrdctNm ? ` (${item.krnPrdctNm})` : '';
-                const price = item.prce ? ` - ${this.formatValue('prce', item.prce)}원` : '';
-
-                // 💡 브라우저 기본 confirm 팝업
-                const isConfirmed = confirm(`'${title}${spec}' 자재를 추가/선택하시겠습니까?`);
-
-                if (isConfirmed) {
-                    // [확인] 누르면 실행될 로직
-                    console.log("선택된 자재:", item);
-                    alert(`'${title}' 항목이 등록되었습니다!`);
-
-                    // 예시: 내 장바구니/선택목록 배열이 있다면 추가
-                    // this.selectedList.push(item);
-                } else {
-                    // [취소] 누르면 아무 작업도 하지 않고 대화상자 닫힘
-                    console.log("선택 취소됨");
-                }
-            },
-
-            // updateDisplayKeys() 함수 내부
-            updateDisplayKeys() {
-                if (this.filteredItems.length === 0) return;
-
-                // 1. 항상 고정으로 보여줄 필수 키들
-                const fixedKeys = ["nticeDt", "prdctClsfcNoNm", "krnPrdctNm", "unit", "prce"];
-
-                // 2. 라디오 버튼 선택에 따라 뒤에 추가할 키들
-                let extraKeys = [];
-
-                switch (this.columnMode) {
-                    case "basic": // 거래/납품 조건
-                        extraKeys = ["vatYnNm", "dlvryCndtnNm"];
-                        break;
-
-                    case "price": // 가격 상세
-                        extraKeys = ["prceDiv", "vatYnNm"];
-                        break;
-
-                    case "all": // 전체 보기
-                    default:
-                        extraKeys = ["vatYnNm", "prceDiv", "dlvryCndtnNm"];
-                        break;
-                }
-
-                // 3. 고정 키 + 추가 키 합쳐서 displayKeys 설정
-                this.displayKeys = [...fixedKeys, ...extraKeys];
             }
         };
     }

@@ -146,138 +146,111 @@
 </style>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.store('dbStore', {
-            cost: JSON.parse(localStorage.getItem('cost')) || {},
+    // 💡 스토어를 덮어쓰는 게 아니라, 일반 컴포넌트 함수로 만들어서 스토어를 '참조'만 함!
+    function projectManager() {
+        return {
+            // 1. 스킨 배경에 이미 만들어진 스토어를 그냥 꺼내옴
+            store: Alpine.store('dbStore'),
 
-            // 💡 프로젝트 리스트와 활성 프로젝트를 option 객체 하나로 묶음!
+            // 2. 프로젝트 목록과 활성 상태는 컴포넌트(옵션)에서 관리
             option: JSON.parse(localStorage.getItem('option')) || {
                 projectList: [],
                 activeProject: null
             },
 
-            // 초기화 메서드
-            initStore() {
-                const costData = this.cost;
+            // [역할] 컴포넌트 실행 시 기존 데이터(cost)와 프로젝트 목록(projectList) 싱크 맞추기
+            init() {
+                const costData = this.store.cost || {};
                 const allKeys = Object.keys(costData);
                 let currentList = this.option.projectList;
 
                 if (currentList.length > 0) {
-                    // 기존 데이터 정합성 맞추기 (삭제된 프로젝트 제거, 새로 생긴 프로젝트 추가)
+                    // 삭제된 건 빼고, 새로 생긴 건 추가하는 순정 로직
                     currentList = currentList.filter(name => costData[name]);
                     allKeys.forEach(name => {
-                        if (!currentList.includes(name)) {
-                            currentList.push(name);
-                        }
+                        if (!currentList.includes(name)) currentList.push(name);
                     });
                     this.option.projectList = currentList;
                 } else {
                     this.option.projectList = allKeys;
                 }
-                this.saveOption();
 
-                // 활성 프로젝트 세팅
-                if (this.option.activeProject && costData[this.option.activeProject]) {
-                    // 유효함
-                } else if (this.option.projectList.length > 0) {
-                    this.option.activeProject = this.option.projectList[0];
-                    this.saveOption();
-                } else {
-                    this.option.activeProject = null;
-                    this.saveOption();
+                // 활성 프로젝트 갱신
+                if (!this.option.activeProject || !costData[this.option.activeProject]) {
+                    this.option.activeProject = this.option.projectList.length > 0 ? this.option.projectList[0] : null;
                 }
+
+                this.saveOption();
             },
 
-            // 저장 메서드 (option 객체 통째로 저장)
-            saveCost() {
-                localStorage.setItem('cost', JSON.stringify(this.cost));
-            },
+            // [역할] 옵션(프로젝트 목록/활성 프로젝트)만 로컬스토리지에 저장
             saveOption() {
                 localStorage.setItem('option', JSON.stringify(this.option));
             },
 
-            // 액션 메서드들
+            // [역할] 새 프로젝트 생성
             addProject(inputName) {
                 const name = (inputName || '').trim();
-                if (!name) {
-                    alert('프로젝트 이름을 입력해줘!');
-                    return;
-                }
+                if (!name) return alert('프로젝트 이름을 입력해줘!');
+                if (this.store.cost[name]) return alert('이미 존재하는 프로젝트야!');
 
-                if (this.cost[name]) {
-                    alert('이미 존재하는 프로젝트야!');
-                    return;
-                }
-
-                // 기본 구조 생성
-                this.cost[name] = {
-                    공종별내역서: [
-                    
-                    ],
+                // 💡 스토어 데이터에 순정으로 값 집어넣고 스토어 save() 호출!
+                this.store.cost[name] = {
+                    공종별내역서: [],
                     일위대가: [],
                     중기단가산출근거: [],
                     적용기준: {
                         환율: { 달러: '', 엔: '' },
-                        유류단가: { 휘발유: '', 경유: '', 선박용경유: '', 중유: '' },
+                        유류단가: { 휘발유: '', 경유: '', 선박용경유: '', 중유: '' }
                     },
                     옵션: {
                         그룹명: ['건축', '토목', '전기', '기계', '조경', '소방', '통신', '기타']
                     }
                 };
-                this.saveCost();
+                this.store.save();
 
+                // 옵션 업데이트
                 this.option.projectList.push(name);
+                if (!this.option.activeProject) this.option.activeProject = name;
                 this.saveOption();
-
-                if (!this.option.activeProject) {
-                    this.setActive(name);
-                }
             },
 
+            // [역할] 기존 프로젝트 이름 변경
             editProject(oldName) {
                 const newName = prompt('변경할 프로젝트 이름을 입력해줘:', oldName);
                 if (!newName) return;
 
                 const trimmedName = newName.trim();
-                if (!trimmedName) {
-                    alert('유효한 이름을 입력해줘!');
-                    return;
-                }
+                if (!trimmedName || trimmedName === oldName) return;
+                if (this.store.cost[trimmedName]) return alert('이미 존재하는 프로젝트 이름이야!');
 
-                if (trimmedName === oldName) return;
+                // 💡 데이터 이동 후 기존 거 삭제
+                this.store.cost[trimmedName] = this.store.cost[oldName];
+                delete this.store.cost[oldName];
+                this.store.save();
 
-                if (this.cost[trimmedName]) {
-                    alert('이미 존재하는 프로젝트 이름이야!');
-                    return;
-                }
-
-                this.cost[trimmedName] = this.cost[oldName];
-                delete this.cost[oldName];
-                this.saveCost();
-
+                // 목록 갱신
                 this.option.projectList = this.option.projectList.map(name => name === oldName ? trimmedName : name);
+                if (this.option.activeProject === oldName) this.option.activeProject = trimmedName;
                 this.saveOption();
-
-                if (this.option.activeProject === oldName) {
-                    this.setActive(trimmedName);
-                }
             },
 
+            // [역할] 프로젝트 삭제
             deleteProject(name) {
                 if (!confirm(`"${name}" 프로젝트를 삭제할래?`)) return;
 
-                delete this.cost[name];
-                this.saveCost();
+                // 💡 스토어에서 바로 지우고 save()
+                delete this.store.cost[name];
+                this.store.save();
 
                 this.option.projectList = this.option.projectList.filter(p => p !== name);
-                this.saveOption();
-
                 if (this.option.activeProject === name) {
                     this.option.activeProject = this.option.projectList.length > 0 ? this.option.projectList[0] : null;
-                    this.saveOption();
                 }
+                this.saveOption();
             },
 
+            // [역할] 순서 위로
             moveUp(index) {
                 if (index <= 0) return;
                 const list = this.option.projectList;
@@ -287,6 +260,7 @@
                 this.saveOption();
             },
 
+            // [역할] 순서 아래로
             moveDown(index) {
                 const list = this.option.projectList;
                 if (index >= list.length - 1) return;
@@ -296,13 +270,11 @@
                 this.saveOption();
             },
 
+            // [역할] 활성 프로젝트 변경
             setActive(name) {
                 this.option.activeProject = name;
                 this.saveOption();
             }
-        });
-
-        // 초기화 실행
-        Alpine.store('dbStore').initStore();
-    });
+        };
+    }
 </script>

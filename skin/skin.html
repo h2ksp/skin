@@ -359,103 +359,44 @@
     </script>
 
 
-
     <script>
+
       document.addEventListener('alpine:init', () => {
         // 스토어 정의
         Alpine.store('dbStore', {
-          cost: JSON.parse(localStorage.getItem('cost') || 'null'),
-          currentProject: 'projectA',
+          // 1. 로컬스토리지에서 가져오거나, 없으면 빈 객체로 시작
+          cost: JSON.parse(localStorage.getItem('cost') || '{}'),
 
+          // [역할] 앱이 처음 실행될 때 로컬에 데이터가 없으면 깃허브에서 샘플 데이터를 다운로드해 세팅함
           async init() {
-            // 로컬스토리지에 'cost' 데이터가 없으면 sample.json을 가져와서 세팅
-            if (!this.cost) {
+            if (!this.cost || Object.keys(this.cost).length === 0) {
               try {
                 const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample_Project.json');
                 if (!res.ok) throw new Error('sample.json 로드 실패');
 
                 const data = await res.json();
                 this.cost = data;
-                localStorage.setItem('cost', JSON.stringify(data));
+                this.save(); // 저장 함수로 통일
               } catch (err) {
                 console.error('기본 데이터 로드 에러:', err);
               }
             }
           },
 
-          get 원가계산서() {
-            const proj = this.cost?.[this.currentProject] || {};
-
-            const 재료비 = (proj.공종별내역서 || []).reduce((sum, item) => {
-              return sum + (Number(item.재료비) || 0);
-            }, 0);
-
-            const 노무비 = Number(proj.원가계산서?.노무비) || 0;
-            const 경비 = Number(proj.원가계산서?.경비) || 0;
-            const 합계 = 재료비 + 노무비 + 경비;
-
-            return { 재료비, 노무비, 경비, 합계 };
-          },
-
-          // [내부함수] 로컬스토리지에서 최신 데이터를 안전하게 가져오는 함수
-          _getData() {
-            const raw = localStorage.getItem('cost');
-            try {
-              return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(defaultCostData));
-            } catch (e) {
-              return JSON.parse(JSON.stringify(defaultCostData));
-            }
-          },
-
-          // 💡 [핵심 자동 연동 함수] 데이터를 변경한 뒤 로컬스토리지와 알파인 스토어에 동시 반영!
-          _saveData(costObj) {
-            // 1) 변경된 전체 객체를 문자열로 바꿔서 로컬스토리지에 저장 (새로고침해도 안 날아가게)
-            localStorage.setItem('cost', JSON.stringify(costObj));
-
-            // 2) 알파인의 반응성(Reactivity)을 트리거하기 위해 store 내부의 cost 변수도 갱신
-            // 이 과정 덕분에 화면(UI)과 다른 컴포넌트들도 실시간으로 자동 업데이트됨!
-            this.cost = costObj;
-          },
-
-          // 데이터를 가져오는 조회 함수
-          getItems(project, category) {
-            const costData = this._getData();
-            return costData[project]?.[category] || [];
-          },
-
-          // ➕ 데이터를 추가할 때: 추가 후 자동으로 _saveData를 호출하므로 로컬+화면 자동 반영됨
-          addItem(project, category, newItem) {
-            const costData = this._getData();
-            if (!costData[project]) costData[project] = {};
-            if (!costData[project][category]) costData[project][category] = [];
-
-            costData[project][category].push(newItem);
-            this._saveData(costData); // <-- 여기서 로컬스토리지 저장 + 알파인 동기화 일체화!
-          },
-
-          // 🔄 데이터를 수정할 때: 수정 후 자동 저장 및 화면 갱신
-          updateItem(project, category, index, updatedData) {
-            const costData = this._getData();
-            const targetList = costData[project]?.[category];
-
-            if (targetList && targetList[index]) {
-              targetList[index] = { ...targetList[index], ...updatedData };
-              this._saveData(costData); // <-- 자동 저장 & 동기화
-            }
-          },
-
-          // ❌ 데이터를 삭제할 때: 삭제 후 자동 저장 및 화면 갱신
-          deleteItem(project, category, index) {
-            const costData = this._getData();
-            const targetList = costData[project]?.[category];
-
-            if (targetList) {
-              targetList.splice(index, 1);
-              this._saveData(costData); // <-- 자동 저장 & 동기화
-            }
+          // [역할] 현재 알파인 스토어의 데이터를 로컬스토리지에 통째로 저장하는 단 하나의 메서드
+          save() {
+            localStorage.setItem('cost', JSON.stringify(this.cost));
           }
         });
       });
+
+      if (!localStorage.getItem('option')) {
+        localStorage.setItem('option', JSON.stringify({
+          projectList: ["샘플프로젝트"],
+          activeProject: "샘플프로젝트"
+        }));
+      }
+
     </script>
 
 </head>
@@ -824,7 +765,7 @@
       renderSidebar(currentGroup, currentSub);
     }
 
-    
+
     function renderSidebar(groupKey, subKey) {
       if (typeof menuData === "undefined") return;
 

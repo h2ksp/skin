@@ -2496,36 +2496,36 @@ const menuData = {
               {
                 secTitle: "3-2　해체공사",
                 items: [
-                  { text: "3-2-1　금속기와 해체", url: "#1-2" },
-                  { text: "3-2-2　흡음텍스 해체", url: "#1-2" },
-                  { text: "3-2-3　경량천장철골틀 해체", url: "#1-2" },
-                  { text: "3-2-4　조적벽 해체", url: "#1-2" },
-                  { text: "3-2-5　경량벽체철골틀 해체", url: "#1-2" },
-                  { text: "1-2-6　석고판 해체", url: "#1-2" },
-                  { text: "1-2-7　도배 해체", url: "#1-2" },
-                  { text: "1-2-8　PVC계 바닥재 해체", url: "#1-2" },
-                  { text: "1-2-9　타일 해체", url: "#1-2" },
-                  { text: "1-2-10　기존방수층 및 보호층 철거", url: "#1-2" },
-                  { text: "1-2-11　기존방수층 제거 및 바탕처리", url: "#1-2" },
-                  { text: "1-2-12　석면건축자재 해체", url: "#1-2" },
+                  { text: "3-2-1　금속기와 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-1.html?group=group1&sub=sub5" },
+                  { text: "3-2-2　흡음텍스 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-2.html?group=group1&sub=sub5" },
+                  { text: "3-2-3　경량천장철골틀 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-3.html?group=group1&sub=sub5" },
+                  { text: "3-2-4　조적벽 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-4.html?group=group1&sub=sub5" },
+                  { text: "3-2-5　경량벽체철골틀 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-5.html?group=group1&sub=sub5" },
+                  { text: "3-2-6　석고판 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-6.html?group=group1&sub=sub5" },
+                  { text: "3-2-7　도배 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-7.html?group=group1&sub=sub5" },
+                  { text: "3-2-8　PVC계 바닥재 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-8-pvc.html?group=group1&sub=sub5" },
+                  { text: "3-2-9　타일 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-9.html?group=group1&sub=sub5" },
+                  { text: "3-2-10　기존방수층 및 보호층 철거", url: "https://study-with-words.blogspot.com/2026/11/3-2-10.html?group=group1&sub=sub5" },
+                  { text: "3-2-11　기존방수층 제거 및 바탕처리", url: "https://study-with-words.blogspot.com/2026/11/3-2-11.html?group=group1&sub=sub5" },
+                  { text: "3-2-12　석면건축자재 해체", url: "https://study-with-words.blogspot.com/2026/11/3-2-12.html?group=group1&sub=sub5" },
                 ]
               },
               {
-                secTitle: "4-3　칠공사",
+                secTitle: "3-3　칠공사",
                 items: [
-                  { text: "4-3-1　재도장 시 바탕처리(콘크리트, 모르타르면)", url: "#1-1" },
-                  { text: "4-3-2　재도장 시 바탕처리(철재면)", url: "#1-1" },
-                  { text: "4-3-3　재도장 시 바탕처리(목재면)", url: "#1-1" },
+                  { text: "3-3-1　재도장 시 바탕처리(콘크리트, 모르타르면)", url: "https://study-with-words.blogspot.com/2026/11/3-3-1.html?group=group1&sub=sub5" },
+                  { text: "3-3-2　재도장 시 바탕처리(철재면)", url: "https://study-with-words.blogspot.com/2026/11/3-3-2.html?group=group1&sub=sub5" },
+                  { text: "3-3-3　재도장 시 바탕처리(목재면)", url: "https://study-with-words.blogspot.com/2026/11/3-3-3.html?group=group1&sub=sub5" },
                 ]
               },
               {
-                secTitle: "4-4　수선 및 보수공사",
+                secTitle: "3-4　수선 및 보수공사",
                 items: [
-                  { text: "4-4-1　지붕 덧씌우기", url: "#1-1" },
-                  { text: "4-4-2　지붕 재설치", url: "#1-1" },
-                  { text: "4-4-3　도배 교체", url: "#1-1" },
-                  { text: "4-4-4　PVC계 바닥재 교체", url: "#1-1" },
-                  { text: "4-4-5　타일 교체", url: "#1-1" },
+                  { text: "3-4-1　지붕 덧씌우기", url: "https://study-with-words.blogspot.com/2026/11/3-4-1.html?group=group1&sub=sub5" },
+                  { text: "3-4-2　지붕 재설치", url: "https://study-with-words.blogspot.com/2026/11/3-4-2.html?group=group1&sub=sub5" },
+                  { text: "3-4-3　도배 교체", url: "https://study-with-words.blogspot.com/2026/11/3-4-3.html?group=group1&sub=sub5" },
+                  { text: "3-4-4　PVC계 바닥재 교체", url: "https://study-with-words.blogspot.com/2026/11/3-4-4-pvc.html?group=group1&sub=sub5" },
+                  { text: "3-4-5　타일 교체", url: "https://study-with-words.blogspot.com/2026/11/3-4-5.html?group=group1&sub=sub5" },
                 ]
               },
 
@@ -2538,19 +2538,19 @@ const menuData = {
               {
                 secTitle: "4-1　일반기계설비 해체",
                 items: [
-                  { text: "4-1-1　배관 해체", url: "#1-1" },
-                  { text: "4-1-2　각형덕트 해체", url: "#1-1" },
-                  { text: "4-1-3　스파이럴덕트 해체", url: "#1-1" },
-                  { text: "4-1-4　배관보온 해체", url: "#1-1" },
-                  { text: "4-1-5　덕트보온 해체", url: "#1-1" },
-                  { text: "4-1-6　펌프 해체", url: "#1-1" },
-                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "#1-1" },
+                  { text: "4-1-1　배관 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-1-22.html?group=group1&sub=sub5" },
+                  { text: "4-1-2　각형덕트 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-2-22.html?group=group1&sub=sub5" },
+                  { text: "4-1-3　스파이럴덕트 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-3-22.html?group=group1&sub=sub5" },
+                  { text: "4-1-4　배관보온 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-4.html?group=group1&sub=sub5" },
+                  { text: "4-1-5　덕트보온 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-5.html?group=group1&sub=sub5" },
+                  { text: "4-1-6　펌프 해체", url: "https://study-with-words.blogspot.com/2026/11/4-1-6.html?group=group1&sub=sub5" },
+                  { text: "4-1-7　일반기계설비 철거 및 이설", url: "https://study-with-words.blogspot.com/2026/11/4-1-7.html?group=group1&sub=sub5" },
                 ]
               },
               {
                 secTitle: "4-2　자동제어설비 해체",
                 items: [
-                  { text: "4-2-1　철거 및 이설", url: "#1-2" },
+                  { text: "4-2-1　철거 및 이설", url: "https://study-with-words.blogspot.com/2026/11/4-2-1.html?group=group1&sub=sub5" },
                 ]
               },
               {
