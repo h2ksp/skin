@@ -2394,8 +2394,8 @@ const menuData = {
                 items: [
                   { text: "2-1-1　교통통제 및 안전처리", url: "#1-1" },
                   { text: "2-1-2　포장 절단", url: "#1-1" },
-                  { text: "2-1-3　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
-                  { text: "2-1-4　아스팔트 포장 절삭 후 아스팔트 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
+                  { text: "2-1-3　아스팔트 포장 절삭 후 덧씌우기(1회 절삭, 1회 포장)", url: "#1-1" },
+                  { text: "2-1-4　아스팔트 포장 절삭 후 덧씌우기(1회 절삭, 2회 포장)", url: "#1-1" },
                   { text: "2-1-5　절삭 후 콘크리트 덧씌우기", url: "#1-1" },
                   { text: "2-1-6　아스팔트 절삭 및 덧씌우기", url: "#1-1" },
                   { text: "2-1-7　콘크리트 포장 절삭 후 아스팔트 덧씌우기", url: "#1-1" },
@@ -2466,14 +2466,14 @@ const menuData = {
                   { text: "2-4-4　하수관 수밀시험", url: "#1-1" },
                   { text: "2-4-5　하수관 공기압시험", url: "#1-1" },
                   { text: "2-4-6　하수관 준설(버킷식)", url: "#1-1" },
-                  { text: "2-4-7　하수관 준설(흡입식)", url: "#1-1" },
-                  { text: "2-4-8　하수로 수로암거 준설(흡입식)", url: "#1-1" },
-                  { text: "2-4-9　빗물받이 준설(흡입식)", url: "#1-1" },
-                  { text: "2-4-10　빗물받이 준설(흡입식)", url: "#1-1" },
-                  { text: "2-4-11　차집관로 고심도 집수정 준설", url: "#1-1" },
-                  { text: "2-4-12　CCTV조사", url: "#1-1" },
-                  { text: "2-4-13　주철관 철거", url: "#1-1" },
-                  { text: "2-4-14　원심력철근콘크리트관 철거", url: "#1-1" },
+                  { text: "2-4-7　하수관 준설(흡입식)", url: "https://study-with-words.blogspot.com/2026/11/2-4-7.html?group=group1&sub=sub5" },
+                  { text: "2-4-8　하수로 수로암거 준설(흡입식)", url: "https://study-with-words.blogspot.com/2026/11/2-4-8.html?group=group1&sub=sub5" },
+                  { text: "2-4-9　빗물받이 준설(흡입식)", url: "https://study-with-words.blogspot.com/2026/11/2-4-9.html?group=group1&sub=sub5" },
+                  { text: "2-4-10　빗물받이 준설(흡입식)", url: "https://study-with-words.blogspot.com/2026/11/2-4-10.html?group=group1&sub=sub5" },
+                  { text: "2-4-11　차집관로 고심도 집수정 준설", url: "https://study-with-words.blogspot.com/2026/11/2-4-11.html?group=group1&sub=sub5" },
+                  { text: "2-4-12　CCTV조사", url: "https://study-with-words.blogspot.com/2026/11/2-4-12-cctv.html?group=group1&sub=sub5" },
+                  { text: "2-4-13　주철관 철거", url: "https://study-with-words.blogspot.com/2026/11/2-4-13_01350220667.html?group=group1&sub=sub5" },
+                  { text: "2-4-14　원심력철근콘크리트관 철거", url: "https://study-with-words.blogspot.com/2026/11/2-4-13.html?group=group1&sub=sub5" },
                 ]
               },
 
@@ -2486,11 +2486,11 @@ const menuData = {
               {
                 secTitle: "3-1　구조물 철거공사",
                 items: [
-                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "#1-1" },
-                  { text: "3-1-2　콘크리트구조물 헐기(기계)", url: "#1-1" },
-                  { text: "3-1-3　철골재 철거(인력)", url: "#1-1" },
-                  { text: "3-1-4　철골재 철거(기계)", url: "#1-1" },
-                  { text: "3-1-5　석축 헐기(인력)", url: "#1-1" },
+                  { text: "3-1-1　콘크리트구조물 헐기(인력)", url: "https://study-with-words.blogspot.com/2026/11/3-1-1.html?group=group1&sub=sub5" },
+                  { text: "3-1-2　콘크리트구조물 헐기(기계)", url: "https://study-with-words.blogspot.com/2026/11/3-1-2.html?group=group1&sub=sub5" },
+                  { text: "3-1-3　철골재 철거(인력)", url: "https://study-with-words.blogspot.com/2026/11/3-1-3.html?group=group1&sub=sub5" },
+                  { text: "3-1-4　철골재 철거(기계)", url: "https://study-with-words.blogspot.com/2026/11/3-1-4.html?group=group1&sub=sub5" },
+                  { text: "3-1-5　석축 헐기(인력)", url: "https://study-with-words.blogspot.com/2026/11/3-1-5.html?group=group1&sub=sub5" },
                 ]
               },
               {
@@ -2558,7 +2558,7 @@ const menuData = {
                 items: [
                   { text: "4-3-1　유량계 교체", url: "https://study-with-words.blogspot.com/2026/11/4-3-1.html?group=group1&sub=sub5" },
                   { text: "4-3-2　관갱생공", url: "https://study-with-words.blogspot.com/2026/11/4-3-2.html?group=group1&sub=sub5" },
-                  { text: "4-3-3　배관누수 검사", url: "#1-1" },
+                  { text: "4-3-3　배관누수 검사", url: "https://study-with-words.blogspot.com/2026/11/4-3-3.html?group=group1&sub=sub5" },
                 ]
               },
 
@@ -3302,25 +3302,62 @@ const menuData = {
 
       // 공사비산출 메뉴
       sub1: {
-        name: "공사비산출",
+        name: "내역서 작성",
         categories: [
+
+          {
+            catTitle: "단가검색",
+            sections: [
+              {
+                secTitle: "공통",
+                items:
+                  [
+                    { text: "노임단가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html?group=group3&sub=sub1" },
+                    { text: "연료가격", url: "https://study-with-words.blogspot.com/2026/10/blog-post_08.html?group=group3&sub=sub1" },
+                  ]
+              },
+
+              {
+                secTitle: "품셈, 시장단가",
+                items:
+                  [
+                    { text: "표준품셈", url: "https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&sub=sub1" },
+                    { text: "표준시장단가", url: "#1-1" },
+                  ]
+              },
+
+              {
+                secTitle: "조달청",
+                items:
+                  [
+                    { text: "시설공통자재", url: "https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&sub=sub1" },
+                    { text: "시장시공가격", url: "#1-1" },
+                    { text: "공종분류 및 세부공종", url: "#1-1" },
+                  ]
+              },
+
+
+            ]
+          },
+
           {
             catTitle: "WORK",
             sections: [
               {
-                secTitle: "당신의 프로젝트",
+                secTitle: "프로젝트매니저",
                 items:
                   [
                     { text: "새 프로젝트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_296.html" },
                     { text: "적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_09.html" },
                   ]
               },
+
               {
                 secTitle: "내역서",
                 items:
                   [
                     { text: "원가계산서", url: "https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&sub=sub4" },
-                    { text: "공종별 내역서 (☆)", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
+                    { text: "공종별 내역서 *", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
                     { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
                     { text: "중기단가산출", url: "#4-1" },
                     { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
@@ -3339,28 +3376,12 @@ const menuData = {
           },
 
           {
-            catTitle: "기준",
-            sections: [
-              {
-                secTitle: "최신",
-                items:
-                  [
-                    { text: "단가검색", url: "https://study-with-words.blogspot.com/2026/10/blog-post_778.html?group=group3&sub=sub1" },
-                    { text: "연료가격", url: "https://study-with-words.blogspot.com/2026/10/blog-post_08.html" },
-                    { text: "노임단가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_266.html" },
-                  ]
-              },
-
-
-            ]
-          },
-          {
-            catTitle: "편의기능",
+            catTitle: "-",
             sections: [
 
 
               {
-                secTitle: "네트워크",
+                secTitle: "협업",
                 items:
                   [
                     { text: "작성자연결", url: "#4-1" },

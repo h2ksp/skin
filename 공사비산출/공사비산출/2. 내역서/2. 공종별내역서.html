@@ -395,77 +395,6 @@
                 </li>
             </template>
 
-            <div class="bottom-love-bar" x-ref="bottomBar" style="visibility: hidden; opacity: 0;">
-
-                <div x-data="materialSearch()">
-                    <!-- 검색 및 카테고리 선택 영역 -->
-                    <div class="input-group" style="
-                                background-color: #f9f9f9e7;
-                                text-align: left;
-                                width: 600px;
-                                border: 1px solid #e2e8f0;
-                                border-radius: 12px;
-                                padding: 5px 16px;
-                                margin-top: 116px;
-                                margin-bottom: 16px;
-                    ">
-                        <label for="apiSelect">분류:</label>
-                        <select id="apiSelect" x-model="selectedApiId" @change="loadData()" style="width: 200px;">
-                            <template x-for="api in apiList" :key="api.id">
-                                <option :value="api.id" x-text="api.name"></option>
-                            </template>
-                        </select>
-
-                        <label for="searchNm">　검색 품명:</label>
-                        <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm"
-                            @keyup.enter="filterItems()">
-
-                        <button @click="filterItems()" :disabled="loading">검색하기</button>
-                    </div>
-
-
-
-                    <div class="input-group" style="margin-top: 10px; display: flex; align-items: center; gap: 15px;">
-                        <h3 style="margin: 0; font-size: 1.1rem; white-space: nowrap;">응답 결과</h3>
-                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="all"
-                                x-model="columnMode" @change="updateDisplayKeys()" checked> 전체 보기</label>
-                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="basic"
-                                x-model="columnMode" @change="updateDisplayKeys()"> 기본 정보</label>
-                        <label style="cursor: pointer; white-space: nowrap;"><input type="radio" value="price"
-                                x-model="columnMode" @change="updateDisplayKeys()"> 가격/조건</label>
-                    </div>
-
-                    <div id="status" x-text="statusMessage"></div>
-
-                    <!-- 결과 표 영역 -->
-                    <div class="table-container" x-show="displayKeys.length > 0">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <template x-for="key in displayKeys" :key="key">
-                                        <td x-text="getColumnHeader(key)"></td>
-                                    </template>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template x-for="(item, idx) in filteredItems" :key="idx">
-                                    <!-- 💡 tr 전체에 클릭 이벤트를 달고, hover 및 클릭 가능 스타일 적용 -->
-                                    <tr @click="selectItem(item)" class="clickable-row">
-                                        <template x-for="key in displayKeys" :key="key">
-                                            <td :class="{ 'text-right': key === 'prce' }"
-                                                x-text="formatValue(key, item[key])"></td>
-                                        </template>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-
-
-                </div>
-
-            </div>
-
         </ul>
 
 
@@ -476,8 +405,9 @@
 <script>
     function appData() {
         const option = JSON.parse(localStorage.getItem('option')) || {};
-        const store = Alpine.store('dbStore');
         const activeProject = option?.activeProject || '';
+        const store = JSON.parse(localStorage.getItem('cost')) || {}
+
 
         return {
             init() { },
@@ -487,26 +417,41 @@
             store: store,
 
             // 현재 프로젝트의 그룹 목록 가져오기
-            groupList: (activeProject && store.cost[activeProject]?.옵션?.그룹명) || [],
-            activeGroup: (activeProject && store.cost[activeProject]?.옵션?.activeGroup !== undefined)
-                ? store.cost[activeProject].옵션.activeGroup : '',
+            groupList: (activeProject && store[activeProject]?.옵션?.그룹명) || [],
+            activeGroup: (activeProject && store[activeProject]?.옵션?.activeGroup !== undefined)
+                ? store[activeProject].옵션.activeGroup : '',
 
             // 공종별 내역서 데이터 (없으면 빈 객체)
-            subGroupList: (activeProject && store.cost[activeProject]?.공종별내역서) || {},
+            subGroupList: (activeProject && store[activeProject]?.공종별내역서) || {},
 
-            // [역할] 선택한 프로젝트를 변경하고 로컬스토리지 및 관련 데이터를 세팅하는 함수
+            
             saveActiveProject() {
                 option.activeProject = this.activeProject;
                 localStorage.setItem('option', JSON.stringify(option));
 
-                if (this.activeProject && store.cost[this.activeProject]?.옵션?.그룹명) {
-                    this.groupList = store.cost[this.activeProject].옵션.그룹명;
-                    this.subGroupList = store.cost[this.activeProject].공종별내역서 || {};
+                if (this.activeProject && store[this.activeProject]?.옵션?.그룹명) {
+                    this.groupList = store[this.activeProject].옵션.그룹명;
+                    this.subGroupList = store[this.activeProject].공종별내역서 || {};
                 } else {
                     this.groupList = [];
                     this.subGroupList = {};
                 }
                 this.activeGroup = '';
+            },
+
+            // [역할] 현재 변경된 데이터를 스토어에 반영하고 store.save()를 호출해 로컬스토리지에 저장하는 공통 함수
+            saveToStore() {
+                if (store[this.activeProject]) {
+                    if (!store[this.activeProject].옵션) {
+                        store[this.activeProject].옵션 = {};
+                    }
+                    store[this.activeProject].옵션.그룹명 = this.groupList;
+                    store[this.activeProject].옵션.activeGroup = this.activeGroup;
+                    store[this.activeProject].공종별내역서 = this.subGroupList;
+
+                    localStorage.setItem('cost', JSON.stringify(store));
+                    localStorage.setItem('option', JSON.stringify(option));
+                }
             },
 
             // [역할] 2차 항목의 타입(일반, 일위대가 등)에 따른 분기 처리 함수
@@ -521,7 +466,7 @@
 
             // [역할] 타입 변경 시 콘솔 로그를 남기고 스토어에 저장하는 함수
             handleTypeChange(lvl2) {
-                console.log("선택된 타입:", lvl2);
+                console.log("선택된 fg타입:", lvl2);
                 this.saveToStore();
             },
 
@@ -558,10 +503,10 @@
 
                 const getNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
 
-                const unit = getNum(lvl2.unit);
-                const i1 = getNum(lvl2.item1);
-                const i2 = getNum(lvl2.item2);
-                const i3 = getNum(lvl2.item3);
+                const unit = getNum(lvl2.단위);
+                const i1 = getNum(lvl2.재료비단가);
+                const i2 = getNum(lvl2.노무비단가);
+                const i3 = getNum(lvl2.경비단가);
 
                 const item4Val = i1 + i2 + i3;
                 const item5Val = i1 * unit;
@@ -589,18 +534,18 @@
                 if (!this.subGroupList[gIndex]) {
                     this.subGroupList[gIndex] = [];
                 }
-                
+
                 this.subGroupList[gIndex].push({
                     name: '',
                     children: [],
                     get 재료비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.item5).replace(/,/g, '')) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.재료비).replace(/,/g, '')) || 0), 0);
                     },
                     get 노무비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.item6).replace(/,/g, '')) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.노무비).replace(/,/g, '')) || 0), 0);
                     },
                     get 경비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.item7).replace(/,/g, '')) || 0), 0);
+                        return this.children.reduce((sum, c) => sum + (Number(String(c.경비).replace(/,/g, '')) || 0), 0);
                     },
                     get 합계() {
                         return this.재료비 + this.노무비 + this.경비;
@@ -624,15 +569,15 @@
                     spec: '',
                     unit: '',
                     qty: 0,
-                    item1: '',
-                    item2: '',
-                    item3: '',
-                    item4: 0,
-                    item5: 0,
-                    item6: 0,
-                    item7: 0,
-                    item8: 0,
-                    item9: ''
+                    재료비단가: '',
+                    재료비: '',
+                    노무비단가: '',
+                    노무비: 0,
+                    경비단가: '',
+                    경비: 0,
+                    단가합계: 0,
+                    합계: 0,
+                    비고: ''
                 });
 
                 this.saveToStore();
@@ -723,20 +668,6 @@
                 this.saveToStore();
             },
 
-            // [역할] 현재 변경된 데이터를 스토어에 반영하고 store.save()를 호출해 로컬스토리지에 저장하는 공통 함수
-            saveToStore() {
-                if (store.cost[this.activeProject]) {
-                    if (!store.cost[this.activeProject].옵션) {
-                        store.cost[this.activeProject].옵션 = {};
-                    }
-                    store.cost[this.activeProject].옵션.그룹명 = this.groupList;
-                    store.cost[this.activeProject].옵션.activeGroup = this.activeGroup;
-                    store.cost[this.activeProject].공종별내역서 = this.subGroupList;
-                    
-                    // 💡 스토어의 가벼운 save() 함수 호출로 일원화!
-                    store.save();
-                }
-            },
 
             // [역할] 프롬프트 창을 띄워 공종명 목록을 콤마(,) 기준으로 수정하는 함수
             editGroups() {

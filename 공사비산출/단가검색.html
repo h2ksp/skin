@@ -1,0 +1,860 @@
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const appTemplate = document.getElementById('my-app').content.cloneNode(true);
+        document.body.replaceChildren(appTemplate);
+    });
+</script>
+
+<template id="my-app">
+
+    <style>
+        /* 기본 스타일 정돈 */
+        .bottom-love-bar {
+            visibility: visible;
+            opacity: 1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #1e293b;
+        }
+
+        #status {
+            margin: 10px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .search-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .group-btn-container {
+            display: flex;
+            gap: 4px;
+        }
+
+        .group-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .group-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .list-container {
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .list-container ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .list-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .item-main {
+            padding: 8px 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-main:hover {
+            background: #f1f5f9;
+        }
+
+        .item-title-wrap {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arrow-icon {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .item-spec {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .item-unit {
+            color: #475569;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .item-action-wrap {
+            display: flex;
+            align-items: center;
+        }
+
+        .item-price {
+            font-size: 0.9rem;
+        }
+
+        .sub-container {
+            margin-bottom: 20px;
+        }
+
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .sub-table th {
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            padding: 8px;
+        }
+
+        .sub-table td {
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            padding: 8px 4px;
+        }
+
+        .sub-table tfoot td {
+            background-color: #f1f5f9;
+            font-size: 0.85rem;
+            border-top: 1px solid #cbd5e1;
+            font-weight: 600;
+        }
+
+        .cell-center {
+            text-align: center;
+        }
+
+        .cell-left {
+            text-align: left;
+        }
+
+        .cell-right {
+            text-align: right;
+        }
+
+        .sub-empty {
+            padding: 12px;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-align: center;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .sub-text-list {
+            margin-top: 8px;
+            padding: 12px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        select,
+        input,
+        button {
+            padding: 5px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        button.action-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button.action-btn:hover {
+            background: #2563eb;
+        }
+
+        button.action-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .radio-title {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+    </style>
+
+    <div id="search_item">
+        <div class="bottom-love-bar">
+            <div x-data="materialSearch">
+
+                <!-- 1) 상단 검색 툴바 영역 (버튼 4개 추가) -->
+                <div x-show="showSearchBar" class="search-toolbar">
+                    <!-- 좌측 그룹 버튼 4개 -->
+                    <div class="group-btn-container">
+                        <button type="button" class="group-btn" :class="{ 'active': selectedGroup === 'common' }"
+                            @click="setGroup('common')">시설공통</button>
+                        <button type="button" class="group-btn" :class="{ 'active': selectedGroup === 'market' }"
+                            @click="setGroup('market')">시장시공</button>
+                        <button type="button" class="group-btn" :class="{ 'active': selectedGroup === 'etc' }"
+                            @click="setGroup('etc')">공종/기타</button>
+                        <button type="button" class="group-btn" :class="{ 'active': selectedGroup === 'unit' }"
+                            @click="setGroup('unit')">일위대가</button>
+                    </div>
+
+                    <label for="apiSelect">분류:</label>
+                    <select id="apiSelect" x-model="selectedApiId" @change="loadData()">
+                        <template x-for="api in filteredApiList" :key="api.id">
+                            <option :value="api.id" x-text="api.name"></option>
+                        </template>
+                    </select>
+
+                    <label for="searchNm">품명:</label>
+                    <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm"
+                        @keyup.enter="filterItems()">
+
+                    <button type="button" class="action-btn" @click="filterItems()" :disabled="loading">검색하기</button>
+                </div>
+
+                <!-- 2) 응답결과 모드 선택 바 -->
+                <div x-show="shouldShowRadioBar()" style="margin-bottom: 10px;">
+                    <span class="radio-title">응답결과:</span>
+                    <template x-for="mode in currentApi.resultModes" :key="mode.id">
+                        <label style="margin-right: 12px; cursor: pointer;">
+                            <input type="radio" :name="'reg_type_' + currentApi.id" :value="mode.id"
+                                :checked="currentRegType === mode.id" @change="setRegType(mode.id)">
+                            <span x-text="mode.label"></span>
+                        </label>
+                    </template>
+                </div>
+
+                <!-- 3) 상태 메시지 -->
+                <div id="status" x-text="statusMessage"></div>
+
+                <!-- 4) 메인 결과 목록 (서브 아이템 없을 때) -->
+                <div class="table-container" x-show="filteredItems.length > 0 && !currentApi.hasSub">
+                    <table class="sub-table">
+                        <thead>
+                            <tr>
+                                <template x-for="(head, hIdx) in getHeaders()" :key="hIdx">
+                                    <th :style="head.width ? 'width:' + head.width : ''" x-text="head.label"></th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(item, idx) in filteredItems" :key="idx">
+                                <tr class="clickable-row" @click="registerFinalItem(item)" style="cursor: pointer;">
+                                    <template x-for="(cell, cIdx) in getMaterialRow(item)" :key="cIdx">
+                                        <td :class="cell.class" x-text="cell.val"></td>
+                                    </template>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 5) 메인 결과 목록 (서브 아이템 있을 때) -->
+                <div class="list-container" x-show="filteredItems.length > 0 && currentApi.hasSub">
+                    <ul>
+                        <template x-for="(item, idx) in filteredItems" :key="idx">
+                            <li class="list-item">
+                                <div class="item-main" @click="toggleRow(idx)">
+                                    <div class="item-title-wrap">
+                                        <span class="arrow-icon" x-show="currentApi.hasSub"
+                                            x-text="expandedIndexes.includes(idx) ? '▶ ' : '▷ '"></span>
+                                        <span x-text="getItemTitle(item)"></span>
+                                        <span class="item-spec" x-text="getItemSpec(item)"></span>
+                                        <span class="item-unit" x-text="getItemUnit(item)"></span>
+                                    </div>
+                                    <div class="item-action-wrap">
+                                        <span class="item-price">
+                                            <span x-text="getItemPrice(item)"></span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="sub-container" x-show="currentApi.hasSub && expandedIndexes.includes(idx)">
+                                    <template
+                                        x-if="getSubItems(item).length > 0 && currentApi.subDisplayMode === 'text'">
+                                        <div class="sub-text-list">
+                                            <template x-for="(sub, subIdx) in getSubItems(item)" :key="subIdx">
+                                                <div class="sub-text-item" x-text="sub.prdctClsfcNoNm || sub.품명 || sub">
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template
+                                        x-if="getSubItems(item).length > 0 && currentApi.subDisplayMode !== 'text'">
+                                        <table class="sub-table">
+                                            <thead>
+                                                <tr>
+                                                    <template x-for="(head, hIdx) in getHeaders()" :key="hIdx">
+                                                        <th :style="head.width ? 'width:' + head.width : ''"
+                                                            x-text="head.label"></th>
+                                                    </template>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template x-for="(row, rIdx) in getRows(item, idx)" :key="rIdx">
+                                                    <tr>
+                                                        <template x-for="(cell, cIdx) in row" :key="cIdx">
+                                                            <td :class="cell.class" x-text="cell.val"></td>
+                                                        </template>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <template x-for="(cell, fIdx) in getFooterRow(item, idx)"
+                                                        :key="fIdx">
+                                                        <td :class="cell.class" x-text="cell.val"></td>
+                                                    </template>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </template>
+
+                                    <template x-if="getSubItems(item).length === 0">
+                                        <div class="sub-empty">하위 구성 항목이 없습니다.</div>
+                                    </template>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('materialSearch', () => ({
+            showSearchBar: true,
+            selectedGroup: 'common', // 기본 선택된 그룹
+            selectedApiId: "civil1",
+            searchNm: "",
+
+            selectedRegTypes: {},
+            expandedIndexes: [],
+            statusMessage: "데이터 로딩 중...",
+            loading: false,
+            allItems: [],
+            filteredItems: [],
+
+            apiList: [
+                // 시설공통자재
+                {
+                    id: "civil1", group: "common", name: "1. 토목 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/1.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false,
+                    searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [
+                        {
+                            id: "all", label: "전체 보기", tableMode: "material",
+                            columns: [
+                                { key: "nticeDt", label: "공고일" },
+                                { key: "prdctClsfcNoNm", label: "품명" },
+                                { key: "krnPrdctNm", label: "규격" },
+                                { key: "unit", label: "단위", width: "60px" },
+                                { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" },
+                                { key: "vatYnNm", label: "부가세 여부" },
+                                { key: "prceDiv", label: "가격구분" },
+                                { key: "dlvryCndtnNm", label: "납품조건" }]
+                        },
+
+                        {
+                            id: "allㅇㄴㅀ", label: "전체 ㅇ롤ㅇ호보기", tableMode: "material",
+                            columns: [
+                                { key: "nticeDt", label: "공고일" },
+                                { key: "prdctClsfcNoNm", label: "품명" },
+                                { key: "krnPrdctNm", label: "규격" },
+                                { key: "unit", label: "단위", width: "60px" },
+                                { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" },
+                                { key: "vatYnNm", label: "부가세 여부" },
+                                { key: "prceDiv", label: "가격구분" },
+                                { key: "dlvryCndtnNm", label: "납품조건" }]
+                        }
+                    ]
+                },
+
+                {
+                    id: "civil2", group: "common", name: "2. 건축 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/2.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B1%B4%EC%B6%95)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false,
+                    searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+
+                {
+                    id: "civil3", group: "common", name: "3. 기계설비 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/3.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B8%B0%EA%B3%84%EC%84%A4%EB%B9%84)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [
+                        {
+                            id: "all", label: "전체 보기", tableMode: "material",
+                            columns: [
+                                { key: "nticeDt", label: "공고일" },
+                                { key: "prdctClsfcNoNm", label: "품명" },
+                                { key: "krnPrdctNm", label: "규격" },
+                                { key: "unit", label: "단위", width: "60px" },
+                                { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" },
+                                { key: "vatYnNm", label: "부가세 여부" },
+                                { key: "prceDiv", label: "가격구분" },
+                                { key: "dlvryCndtnNm", label: "납품조건" }]
+                        }]
+                },
+                
+                {
+                    id: "civil4", group: "common", name: "4. 전기, 정보통신 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/4.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EC%A0%84%EA%B8%B0%2C%EC%A0%95%EB%B3%B4%ED%86%B5%EC%8B%A0)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [
+                        {
+                            id: "all", label: "전체 보기", tableMode: "material",
+                            columns: [
+                                { key: "nticeDt", label: "공고일" },
+                                { key: "prdctClsfcNoNm", label: "품명" },
+                                { key: "krnPrdctNm", label: "규격" },
+                                { key: "unit", label: "단위", width: "60px" },
+                                { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" },
+                                { key: "vatYnNm", label: "부가세 여부" },
+                                { key: "prceDiv", label: "가격구분" },
+                                { key: "dlvryCndtnNm", label: "납품조건" }]
+                        }]
+                },
+
+                // 시장시공가격
+                {
+                    id: "civil5", group: "market", name: "1. 시장시공가격 토목",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/5.%EC%8B%9C%EC%9E%A5%EC%8B%9C%EA%B3%B5%EA%B0%80%EA%B2%A9(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json", hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+                {
+                    id: "civil6", group: "market", name: "2. 시장시공가격 건축",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/6.%EC%8B%9C%EC%9E%A5%EC%8B%9C%EA%B3%B5%EA%B0%80%EA%B2%A9(%EA%B1%B4%EC%B6%95)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json", hasSub: true, subDisplayMode: "text", searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "총계", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right", getValue: item => Number(item.mtrlcst || 0) + Number(item.lbrcst || 0) + Number(item.gnrlexpns || 0) }] }]
+                },
+                {
+                    id: "civil7", group: "market", name: "3. 시장시공가격 기계설비",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/7.%EC%8B%9C%EC%9E%A5%EC%8B%9C%EA%B3%B5%EA%B0%80%EA%B2%A9(%EA%B8%B0%EA%B3%84%EC%84%A4%EB%B9%84)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json", hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+
+                // 표준시장단가 및 시장시공가격
+                {
+                    id: "civil8", group: "etc", name: "8. 공종분류 및 세부공종",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/8.%EA%B3%B5%EC%A2%85%EB%B6%84%EB%A5%98%EB%B0%8F%EC%84%B8%EB%B6%80%EA%B3%B5%EC%A2%85.json", hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+                {
+                    id: "civil9", group: "etc", name: "9. 표준시장단가 및 시장시공가격정보",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/9.%ED%91%9C%EC%A4%80%EC%8B%9C%EC%9E%A5%EB%8B%A8%EA%B0%80%EB%B0%8F%EC%8B%9C%EC%9E%A5%EC%8B%9C%EA%B3%B5%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json", hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+                {
+                    id: "civil10", group: "etc", name: "10. 표준시장단가 추가공공데이터",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%EC%8B%9C%EC%9E%A5%EB%8B%A8%EA%B0%80/12.%EC%B6%94%EA%B0%80%EA%B3%B5%EA%B3%B5%EB%8D%B0%EC%9D%B4%ED%84%B0.json", hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all", resultModes: [{ id: "all", label: "전체 보기", tableMode: "material", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+
+                // 그룹 4: 표준품셈 일위대가 (unit)
+                {
+                    id: "architecture1", group: "unit", name: "표준품셈 일위대가(건축)",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%ED%92%88%EC%85%88/2026%EB%85%84%20%EA%B1%B4%EC%B6%95%EA%B3%B5%EC%82%AC%20%ED%91%9C%EC%A4%80%EC%9D%BC%EC%9C%84%EB%8C%80%EA%B0%80(%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8_26%EB%85%84%EC%83%81).json", hasSub: true, getItems: (json) => json?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가 || [], searchKey: "품명", defaultResultMode: "sum", resultModes: [{ id: "sum", label: "기본", tableMode: "sum", columns: [{ key: "title", label: "품명", class: "cell-left" }, { key: "spec", label: "규격", class: "cell-left" }, { key: "unit", label: "단위", width: "50px", class: "cell-center" }, { key: "mat", label: "재료비", width: "90px", class: "cell-right" }, { key: "lab", label: "노무비", width: "90px", class: "cell-right" }, { key: "exp", label: "경비", width: "90px", class: "cell-right" }, { key: "total", label: "합계", width: "100px", class: "cell-right" }] }]
+                },
+                {
+                    id: "architecture2", group: "unit", name: "표준품셈 일위대가(기계공사)",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%ED%92%88%EC%85%88/2026%EB%85%84%20%EA%B8%B0%EA%B3%84%EA%B3%B5%EC%82%AC%20%ED%91%9C%EC%A4%80%EC%9D%BC%EC%9C%84%EB%8C%80%EA%B0%80(%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8_26%EB%85%84%EC%83%81)260210.json", hasSub: true, getItems: (json) => json?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가 || [], searchKey: "품명", defaultResultMode: "sum", resultModes: [{ id: "sum", label: "기본", tableMode: "sum", columns: [{ key: "title", label: "품명", class: "cell-left" }, { key: "spec", label: "규격", class: "cell-left" }, { key: "unit", label: "단위", width: "50px", class: "cell-center" }, { key: "mat", label: "재료비", width: "90px", class: "cell-right" }, { key: "lab", label: "노무비", width: "90px", class: "cell-right" }, { key: "exp", label: "경비", width: "90px", class: "cell-right" }, { key: "total", label: "합계", width: "100px", class: "cell-right" }] }]
+                },
+                {
+                    id: "architecture3", group: "unit", name: "표준품셈 일위대가(전기)",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%ED%92%88%EC%85%88/2026%EB%85%84%20%EC%A0%84%EA%B8%B0%EA%B3%B5%EC%82%AC%20%ED%91%9C%EC%A4%80%EC%9D%BC%EC%9C%84%EB%8C%80%EA%B0%80(%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8_26%EB%85%84%EC%83%81).json", hasSub: true, getItems: (json) => json?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가 || [], searchKey: "품명", defaultResultMode: "sum", resultModes: [{ id: "sum", label: "기본", tableMode: "sum", columns: [{ key: "title", label: "품명", class: "cell-left" }, { key: "spec", label: "규격", class: "cell-left" }, { key: "unit", label: "단위", width: "50px", class: "cell-center" }, { key: "mat", label: "재료비", width: "90px", class: "cell-right" }, { key: "lab", label: "노무비", width: "90px", class: "cell-right" }, { key: "exp", label: "경비", width: "90px", class: "cell-right" }, { key: "total", label: "합계", width: "100px", class: "cell-right" }] }]
+                },
+                {
+                    id: "architecture4", group: "unit", name: "표준품셈 일위대가(토목)",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%ED%92%88%EC%85%88/2026%EB%85%84%20%ED%86%A0%EB%AA%A9%EA%B3%B5%EC%82%AC%20%ED%91%9C%EC%A4%80%EC%9D%BC%EC%9C%84%EB%8C%80%EA%B0%80(%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8_26%EB%85%84%EC%83%81).json",
+                    hasSub: true, getItems: (json) => json?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가 || [],
+                    searchKey: "품명", defaultResultMode: "sum",
+                    resultModes: [{ id: "sum", label: "기본", tableMode: "sum", columns: [{ key: "title", label: "품명", class: "cell-left" }, { key: "spec", label: "규격", class: "cell-left" }, { key: "unit", label: "단위", width: "50px", class: "cell-center" }, { key: "mat", label: "재료비", width: "90px", class: "cell-right" }, { key: "lab", label: "노무비", width: "90px", class: "cell-right" }, { key: "exp", label: "경비", width: "90px", class: "cell-right" }, { key: "total", label: "합계", width: "100px", class: "cell-right" }] }]
+                },
+                {
+                    id: "architecture", group: "unit", name: "표준품셈 일위대가(통신)",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%ED%91%9C%EC%A4%80%ED%92%88%EC%85%88/2026%EB%85%84%20%ED%86%B5%EC%8B%A0%EA%B3%B5%EC%82%AC%20%ED%91%9C%EC%A4%80%EC%9D%BC%EC%9C%84%EB%8C%80%EA%B0%80(%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8_26%EB%85%84%EC%83%81).json",
+                    hasSub: true, getItems: (json) => json?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가 || [], searchKey: "품명", defaultResultMode: "sum", resultModes: [{ id: "sum", label: "기본", tableMode: "sum", columns: [{ key: "title", label: "품명", class: "cell-left" }, { key: "spec", label: "규격", class: "cell-left" }, { key: "unit", label: "단위", width: "50px", class: "cell-center" }, { key: "mat", label: "재료비", width: "90px", class: "cell-right" }, { key: "lab", label: "노무비", width: "90px", class: "cell-right" }, { key: "exp", label: "경비", width: "90px", class: "cell-right" }, { key: "total", label: "합계", width: "100px", class: "cell-right" }] }]
+                }
+            ],
+
+
+            init() {
+                this.loadData();
+            },
+
+            // 그룹 변경 함수
+            setGroup(groupName) {
+                this.selectedGroup = groupName;
+                // 해당 그룹의 첫 번째 아이템을 기본 선택
+                const firstItem = this.filteredApiList[0];
+                if (firstItem) {
+                    this.selectedApiId = firstItem.id;
+                    this.loadData();
+                }
+            },
+
+            // 현재 선택된 그룹에 따라 콤보박스 목록 필터링
+            get filteredApiList() {
+                return this.apiList.filter(api => api.group === this.selectedGroup);
+            },
+
+            // 현재 선택된 API 정보 가져오기
+            get currentApi() {
+                return this.apiList.find(api => api.id === this.selectedApiId) || this.filteredApiList[0] || this.apiList[0];
+            },
+
+            // 현재 선택된 등록 유형 가져오기
+            get currentRegType() {
+                return this.selectedRegTypes[this.currentApi.id]
+                    || this.currentApi.defaultResultMode
+                    || this.currentApi.resultModes[0]?.id;
+            },
+
+            // 현재 선택된 결과 모드 가져오기
+            get currentResultMode() {
+                return this.currentApi.resultModes.find(mode => mode.id === this.currentRegType)
+                    || this.currentApi.resultModes[0];
+            },
+
+            // 등록 유형 설정
+            setRegType(type) {
+                this.selectedRegTypes[this.currentApi.id] = type;
+            },
+
+            // 라디오 바 표시 여부 판단
+            shouldShowRadioBar() {
+                return this.showSearchBar && this.currentApi.resultModes.length > 0;
+            },
+
+            // 테이블 헤더 가져오기
+            getHeaders() {
+                return this.currentResultMode?.columns || [];
+            },
+
+            // 자재 행 가져오기
+            getMaterialRow(item) {
+                const mode = this.currentResultMode;
+                if (mode?.tableMode === 'material') {
+                    return mode.columns.map(column => {
+                        let val = column.getValue ? column.getValue(item) : item[column.key];
+                        if (column.key === 'nticeDt') {
+                            val = val ? String(val).split(' ')[0] : '';
+                        } else if (column.key === 'prce') {
+                            const price = Number(val);
+                            val = (val === undefined || val === null || val === '' || isNaN(price)) ? (val || '') : price.toLocaleString('ko-KR');
+                        } else {
+                            val = val ?? '';
+                        }
+                        return { class: column.class || '', val };
+                    });
+                }
+                return [];
+            },
+
+            // 하위 행 가져오기
+            getRows(item, idx) {
+                if (!this.currentApi.hasSub || !this.expandedIndexes.includes(idx)) return [];
+                const subList = item._cachedSubItems || this.getSubItems(item);
+                const mode = this.currentResultMode;
+
+                const formatNum = (val) => {
+                    if (val === 0 || isNaN(val)) return '0';
+                    return Number.isInteger(val) ? val.toLocaleString("ko-KR") : val.toLocaleString("ko-KR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                };
+
+                return subList.map(sub => {
+                    const parseNum = (val) => {
+                        if (val === undefined || val === null || val === '') return 0;
+                        const n = parseFloat(String(val).replace(/,/g, '').trim());
+                        return isNaN(n) ? 0 : n;
+                    };
+
+                    const matUnit = parseNum(sub.재료비단가 || sub.재료비 || sub.matPrce);
+                    const labUnit = parseNum(sub.노무비단가 || sub.노무비 || sub.labPrce);
+                    const expUnit = parseNum(sub.경비단가 || sub.경비 || sub.expPrce);
+                    const unitPriceSum = matUnit + labUnit + expUnit;
+
+                    let qtyRaw = sub.수량 ?? sub.qty ?? 1;
+                    if (typeof qtyRaw === 'string') qtyRaw = qtyRaw.replace(/,/g, '').trim();
+                    let qtyVal = parseFloat(qtyRaw);
+                    if (isNaN(qtyVal)) qtyVal = 1;
+
+                    const matAmount = matUnit * qtyVal;
+                    const labAmount = labUnit * qtyVal;
+                    const expAmount = expUnit * qtyVal;
+                    const rowTotalAmount = matAmount + labAmount + expAmount;
+
+                    const values = {
+                        title: sub.품명 || sub.명칭 || sub.prdctClsfcNoNm || '-',
+                        spec: sub.규격 || sub.spec || '-',
+                        unit: sub.단위 || sub.unit || '-'
+                    };
+
+                    if (mode?.tableMode === 'sum') {
+                        Object.assign(values, {
+                            mat: formatNum(matAmount),
+                            lab: formatNum(labAmount),
+                            exp: formatNum(expAmount),
+                            total: formatNum(rowTotalAmount)
+                        });
+                    } else if (mode?.tableMode === 'breakdown') {
+                        Object.assign(values, {
+                            qty: formatNum(qtyVal),
+                            mat: formatNum(matUnit),
+                            lab: formatNum(labUnit),
+                            exp: formatNum(expUnit),
+                            total: formatNum(unitPriceSum)
+                        });
+                    }
+
+                    return mode.columns.map(column => ({
+                        class: column.class || '',
+                        val: values[column.key] ?? ''
+                    }));
+                });
+            },
+
+            // 푸터 행 가져오기
+            getFooterRow(item, idx) {
+                if (!this.currentApi.hasSub || !this.expandedIndexes.includes(idx)) return [];
+                const subList = item._cachedSubItems || this.getSubItems(item);
+                const mode = this.currentResultMode;
+
+                let totalMatAmount = 0, totalLabAmount = 0, totalExpAmount = 0, totalAmountSum = 0;
+                let totalMatUnit = 0, totalLabUnit = 0, totalExpUnit = 0, totalUnitPriceSum = 0;
+
+                const parseNum = (val) => {
+                    if (val === undefined || val === null || val === '') return 0;
+                    const n = parseFloat(String(val).replace(/,/g, '').trim());
+                    return isNaN(n) ? 0 : n;
+                };
+
+                const formatNum = (val) => {
+                    if (val === 0 || isNaN(val)) return '0';
+                    return Number.isInteger(val) ? val.toLocaleString("ko-KR") : val.toLocaleString("ko-KR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                };
+
+                subList.forEach(sub => {
+                    const matUnit = parseNum(sub.재료비단가 || sub.재료비 || sub.matPrce);
+                    const labUnit = parseNum(sub.노무비단가 || sub.노무비 || sub.labPrce);
+                    const expUnit = parseNum(sub.경비단가 || sub.경비 || sub.expPrce);
+                    const unitPriceSum = matUnit + labUnit + expUnit;
+
+                    let qtyRaw = sub.수량 ?? sub.qty ?? 1;
+                    if (typeof qtyRaw === 'string') qtyRaw = qtyRaw.replace(/,/g, '').trim();
+                    let qtyVal = parseFloat(qtyRaw);
+                    if (isNaN(qtyVal)) qtyVal = 1;
+
+                    totalMatAmount += matUnit * qtyVal;
+                    totalLabAmount += labUnit * qtyVal;
+                    totalExpAmount += expUnit * qtyVal;
+                    totalAmountSum += (matUnit * qtyVal + labUnit * qtyVal + expUnit * qtyVal);
+
+                    totalMatUnit += matUnit;
+                    totalLabUnit += labUnit;
+                    totalExpUnit += expUnit;
+                    totalUnitPriceSum += unitPriceSum;
+                });
+
+                const values = { title: '합계', spec: '', unit: '' };
+
+                if (mode?.tableMode === 'sum') {
+                    Object.assign(values, {
+                        mat: formatNum(totalMatAmount),
+                        lab: formatNum(totalLabAmount),
+                        exp: formatNum(totalExpAmount),
+                        total: formatNum(totalAmountSum)
+                    });
+                } else if (mode?.tableMode === 'breakdown') {
+                    Object.assign(values, {
+                        qty: '',
+                        mat: formatNum(totalMatUnit),
+                        lab: formatNum(totalLabUnit),
+                        exp: formatNum(totalExpUnit),
+                        total: formatNum(totalUnitPriceSum)
+                    });
+                }
+
+                return mode.columns.map(column => ({
+                    class: column.class || '',
+                    val: values[column.key] ?? ''
+                }));
+            },
+
+            // 아이템 제목 가져오기
+            getItemTitle(item) {
+                return item.품명 || item.prdctClsfcNoNm || item.명칭 || '-';
+            },
+
+            // 아이템 규격 가져오기
+            getItemSpec(item) {
+                const spec = item.규격 || item.krnPrdctNm || item.spec;
+                return spec ? `/ ${spec}` : '';
+            },
+
+            // 아이템 단위 가져오기
+            getItemUnit(item) {
+                const unit = item.단위 || item.unit;
+                return unit ? `/ ${unit}` : '';
+            },
+
+            // 아이템 가격 가져오기
+            getItemPrice(item) {
+                let price = item.합계 || item.단가 || item.prce || item.금액;
+                if (!price && (item.재료비 !== undefined || item.노무비 !== undefined || item.경비 !== undefined)) {
+                    const mat = Number(item.재료비 || item.matPrce || 0) || 0;
+                    const lab = Number(item.노무비 || item.labPrce || 0) || 0;
+                    const exp = Number(item.경비 || item.expPrce || 0) || 0;
+                    price = mat + lab + exp;
+                }
+                if (price === undefined || price === null || price === '') return '-';
+                const num = Number(price);
+                return isNaN(num) ? price : `${num.toLocaleString("ko-KR")} 원`;
+            },
+
+            // 데이터 로드
+            async loadData() {
+                const api = this.currentApi;
+                if (!api || !api.url) return;
+
+                this.loading = true;
+                this.statusMessage = "데이터 요청 중...";
+                this.filteredItems = [];
+                this.expandedIndexes = [];
+
+                const cleanUrl = encodeURI(decodeURI(api.url));
+                const targetUrl = api.id === 'architecture' ? cleanUrl : `${cleanUrl}?v=${new Date().getTime()}`;
+
+                try {
+                    const response = await fetch(targetUrl);
+                    if (!response.ok) throw new Error(`HTTP 에러! 상태 코드: ${response.status}`);
+
+                    const jsonObj = await response.json();
+                    let rawItems = typeof api.getItems === 'function' ? api.getItems(jsonObj) : (jsonObj?.response?.body?.items || jsonObj || []);
+
+                    if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
+                        this.statusMessage = "데이터가 비어있거나 불러올 수 없어.";
+                        this.loading = false;
+                        return;
+                    }
+
+                    let list = Array.isArray(rawItems) ? rawItems : [rawItems];
+                    this.allItems = list.map(item => ({
+                        ...item,
+                        _cachedSubItems: this.getSubItems(item)
+                    }));
+
+                    if (this.searchNm.trim() !== "") {
+                        this.filterItems();
+                    } else {
+                        this.statusMessage = "데이터 준비 완료";
+                    }
+                } catch (error) {
+                    console.error("오류 발생:", error);
+                    this.statusMessage = "데이터 로드 실패: " + error.message;
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            // 아이템 필터링
+            filterItems() {
+                if (this.allItems.length === 0) return;
+                const query = this.searchNm.trim().toLowerCase();
+                this.expandedIndexes = [];
+
+                if (!query) {
+                    this.filteredItems = [];
+                    this.statusMessage = "검색어를 입력해줘.";
+                    return;
+                }
+
+                const searchKey = this.currentApi.searchKey;
+                this.filteredItems = this.allItems.filter(item => {
+                    const val = item[searchKey] || item.prdctClsfcNoNm || item.품명;
+                    return val && String(val).toLowerCase().includes(query);
+                });
+
+                if (this.filteredItems.length === 0) {
+                    this.statusMessage = `'${query}' 검색 결과가 없어.`;
+                    return;
+                }
+
+                this.statusMessage = `총 ${this.filteredItems.length}건 출력 완료 (전체 ${this.allItems.length}건 중)`;
+            },
+
+            // 하위 아이템 가져오기
+            getSubItems(item) {
+                if (!item) return [];
+                const possibleSubKeys = ["일위대가상세", "etcCntnts"];
+                for (const key of possibleSubKeys) {
+                    if (item[key]) {
+                        if (Array.isArray(item[key]) && item[key].length > 0) return item[key];
+                        if (typeof item[key] === 'object' && Object.keys(item[key]).length > 0) return [item[key]];
+                        if (typeof item[key] === 'string') {
+                            return item[key].replace(/\\r\\n|\\n|\r\n?/g, '\n').split(/\n|(?=\s*\d+\.\s)/).map(line => line.trim()).filter(Boolean).map(line => ({ prdctClsfcNoNm: line }));
+                        }
+                    }
+                }
+                for (const k in item) {
+                    if (Array.isArray(item[k]) && item[k].length > 0) return item[k];
+                }
+                return [];
+            },
+
+            // 행 토글 (확장/축소)
+            toggleRow(idx) {
+                if (this.currentApi.hasSub) {
+                    const pos = this.expandedIndexes.indexOf(idx);
+                    if (pos > -1) {
+                        this.expandedIndexes.splice(pos, 1);
+                    } else {
+                        this.expandedIndexes.push(idx);
+                    }
+                }
+            },
+
+            // 최종 아이템 등록
+            registerFinalItem(item) {
+                const title = item.prdctClsfcNoNm || item.품명 || item.명칭 || '해당 자재';
+                const spec = (item.krnPrdctNm || item.규격) ? ` (${item.krnPrdctNm || item.규격})` : '';
+                let registrationMode = this.currentResultMode?.tableMode === 'breakdown' ? '재료비/노무비/경비 세부 내역' : '합계 금액';
+
+                if (confirm(`'${title}${spec}' 자재를 [${registrationMode}] 방식으로 등록하시겠습니까?`)) {
+                    alert(`'${title}' 항목이 등록되었습니다!`);
+                }
+            }
+        }));
+    });
+</script>

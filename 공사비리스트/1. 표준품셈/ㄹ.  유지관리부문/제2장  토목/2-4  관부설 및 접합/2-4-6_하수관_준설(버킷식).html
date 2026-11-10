@@ -1,0 +1,77 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-4-6 하수관 준설(버킷식)('93년 신설, '12, '18, '21년 보완)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-4-6 하수관 준설(버킷식)('93년 신설, '12, '18, '21년 보완)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-4-6 하수관 준설(버킷식)('93년 신설, '12, '18, '21년 보완)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(일당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th style="width: 20%">구 분</th>
+                <th style="width: 20%">규 격</th>
+                <th>단 위</th>
+                <th>수 량</th>
+                <th style="width: 20%">시공량(㎥)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    특 별 인 부
+                </td>
+                <td></td>
+                <td>인</td>
+                <td>1</td>
+                <td rowspan="2">0.8</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    버 킷 준 설 기<br>
+                    트 럭
+                </td>
+                <td>
+                    7.46kW<br>
+                    2.5ton
+                </td>
+                <td>대<br>대</td>
+                <td>2<br>1</td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 버킷준설기를 이용한 하수관거 준설을 기준한 것이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품은 버킷준설기 셋팅, 준설, 준설토 상차 및 마무리 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>준설토의 운반 작업은 제외되어 있다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>버킷준설기는 호퍼식 준설기 기준이다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="하수관 준설" index="[1]" %}
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-2-10 도상자갈철거(인력)('11년 신설)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-2-10 도상자갈철거(인력)('11년 신설)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-2-10 도상자갈철거(인력)('11년 신설)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(㎥당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th style="width: 33%">단 위</th>
+                <th style="width: 33%">수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;" rowspan="2">
+                    궤 도 공<br>특 별 인 부<br>보 통 인 부
+                </td>
+                <td>인<br>인<br>인</td>
+                <td>0.04<br>0.11<br>0.32</td>
+            </tr>
+
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 인력으로 기존 자갈도상의 자갈을 긁어내는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>자갈도상을 긁어내고 도상을 정리하는 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>철거작업으로 발생된 자갈의 상차 및 하화, 운반 및 정리는 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="도상자갈 철거" index="[1]"%}
+{% endblock %}

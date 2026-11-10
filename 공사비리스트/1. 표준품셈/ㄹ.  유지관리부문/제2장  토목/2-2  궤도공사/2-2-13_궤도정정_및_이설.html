@@ -1,0 +1,74 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-2-13 궤도정정 및 이설('12, '19, '23년 보완)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-2-13 궤도정정 및 이설('12, '19, '23년 보완)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-2-13 궤도정정 및 이설('12, '19, '23년 보완)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(km당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2" style="width: 27%">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="2">수 량</th>
+            </tr>
+            <tr>
+                <th>궤도정정</th>
+                <th>궤도이설</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    궤 도 공<br>보 통 인 부
+                </td>
+                <td>-<br>-</td>
+                <td>인<br>인</td>
+                <td>47<br>27</td>
+                <td>121<br>46</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    굴착기 + 부착용 집게<br>
+                    굴착기 + 부착용 집게<br>
+                    양 로 기
+                </td>
+                <td>0.2㎥<br>0.6㎥<br>11.19㎾</td>
+                <td>hr<br>hr<br>hr</td>
+                <td>53<br>-<br>-</td>
+                <td>153<br>153<br>76</td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 궤도정정은 레일의 이동범위 1m미만 기준이며, 궤도이설은 레일의 이동범위 1m∼3m 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>자갈제거, 궤도정정 및 이설, 자갈펴넣기, 자갈정리 및 뒷정리 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>자갈다지기는 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="궤도" index="[27,28]" %}
+{% endblock %}

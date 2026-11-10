@@ -358,47 +358,6 @@
       })();
     </script>
 
-
-    <script>
-
-      document.addEventListener('alpine:init', () => {
-        // 스토어 정의
-        Alpine.store('dbStore', {
-          // 1. 로컬스토리지에서 가져오거나, 없으면 빈 객체로 시작
-          cost: JSON.parse(localStorage.getItem('cost') || '{}'),
-
-          // [역할] 앱이 처음 실행될 때 로컬에 데이터가 없으면 깃허브에서 샘플 데이터를 다운로드해 세팅함
-          async init() {
-            if (!this.cost || Object.keys(this.cost).length === 0) {
-              try {
-                const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample_Project.json');
-                if (!res.ok) throw new Error('sample.json 로드 실패');
-
-                const data = await res.json();
-                this.cost = data;
-                this.save(); // 저장 함수로 통일
-              } catch (err) {
-                console.error('기본 데이터 로드 에러:', err);
-              }
-            }
-          },
-
-          // [역할] 현재 알파인 스토어의 데이터를 로컬스토리지에 통째로 저장하는 단 하나의 메서드
-          save() {
-            localStorage.setItem('cost', JSON.stringify(this.cost));
-          }
-        });
-      });
-
-      if (!localStorage.getItem('option')) {
-        localStorage.setItem('option', JSON.stringify({
-          projectList: ["샘플프로젝트"],
-          activeProject: "샘플프로젝트"
-        }));
-      }
-
-    </script>
-
 </head>
 
 
@@ -431,7 +390,7 @@
                 </li>
 
                 <!-- 3. 공사원가 책 아이콘 -->
-                <li>
+                <!-- <li>
                   <a href="https://npccs.g2b.go.kr:8785/portal/main/main/portalMainForm.do" target="_blank"
                     rel="noopener noreferrer" title="공사원가통합관리시스템">
                     <svg viewBox="0 0 40 40">
@@ -442,7 +401,7 @@
                       <path d="M 34 13 L 34 28" />
                     </svg>
                   </a>
-                </li>
+                </li> -->
                 <!-- 4. 네이버 아이콘 (DOM 우측 전환용으로 변경) -->
                 <li>
                   <a href="javascript:void(0);" id="naver-mode-btn" title="우측 화면 전환">
@@ -453,8 +412,8 @@
                   </a>
                 </li>
                 <!-- 5. 작업창 아이콘 -->
-                <li id="workspace-sticky-btn">
-                  <a href="#" target="_blank" rel="noopener noreferrer" title="내 작업창 띄우기">
+                <!-- <li id="workspace-sticky-btn">
+                  <a href="#" target="_blank" rel="noopener noreferrer" title="공종별내역서">
                     <svg viewBox="0 0 40 40">
                       <path
                         d="M 15 8 L 9 8 C 7.5 8, 6 9.5, 6 11 L 6 27 C 6 28.5, 7.5 30, 9 30 L 25 30 C 26.5 30, 28 28.5, 28 27 L 28 21" />
@@ -462,7 +421,8 @@
                       <path d="M 24 8 L 32 8 L 32 16" />
                     </svg>
                   </a>
-                </li>
+                </li> -->
+
                 <!-- 6. 수정 아이콘 -->
                 <li id="admin-edit-btn" style="display: none;">
                   <a id="admin-edit-link" href="#" target="_blank" title="현재 글 수정하기">
@@ -877,6 +837,7 @@
             items: []
           };
 
+
           sec.items.forEach(item => {
             const li = document.createElement("li");
             li.style.marginLeft = "45px";
@@ -892,6 +853,8 @@
             a.href = finalItemUrl;
             a.textContent = item.text;
 
+            const isNewTab = item.isNewWindow === true;
+
             a.onclick = function (e) {
               e.preventDefault();
               e.stopPropagation();
@@ -899,7 +862,11 @@
               if (finalItemUrl.startsWith("#")) {
                 window.location.hash = finalItemUrl;
               } else {
-                window.location.href = finalItemUrl;
+                if (isNewTab) {
+                  window.open(finalItemUrl, "_blank");
+                } else {
+                  window.location.href = finalItemUrl;
+                }
               }
             };
 

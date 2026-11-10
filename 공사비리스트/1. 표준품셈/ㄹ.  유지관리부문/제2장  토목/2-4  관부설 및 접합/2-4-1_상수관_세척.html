@@ -1,0 +1,70 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-4-1 상수관 세척('18년 신설)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-4-1 상수관 세척('18년 신설)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-4-1 상수관 세척('18년 신설)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(일당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+                <th style="width: 25%">시공량(구분)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px; width: 25%">
+                    배 관 공( 수 도)<br>보 통 인 부
+                </td>
+                <td>인<br>인</td>
+                <td>1<br>3</td>
+                <td rowspan="2">2</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    시 험 기 구
+                </td>
+                <td>식</td>
+                <td>1</td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 양측의 제수밸브와 소화전을 이용한 상수관(300㎜이하)의 물세척(플러싱) 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품의 시공량의 “구간”은 양측 제수밸브에 의해 통제되는 구간 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>본 품은 단수준비(사전홍보 포함), 제수밸브 개폐(양측), 탁도/염도 측정 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>측정에 필요한 시험기구의 손료는 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="상수관" %}
+{% endblock %}

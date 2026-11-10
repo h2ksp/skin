@@ -1,0 +1,85 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-4-5 하수관 공기압시험('21년 신설)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-4-5 하수관 공기압시험('21년 신설)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-4-5 하수관 공기압시험('21년 신설)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(일당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2" style="width: 25%;">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th rowspan="2">수 량</th>
+                <th colspan="3">관경(㎜)</th>
+            </tr>
+            <tr>
+                <th style="width: 14%">300mm 이하</th>
+                <th style="width: 14%">600mm 이하</th>
+                <th style="width: 14%">800mm 이하</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    배 관 공( 수도)<br>
+                    보 통 인 부
+                </td>
+                <td></td>
+                <td>인<br>인</td>
+                <td>2<br>1</td>
+                <td rowspan="2">15</td>
+                <td rowspan="2">11</td>
+                <td rowspan="2">8</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    시 험 기 구<br>
+                    트 럭
+                </td>
+                <td>
+                    -<br>
+                    2.5ton
+                </td>
+                <td>식<br>대</td>
+                <td>1<br>1</td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 하수관에 공기를 주입하여 누수를 측정하는 공기압시험 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품은 시험기구 설치, 공기채움, 측정, 기구해체 및 이동 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>물탱크, 공기압축기, 시험기구의 손료는 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>용수와 잡재료비는 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="하수관 공기압시험" %}
+{% endblock %}

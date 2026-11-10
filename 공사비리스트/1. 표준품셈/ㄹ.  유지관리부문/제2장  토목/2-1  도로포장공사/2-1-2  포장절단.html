@@ -1,0 +1,73 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-1-2 포장 절단('21년 보완)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-1-2 포장 절단('21년 보완)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-1-2 포장 절단('21년 보완)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(일당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th rowspan="2">수 량</th>
+                <th colspan="2" style="width: 35%">시공량 (m)</th>
+            </tr>
+            <tr>
+                <th>아스팔트포장</th>
+                <th>콘크리트포장</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    특 별 인 부<br>보 통 인 부
+                </td>
+                <td></td>
+                <td>인<br>인</td>
+                <td>1<br>1</td>
+                <td rowspan="2">500</td>
+                <td rowspan="2">450</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    커 터<br>동력 분무기
+                </td>
+                <td>320~400㎜<br>4.85㎾</td>
+                <td>대<br>대</td>
+                <td>1<br>0.5</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 아스팔트 포장 및 콘크리트 포장을 절단하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>포장두께는 20㎝이하를 기준한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>블레이드 및 물 소비량은 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="포장 절단" %}
+{% endblock %}

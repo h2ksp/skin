@@ -1,64 +1,60 @@
-<div x-data id="print-container">
+<div x-data="projectManager()" id="print-container">
 
     <h1>새 프로젝트</h1>
 
-    <div class="tbl-text"
-        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 19px; font-weight: 400; font-style: italic; color: #666666; margin-bottom: 12px; line-height: 1.6;">
-        "프로젝트를 추가 할 수 있고 순서를 바꾸거나 이름을 편집하거나 삭제할 수 있습니다."
-    </div>
-
-    <!-- 현재 활성 프로젝트 표시 (option 안에서 가져옴) -->
-    <div class="active-box" x-data>
+    <!-- 현재 활성 프로젝트 표시 -->
+    <div class="active-box">
         <span>현재 활성: </span>
-        <span id="activeDisplay" x-text="$store.dbStore.option.activeProject || '선택된 프로젝트 없음'"></span>
+        <span id="activeDisplay" x-text="option.activeProject || '선택된 프로젝트 없음'"></span>
     </div>
 
-    <!-- 프로젝트 입력 폼 -->
+    <!-- 프로젝트 입력 폼 및 샘플 추가 버튼 -->
     <div class="input-row" x-data="{ newName: '' }">
-        <input type="text" x-model="newName" @keyup.enter="$store.dbStore.addProject(newName); newName = '';"
+        <input type="text" x-model="newName" @keyup.enter="addProject(newName); newName = '';"
             placeholder=" 새 프로젝트 이름 입력..." autocomplete="off">
-        <button @click="$store.dbStore.addProject(newName); newName = '';">추가</button>
+        <button @click="addProject(newName); newName = '';">추가</button>
+        <!-- 💡 샘플 프로젝트 추가 버튼 -->
+        <button @click="addSampleProject()">샘플프로젝트</button>
     </div>
 
     <!-- 프로젝트 목록 테이블 -->
-    <div style="margin-top: 50px;" x-data>
+    <div style="margin-top: 50px;">
         <div class="tbl-text">프로젝트 목록</div>
         <table id="projectTable">
             <tbody id="projectList">
-                <template x-for="(project, index) in $store.dbStore.option.projectList" :key="project">
+                <template x-for="(project, index) in option.projectList" :key="project">
                     <tr>
                         <!-- 1. 순번 -->
                         <td class="tbl-num" x-text="(index + 1) + '.'"></td>
 
                         <!-- 2. 프로젝트 이름 -->
                         <td>
-                            <div class="tbl-text"
-                                :class="{ 'is-active-project': project === $store.dbStore.option.activeProject }"
+                            <div class="tbl-text" :class="{ 'is-active-project': project === option.activeProject }"
                                 x-text="project"></div>
                         </td>
 
                         <!-- 3. 선택, 편집, 삭제 버튼 -->
                         <td style="width: 170px; text-align: right;">
                             <div class="btn-group">
-                                <button @click="$store.dbStore.setActive(project)">선택</button>
-                                <button @click="$store.dbStore.editProject(project)">편집</button>
-                                <button @click="$store.dbStore.deleteProject(project)">삭제</button>
+                                <button @click="setActive(project)">선택</button>
+                                <button @click="editProject(project)">편집</button>
+                                <button @click="deleteProject(project)">삭제</button>
                             </div>
                         </td>
 
                         <!-- 4. 위아래(▲, ▼) 버튼 -->
                         <td style="width: 90px; text-align: right;">
                             <div class="btn-group">
-                                <button @click="$store.dbStore.moveUp(index)" :disabled="index === 0">▲</button>
-                                <button @click="$store.dbStore.moveDown(index)"
-                                    :disabled="index === $store.dbStore.option.projectList.length - 1">▼</button>
+                                <button @click="moveUp(index)" :disabled="index === 0">▲</button>
+                                <button @click="moveDown(index)"
+                                    :disabled="index === option.projectList.length - 1">▼</button>
                             </div>
                         </td>
                     </tr>
                 </template>
 
                 <!-- 등록된 프로젝트가 없을 때 -->
-                <template x-if="$store.dbStore.option.projectList.length === 0">
+                <template x-if="option.projectList.length === 0">
                     <tr>
                         <td colspan="4" style="color: gray; font-size: 17px; padding: 6px 2px;">등록된 프로젝트가 없습니다.</td>
                     </tr>
@@ -90,7 +86,7 @@
     }
 
     .input-row input {
-        width: 50%;
+        width: 40%;
         outline: none;
     }
 
@@ -133,40 +129,24 @@
         justify-content: flex-end;
         width: 100%;
     }
-
-    .project-manager-app table button {
-        cursor: pointer;
-        text-align: center;
-    }
-
-    .project-manager-app table button:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
 </style>
 
 <script>
-    // 💡 스토어를 덮어쓰는 게 아니라, 일반 컴포넌트 함수로 만들어서 스토어를 '참조'만 함!
     function projectManager() {
         return {
-            // 1. 스킨 배경에 이미 만들어진 스토어를 그냥 꺼내옴
-            store: Alpine.store('dbStore'),
-
-            // 2. 프로젝트 목록과 활성 상태는 컴포넌트(옵션)에서 관리
             option: JSON.parse(localStorage.getItem('option')) || {
                 projectList: [],
                 activeProject: null
             },
 
-            // [역할] 컴포넌트 실행 시 기존 데이터(cost)와 프로젝트 목록(projectList) 싱크 맞추기
+            costData: JSON.parse(localStorage.getItem('cost')) || {},
+
             init() {
-                const costData = this.store.cost || {};
-                const allKeys = Object.keys(costData);
+                const allKeys = Object.keys(this.costData);
                 let currentList = this.option.projectList;
 
                 if (currentList.length > 0) {
-                    // 삭제된 건 빼고, 새로 생긴 건 추가하는 순정 로직
-                    currentList = currentList.filter(name => costData[name]);
+                    currentList = currentList.filter(name => this.costData[name]);
                     allKeys.forEach(name => {
                         if (!currentList.includes(name)) currentList.push(name);
                     });
@@ -175,105 +155,141 @@
                     this.option.projectList = allKeys;
                 }
 
-                // 활성 프로젝트 갱신
-                if (!this.option.activeProject || !costData[this.option.activeProject]) {
+                if (!this.option.activeProject || !this.costData[this.option.activeProject]) {
                     this.option.activeProject = this.option.projectList.length > 0 ? this.option.projectList[0] : null;
                 }
 
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 옵션(프로젝트 목록/활성 프로젝트)만 로컬스토리지에 저장
-            saveOption() {
+            saveAll() {
                 localStorage.setItem('option', JSON.stringify(this.option));
+                localStorage.setItem('cost', JSON.stringify(this.costData));
             },
 
-            // [역할] 새 프로젝트 생성
             addProject(inputName) {
+                const rawData = JSON.parse(localStorage.getItem('api_data')) || {};
+                const fuelArray = rawData?.data?.oil?.fuelPrices || [];
+                const oil = (name) => {
+                    const found = fuelArray.find(item => item.fuelType === name);
+                    return found ? found.price : '';
+                };
+
                 const name = (inputName || '').trim();
                 if (!name) return alert('프로젝트 이름을 입력해줘!');
-                if (this.store.cost[name]) return alert('이미 존재하는 프로젝트야!');
+                if (this.costData[name]) return alert('이미 존재하는 프로젝트야!');
 
-                // 💡 스토어 데이터에 순정으로 값 집어넣고 스토어 save() 호출!
-                this.store.cost[name] = {
+                this.costData[name] = {
                     공종별내역서: [],
                     일위대가: [],
                     중기단가산출근거: [],
                     적용기준: {
-                        환율: { 달러: '', 엔: '' },
-                        유류단가: { 휘발유: '', 경유: '', 선박용경유: '', 중유: '' }
+                        환율: {
+                            달러: 1350,
+                            엔: 990
+                        },
+                        유류단가: {
+                            휘발유: oil('휘발유'),
+                            경유: oil('자동차용경유'),
+                            선박용경유: '',
+                            중유: ''
+                        }
                     },
                     옵션: {
                         그룹명: ['건축', '토목', '전기', '기계', '조경', '소방', '통신', '기타']
                     }
                 };
-                this.store.save();
 
-                // 옵션 업데이트
                 this.option.projectList.push(name);
                 if (!this.option.activeProject) this.option.activeProject = name;
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 기존 프로젝트 이름 변경
+            // 💡 깃허브에서 샘플 프로젝트 다운받아서 추가하는 함수
+            async addSampleProject() {
+                try {
+                    const res = await fetch('https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/sample_Project.json');
+                    if (!res.ok) throw new Error('샘플 데이터 로드 실패');
+
+                    const sampleData = await res.json();
+
+                    Object.keys(sampleData).forEach(sampleName => {
+                        let targetName = sampleName;
+                        let counter = 1;
+                        while (this.costData[targetName]) {
+                            targetName = `${sampleName}_(${counter})`;
+                            counter++;
+                        }
+
+                        // 데이터 병합
+                        this.costData[targetName] = sampleData[sampleName];
+
+                        // 목록에 없으면 추가
+                        if (!this.option.projectList.includes(targetName)) {
+                            this.option.projectList.push(targetName);
+                        }
+                    });
+
+                    // 활성 프로젝트가 없다면 첫 번째로 지정
+                    if (!this.option.activeProject && this.option.projectList.length > 0) {
+                        this.option.activeProject = this.option.projectList[0];
+                    }
+
+                    this.saveAll();
+                } catch (err) {
+                    console.error('샘플 프로젝트 로드 에러:', err);
+                }
+            },
+
             editProject(oldName) {
                 const newName = prompt('변경할 프로젝트 이름을 입력해줘:', oldName);
                 if (!newName) return;
 
                 const trimmedName = newName.trim();
                 if (!trimmedName || trimmedName === oldName) return;
-                if (this.store.cost[trimmedName]) return alert('이미 존재하는 프로젝트 이름이야!');
+                if (this.costData[trimmedName]) return alert('이미 존재하는 프로젝트 이름이야!');
 
-                // 💡 데이터 이동 후 기존 거 삭제
-                this.store.cost[trimmedName] = this.store.cost[oldName];
-                delete this.store.cost[oldName];
-                this.store.save();
+                this.costData[trimmedName] = this.costData[oldName];
+                delete this.costData[oldName];
 
-                // 목록 갱신
                 this.option.projectList = this.option.projectList.map(name => name === oldName ? trimmedName : name);
                 if (this.option.activeProject === oldName) this.option.activeProject = trimmedName;
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 프로젝트 삭제
             deleteProject(name) {
                 if (!confirm(`"${name}" 프로젝트를 삭제할래?`)) return;
 
-                // 💡 스토어에서 바로 지우고 save()
-                delete this.store.cost[name];
-                this.store.save();
-
+                delete this.costData[name];
                 this.option.projectList = this.option.projectList.filter(p => p !== name);
+
                 if (this.option.activeProject === name) {
                     this.option.activeProject = this.option.projectList.length > 0 ? this.option.projectList[0] : null;
                 }
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 순서 위로
             moveUp(index) {
                 if (index <= 0) return;
                 const list = this.option.projectList;
                 const temp = list[index];
                 list[index] = list[index - 1];
                 list[index - 1] = temp;
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 순서 아래로
             moveDown(index) {
                 const list = this.option.projectList;
                 if (index >= list.length - 1) return;
                 const temp = list[index];
                 list[index] = list[index + 1];
                 list[index + 1] = temp;
-                this.saveOption();
+                this.saveAll();
             },
 
-            // [역할] 활성 프로젝트 변경
             setActive(name) {
                 this.option.activeProject = name;
-                this.saveOption();
+                this.saveAll();
             }
         };
     }

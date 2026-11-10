@@ -1,0 +1,109 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+
+{% block head %}
+    <title>
+        2-2-4 레일교환(인력)('12, '23년 보완)
+    </title>
+    <meta name="description"
+          content="정부 및 공공기관 건설공사 예정가격 산정 기준을 제공하는 '2-2-4 레일교환(인력)('12, '23년 보완)' 항목의 상세 설명입니다.">
+{% endblock %}
+
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <h1>
+            2-2-4 레일교환(인력)('12, '23년 보완)
+        </h1>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(km당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="4" colspan="2">구 분</th>
+                <th rowspan="4">단 위</th>
+                <th colspan="12">수 량</th>
+            </tr>
+            <tr>
+                <th colspan="6">3시간 차단</th>
+                <th colspan="6">4시간 차단</th>
+            </tr>
+            <tr>
+                <th colspan="2">시공구간<br>30m 이하</th>
+                <th colspan="2">시공구간<br>100m 이하</th>
+                <th colspan="2">시공구간<br>100m 초과</th>
+                <th colspan="2">시공구간<br>30m 이하</th>
+                <th colspan="2">시공구간<br>100m 이하</th>
+                <th colspan="2">시공구간<br>100m 초과</th>
+            </tr>
+            <tr>
+                <th>50㎏</th><th>60㎏</th>
+                <th>50㎏</th><th>60㎏</th>
+                <th>50㎏</th><th>60㎏</th>
+                <th>50㎏</th><th>60㎏</th>
+                <th>50㎏</th><th>60㎏</th>
+                <th>50㎏</th><th>60㎏</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: left; padding-left: 15px;">
+                    목침목<br>구 간
+                </td>
+                <td style="text-align: left; padding-left: 15px;">
+                    궤 도 공<br>보통인부
+                </td>
+                <td>인<br>인</td>
+                <td>193<br>42</td>
+                <td>204<br>45</td>
+                <td>161<br>35</td>
+                <td>171<br>38</td>
+                <td>130<br>29</td>
+                <td>138<br>30</td>
+
+                <td>178<br>39</td>
+                <td>189<br>42</td>
+                <td>149<br>33</td>
+                <td>158<br>35</td>
+                <td>121<br>27</td>
+                <td>128<br>28</td>
+            </tr>
+
+            <tr>
+                <td colspan="2">비고</td>
+                <td colspan="13" style="text-align: left; padding-left: 15px;">
+                    - 한측 레일만 교환하는 경우는 본 품의 65%를 적용한다.
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <table style="margin-bottom: 50px;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 인력으로 양측레일을 교환하는 품이며, 운행선 구간의 야간작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>시공구간은 1일 차단시간 내에 시공하는 레일교환 대상물량 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>체결구 해체, 레일교환, 체결구 체결을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>레일의 상차 및 하화, 운반, 레일 절단에 소요되는 품은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤</td>
+                <td>야간작업 할증, 열차 운행에 따른 지장, 대피 할증을 추가 계상하지 않는다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="레일교환" li=48 %}
+{% endblock %}
