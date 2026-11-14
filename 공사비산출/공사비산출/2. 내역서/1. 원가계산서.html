@@ -27,7 +27,11 @@
 
 <div id="title">원가계산서</div>
 
+
+
+
 <div class="cost-estimate" x-data="costEstimate()" x-init="init()">
+
     <div class="toolbar">
         <label for="costEstimateProject">프로젝트 선택:</label>
         <select id="costEstimateProject" x-model="activeProject" @change="saveActiveProject()">
@@ -40,7 +44,7 @@
 
     <div class="status" x-text="statusMessage"></div>
 
-
+    <div class="money" x-text="total(activeProject).직접재료비">asdf</div>
 
     <div class="tables-wrapper">
 
@@ -353,6 +357,62 @@
 
 <script>
     function costEstimate() {
+        return {
+            projectList: [],
+            activeProject: '',
+            statusMessage: '',
+            // 💡 1. 컴포넌트 내부에 cost 데이터 선언
+            cost: JSON.parse(localStorage.getItem('cost') || '{}'),
 
+            init() {
+                this.projectList = Object.keys(this.cost);
+                const savedProject = localStorage.getItem('activeProject');
+                this.activeProject = this.projectList.includes(savedProject)
+                    ? savedProject
+                    : (this.projectList[0] || '');
+                this.statusMessage = this.activeProject ? '' : '선택할 프로젝트가 없습니다. (localStorage에 cost 데이터를 확인하세요)';
+            },
+
+            saveActiveProject() {
+                localStorage.setItem('activeProject', this.activeProject || '');
+            },
+
+            toNum(v) {
+                return Number(String(v || 0).replace(/,/g, '')) || 0;
+            },
+
+            total(projectName) {
+                const project = this.cost[projectName];
+                const items = Object.values(project.공종별내역서).flat(2);
+                // if (project.옵션 && project.옵션.machineFilter) {
+                //     items = items.filter(c => c?.type !== '일위대가');
+                // }
+
+                const a1 = items.reduce((sum, c) => sum + this.toNum(c.재료비), 0);
+                const a2 = items.reduce((sum, c) => sum + this.toNum(c.), 0);
+                const a3 = items.reduce((sum, c) => sum + this.toNum(c.item7), 0);
+                // const a4 = a1 + a2 - a3;
+
+                // const b1 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+                // const b2 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+
+                // const c1 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+                // const c2 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+                // const c3 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+                console.log(a1);
+                return {
+                    직접재료비: a1.toLocaleString('ko-KR'),
+                    // 간접재료비: a2.toLocaleString('ko-KR'),
+                    // 작업설부산물: a3.toLocaleString('ko-KR'),
+                    // 소계_1: a4.toLocaleString('ko-KR'),
+                    // 직접노무비: b1.toLocaleString('ko-KR'),
+                    // 간접노무비: b2.toLocaleString('ko-KR'),
+                    // 소계_2: (b1 + b2).toLocaleString('ko-KR'),
+                    // 산출경비: c1.toLocaleString('ko-KR'),
+                    // 기계경비: c2.toLocaleString('ko-KR'),
+                    // 산재보험료: c3.toLocaleString('ko-KR')
+                };
+            }
+        };
     }
 </script>

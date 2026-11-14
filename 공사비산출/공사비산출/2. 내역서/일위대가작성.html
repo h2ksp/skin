@@ -1,0 +1,915 @@
+<style>
+    /* 테이블 전체 테두리 및 선 제거 */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        padding: 0;
+    }
+
+
+    th {
+        font-weight: normal;
+        text-align: center;
+        background-color: #fafafa;
+        border-bottom: none;
+    }
+
+    td {
+        border: none;
+        font-style: italic;
+        padding: 0;
+        font-weight: normal;
+        padding-right: 2px;
+        white-space: nowrap;
+        padding: 0 2px 0 0;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    input {
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        width: 100%;
+        height: 20px;
+        padding: 0 10px 0 2px;
+        box-sizing: border-box;
+        font-style: italic;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        background: transparent;
+        outline: none;
+    }
+
+    select {
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        width: 100%;
+        /* height: 20px; */
+        padding: 0 10px 0 2px;
+        box-sizing: border-box;
+        font-style: italic;
+        border: none;
+
+        background: transparent;
+        outline: none;
+    }
+
+    input:focus,
+    select:focus {
+        border-bottom: 1px solid #333;
+    }
+
+    input.text-left,
+    select.text-left {
+        text-align: left;
+    }
+
+    input.text-center,
+    select.text-center {
+        text-align: center;
+    }
+
+    input.text-right,
+    select.text-right {
+        text-align: right;
+    }
+
+
+    .select-cell {
+        cursor: pointer;
+        width: 20px;
+        text-align: center;
+        background-color: transparent;
+    }
+
+    tr.selected-row>td {
+        background-color: #eff6fe !important;
+    }
+
+    .explorer-bar {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 12px;
+        background: #f8f9fa;
+        padding: 8px;
+        border: 1px solid #e1e4e8;
+        border-radius: 6px;
+    }
+
+    .explorer-field select {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-style: normal;
+    }
+
+    /* 중첩 상태일 때 보여지는 부모 품목 정보 바 스타일 */
+    .nested-info-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        padding: 10px 14px;
+        align-items: center;
+    }
+
+    .nested-parent-fields {
+        display: flex;
+        gap: 10px;
+        font-size: 16px;
+        flex: 1;
+    }
+
+    .nested-parent-field {
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+        padding: 2px 6px;
+    }
+
+    .nested-parent-unit,
+    .nested-parent-qty {
+        width: 60px;
+    }
+
+    .nested-parent-unit {
+        text-align: center;
+    }
+
+    .nested-parent-qty {
+        text-align: right;
+    }
+
+    .my-data-item {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        cursor: pointer;
+        /* font-style: italic; */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80%;
+        box-sizing: border-box;
+    }
+
+    .my-data-item.is-selected {
+        background-color: #eff6fe;
+
+    }
+
+    .top-bar {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .radio-group label {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    pre {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        color: #333333;
+        /* font-style: italic; */
+        font-size: 14px;
+    }
+</style>
+
+<br>
+
+<div x-data="costCalculator()" style="margin-left: -40px;width: calc(100% + 140px); font-size: 0.9rem;">
+
+    <!-- 젤 상단 탐색기 스타일 콤보박스 2개 -->
+    <div class="explorer-bar">
+        <div class="explorer-field">
+            <select x-model="selectedProjectKey" @change="onProjectChange()">
+                <option value="">-- 프로젝트를 선택하세요 --</option>
+                <template x-for="projKey in projectKeys" :key="projKey">
+                    <option :value="projKey" x-text="projKey"></option>
+                </template>
+            </select>
+        </div>
+        <div class="explorer-field">
+            <select x-model="selectedCategoryKey" @change="onCategoryChange()" :disabled="!selectedProjectKey">
+                <option value="">-- 공종그룹을 선택하세요 --</option>
+                <template x-for="catOpt in availableCategories" :key="catOpt.key">
+                    <option :value="catOpt.key" x-text="catOpt.label"></option>
+                </template>
+            </select>
+        </div>
+        <button type="button" @click="goBack()" :disabled="!canGoBack">
+            ← 뒤로
+        </button>
+        <button type="button" @click="editSelected()" :disabled="!canEnterSelected">세부항목</button>
+        <!-- 🔄 나의데이터 토글 버튼 (텍스트 고정) -->
+        <button type="button" @click="showMyData = !showMyData; selectedIndex = null;">
+            나의데이터
+        </button>　
+        <span x-text="nestingDepthNumber"></span>
+    </div>
+
+
+
+    <div class="top-bar">
+        <div>
+            <button type="button" @click="moveSelected(-1)"
+                :disabled="selectedIndex === null || selectedIndex === 0">위로</button>
+            <button type="button" @click="moveSelected(1)"
+                :disabled="selectedIndex === null || selectedIndex === rows.length - 1">아래로</button>
+            <button type="button" @click="addRow()">줄추가</button>
+        </div>
+
+        <div class="radio-group">
+            <template x-for="(view, key) in views" :key="key">
+                <label>
+                    <input type="radio" name="costView" :value="key" x-model="currentView">
+                    <span x-text="view.label"></span>
+                </label>
+            </template>
+        </div>
+    </div>
+
+
+    <!-- 최상위가 아닐 때 부모 항목의 정보가 실시간으로 바인딩되어 표시되는 영역 -->
+    <div class="nested-info-bar" x-show="canGoBack && parentItem">
+        <div class="nested-parent-fields" x-if="parentItem">
+            <input type="text" placeholder="품목" x-model="parentItem.품목" @input="saveCostData()"
+                class="nested-parent-field">
+            <input type="text" placeholder="규격" x-model="parentItem.규격" @input="saveCostData()"
+                class="nested-parent-field">
+            <input type="text" placeholder="단위" x-model="parentItem.단위" @input="saveCostData()"
+                class="nested-parent-field nested-parent-unit">
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table x-ref="costTable">
+            <thead>
+                <tr>
+                    <th style="width: 15px;"></th>
+                    <template x-for="col in currentColumns">
+                        <th :style="'width: ' + col.width" x-text="col.title"></th>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(row, index) in rows" :key="index">
+                    <tr :class="{ 'selected-row': selectedIndex === index }">
+
+                        <!-- 행 선택 시 나의데이터 창이 켜져있다면 자동으로 닫힘(!showMyData) -->
+                        <td class="select-cell"
+                            @click.stop="selectedIndex = selectedIndex === index ? null : index; showMyData = false;">
+                        </td>
+
+                        <template x-for="col in currentColumns">
+                            <td :class="col.alignClass">
+                                <!-- 1. 콤보박스(select) 타입 -->
+                                <template x-if="col.type === 'select'">
+                                    <select x-model="row[col.key]" @change="saveCostData()" :class="col.alignClass">
+                                        <template x-for="opt in (col.options || [])">
+                                            <option :value="opt.value" x-text="opt.label"></option>
+                                        </template>
+                                    </select>
+                                </template>
+
+                                <!-- 2. 일반 텍스트 인풋 타입 -->
+                                <template x-if="col.type === 'input-text'">
+                                    <input type="text" x-model="row[col.key]" @input="saveCostData()"
+                                        :class="col.alignClass">
+                                </template>
+
+                                <!-- 3. 숫자 입력 타입 -->
+                                <template x-if="col.type === 'input-num'">
+                                    <input type="text" inputmode="decimal" :value="getDisplayValue(row[col.key])"
+                                        @input="formatInput($event, row, col.key)" :class="col.alignClass">
+                                </template>
+
+                                <!-- 4. 계산식 타입 -->
+                                <template x-if="col.type === 'calc'">
+                                    <div x-text="formatNum(col.calcFn(row))" :class="col.alignClass"
+                                        style="padding-bottom: 2px;"></div>
+                                </template>
+
+                                <!-- 5. 삭제 액션 타입 -->
+                                <template x-if="col.type === 'action'">
+                                    <a type="button" @click.stop="removeRow(index)"
+                                        style="cursor: pointer; color: #999;">X</a>
+                                </template>
+                            </td>
+                        </template>
+
+                    </tr>
+                </template>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <!-- 앞의 4개 열을 제외한 열마다 합계 행의 셀을 만듭니다. -->
+                    <template x-for="(col, idx) in currentColumns">
+                        <td :class="col.alignClass" style="padding-top: 8px;">
+                            <template x-if="col.type === 'calc'">
+                                <!-- calc 열은 해당 열의 totalFn()으로 계산한 합계를 표시합니다. -->
+                                <div x-text="formatNum(rows.reduce((sum, row) => sum + (Number(col.calcFn(row)) || 0), 0))"
+                                    :class="col.alignClass"></div>
+                            </template>
+                            <template x-if="col.type !== 'calc'">
+                                <!-- 계산 열이 아니면 합계를 표시하지 않고 '-'를 표시합니다. -->
+                                <div :class="col.alignClass">-</div>
+                            </template>
+                        </td>
+                    </template>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- 하단 '나의 데이터' 영역 -->
+    <div style="margin-top: 64px; margin-left: 24px;"
+        x-show="showMyData && _availableProjects && selectedIndex === null" x-cloak @click="selectedMyDataIndex = null"
+        @click.outside="selectedMyDataIndex = null">
+
+        <!-- 1. 일위대가, 노무, 자재 등을 텍스트와 '/' 구분자로 나열 -->
+        <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center; font-size: 0.9rem;">
+            <template x-for="(typeName, idx) in cycleTypes" :key="typeName">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <a href="#" @click.prevent="changeCycleType(typeName)" :style="{
+                       textDecoration: 'none',
+                       fontWeight: currentCycleTypeName === typeName ? 'bold' : 'normal'
+                    }"
+                        x-text="typeName + ' (' + (getProjectClassifiedItems()[typeName] ? getProjectClassifiedItems()[typeName].length : 0) + ')'">
+                    </a>
+                    <span x-show="idx < cycleTypes.length - 1" style="color: #ccc;">/</span>
+                </div>
+            </template>
+            &nbsp;&nbsp;&nbsp;
+            <button type="button" @click.stop="addSelectedMyItem()" :disabled="selectedMyDataIndex === null">
+                항목추가
+            </button>
+        </div>
+
+
+
+        <template x-for="(item, index) in currentCycleItems" :key="index">
+            <div class="my-data-item" :class="{ 'is-selected': selectedMyDataIndex === index }"
+                @click.stop="selectedMyDataIndex = selectedMyDataIndex === index ? null : index">
+                <span
+                    x-text="'- ' + (item.품목 || item.품명 || '품목없음') + ' / 규격: ' + (item.규격 || '-') + ' / 단위: ' + (item.단위 || '-')"></span>
+            </div>
+        </template>
+        <template x-if="currentCycleItems.length === 0">
+            <div
+                style="color: #999; text-align: center; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+                해당 타입의 항목이 없습니다.</div>
+        </template>
+
+    </div>
+
+    <!-- 하단 JSON 상세 보기 영역 -->
+    <div x-show="selectedIndex !== null && rows[selectedIndex] && !showMyData" x-cloak style="margin-top: 14px;">
+        <pre x-text="JSON.stringify(rows[selectedIndex], null, 2)"></pre>
+    </div>
+
+</div>
+
+<script>
+    function costCalculator() {
+        return {
+            currentView: 'view1',
+            rows: [],
+            selectedIndex: null,
+            showMyData: false,
+            selectedMyDataIndex: null,
+            currentCycleItems: [],
+            _availableProjects: null,
+            _targetContainer: null,
+            currentProjectKey: null,
+
+            projectKeys: [],
+            selectedProjectKey: '',
+            availableCategories: [],
+            selectedCategoryKey: '',
+            subItemKey: '',
+            parentItem: null,
+
+            cycleTypes: ['자재', '노무', '경비', '일위대가'],
+            cycleIndex: 0,
+
+            get currentCycleTypeName() {
+                return this.cycleTypes[this.cycleIndex];
+            },
+
+            updateCurrentCycleItems() {
+                const classified = this.getProjectClassifiedItems();
+                this.currentCycleItems = classified[this.currentCycleTypeName] || [];
+            },
+
+            changeCycleType(typeName) {
+                const idx = this.cycleTypes.indexOf(typeName);
+                if (idx !== -1) {
+                    this.cycleIndex = idx;
+                    this.selectedMyDataIndex = null;
+                    this.updateCurrentCycleItems();
+                }
+            },
+
+            cycleBottomType() {
+                this.cycleIndex = (this.cycleIndex + 1) % this.cycleTypes.length;
+                this.selectedMyDataIndex = null;
+                this.updateCurrentCycleItems();
+            },
+
+            addSelectedMyItem() {
+                if (this.selectedMyDataIndex === null || !this.currentCycleItems[this.selectedMyDataIndex]) return;
+                this.addItemToCurrent(this.currentCycleItems[this.selectedMyDataIndex]);
+            },
+
+            get canGoBack() {
+                return this.subItemKey !== "" && this.subItemKey != null && this.subItemKey !== "null" && this.subItemKey !== "undefined";
+            },
+
+            get canEnterSelected() {
+                if (this.selectedIndex === null || !this.rows[this.selectedIndex]) return false;
+                const row = this.rows[this.selectedIndex];
+                const t = String(row.type || row.타입 || row.구분 || '').trim();
+                return t.includes('일위대가') || t.includes('건설기계');
+            },
+
+            get nestingDepthNumber() {
+                if (!this.subItemKey || this.subItemKey === "") return "";
+                const depth = String(this.subItemKey).split('-').length;
+                return `(${depth})`;
+            },
+
+            views: {
+                view1: {
+                    label: '기본',
+                    columns: [
+                        {
+                            key: 'type', title: 'TYPE', type: 'select', width: '60px', alignClass: 'text-left',
+                            options: [
+                                { value: '자재', label: '자재' },
+                                { value: '노무', label: '노무' },
+                                { value: '경비', label: '경비' },
+                                { value: '일위대가', label: '일위대가' },
+                                { value: '건설기계', label: '건설기계' }
+                            ]
+                        },
+                        { key: '품목', title: '품목', type: 'input-text', width: '180px', alignClass: 'text-left' },
+                        { key: '규격', title: '규격', type: 'input-text', width: '180px', alignClass: 'text-left' },
+                        { key: '단위', title: '단위', type: 'input-text', width: '30px', alignClass: 'text-center' },
+                        { key: '수량', title: '수량', type: 'input-num', width: '40px', alignClass: 'text-right' },
+                        {
+                            key: '합계', title: '합계', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.수량) || 0) * (
+                                (Number(r.재료비단가) || 0) +
+                                (Number(r.노무비단가) || 0) +
+                                (Number(r.경비단가) || 0)
+                            ),
+                            totalFn: () => '-'
+                        },
+                        { key: 'action', title: '-', type: 'action', width: '20px', alignClass: 'text-center' }
+                    ]
+                },
+                view2: {
+                    label: '단가입력 및 금액보기',
+                    columns: [
+                        { key: '수량', title: '수량', type: 'input-num', width: '40px', alignClass: 'text-right' },
+                        { key: '재료비단가', title: '재료비단가', type: 'input-num', width: '65px', alignClass: 'text-right' },
+                        { key: '노무비단가', title: '노무비단가', type: 'input-num', width: '65px', alignClass: 'text-right' },
+                        { key: '경비단가', title: '경비단가', type: 'input-num', width: '65px', alignClass: 'text-right' },
+                        {
+                            key: '재료비', title: '재료비', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.수량) || 0) * (Number(r.재료비단가) || 0),
+                            totalFn: () => '-'
+                        },
+                        {
+                            key: '노무비', title: '노무비', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.수량) || 0) * (Number(r.노무비단가) || 0),
+                            totalFn: () => '-'
+                        },
+                        {
+                            key: '경비', title: '경비', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.수량) || 0) * (Number(r.경비단가) || 0),
+                            totalFn: () => '-'
+                        },
+                        {
+                            key: '단가합계', title: '단가합계', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.재료비단가) || 0) + (Number(r.노무비단가) || 0) + (Number(r.경비단가) || 0),
+                            totalFn: () => '-'
+                        },
+                        {
+                            key: '합계', title: '합계', type: 'calc', width: '65px', alignClass: 'text-right',
+                            calcFn: r => (Number(r.수량) || 0) * (
+                                (Number(r.재료비단가) || 0) +
+                                (Number(r.노무비단가) || 0) +
+                                (Number(r.경비단가) || 0)
+                            ),
+                            totalFn: () => '-'
+                        },
+                        { key: 'action', title: '-', type: 'action', width: '20px', alignClass: 'text-center' }
+                    ]
+                },
+            },
+
+            get currentColumns() {
+                return this.views[this.currentView].columns;
+            },
+
+            init() {
+                this.loadProjectsList();
+                this.loadDataFromOption();
+            },
+
+            loadProjectsList() {
+                try {
+                    const projects = JSON.parse(localStorage.getItem("cost") || "{}");
+                    this.projectKeys = Object.keys(projects);
+                } catch (e) {
+                    this.projectKeys = [];
+                }
+            },
+
+            onProjectChange() {
+                this.selectedCategoryKey = '';
+                this.subItemKey = '';
+                this.parentItem = null;
+                this.rows = [];
+                this._targetContainer = null;
+                this.updateAvailableCategories();
+
+                try {
+                    const optData = JSON.parse(localStorage.getItem("option") || "{}");
+                    optData.comboboxsave = {
+                        projectKey: this.selectedProjectKey,
+                        categoryKey: '',
+                        subItemKey: ''
+                    };
+                    localStorage.setItem("option", JSON.stringify(optData));
+                } catch (e) { }
+
+                this.loadDataFromOption();
+            },
+
+            updateAvailableCategories() {
+                this.availableCategories = [];
+                if (!this.selectedProjectKey) return;
+
+                try {
+                    const projects = JSON.parse(localStorage.getItem("cost") || "{}");
+                    this._availableProjects = projects; // 여기도 안전하게 추가
+                    const proj = projects[this.selectedProjectKey];
+                    if (!proj || !proj.공종별내역서) return;
+
+                    let list = [];
+                    proj.공종별내역서.forEach((group, gIdx) => {
+                        if (Array.isArray(group)) {
+                            group.forEach((cat, cIdx) => {
+                                if (cat) {
+                                    let groupName = cat.품목 || cat.품명 || cat.name || cat.title || cat.공종 || cat.구분 || `공종그룹 ${gIdx}-${cIdx}`;
+                                    list.push({
+                                        key: `${gIdx}-${cIdx}`,
+                                        label: `건축 / ${groupName}`
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    this.availableCategories = list;
+                } catch (e) { }
+            },
+
+            onCategoryChange() {
+                this.subItemKey = '';
+                this.parentItem = null;
+                try {
+                    const optData = JSON.parse(localStorage.getItem("option") || "{}");
+                    if (optData.comboboxsave) {
+                        optData.comboboxsave.categoryKey = this.selectedCategoryKey;
+                        optData.comboboxsave.subItemKey = '';
+                        localStorage.setItem("option", JSON.stringify(optData));
+                    }
+                } catch (e) { }
+
+                this.loadDataFromOption();
+            },
+
+            loadDataFromOption() {
+                try {
+                    const projects = JSON.parse(localStorage.getItem("cost") || "{}");
+                    this._availableProjects = projects; // 👈 💡 [핵심 수정] 프로젝트 데이터를 함수 시작하자마자 무조건 담아줌!
+
+                    const opt = JSON.parse(localStorage.getItem("option") || "{}")?.comboboxsave;
+
+                    if (opt?.projectKey) {
+                        this.selectedProjectKey = opt.projectKey;
+                        this.currentProjectKey = opt.projectKey;
+                        this.updateAvailableCategories();
+                    } else {
+                        this.selectedProjectKey = '';
+                        this.currentProjectKey = null;
+                        this.availableCategories = [];
+                    }
+
+                    if (!opt?.projectKey || !opt?.categoryKey) {
+                        this.selectedCategoryKey = opt?.categoryKey || '';
+                        this.subItemKey = '';
+                        this.parentItem = null;
+                        this.rows = [];
+                        this._targetContainer = null;
+                        this.updateCurrentCycleItems(); // 이제 _availableProjects가 있으므로 나의 데이터가 정상 작동함!
+                        return;
+                    }
+
+                    this.selectedCategoryKey = opt.categoryKey;
+                    this.subItemKey = opt.subItemKey || '';
+
+                    const [gIdx, cIdx] = String(opt.categoryKey).split('-').map(Number);
+                    const cat = projects[opt.projectKey]?.공종별내역서?.[gIdx]?.[cIdx];
+
+                    if (!cat) {
+                        this.rows = [];
+                        this.parentItem = null;
+                        this._targetContainer = null;
+                        this.updateCurrentCycleItems();
+                        return;
+                    }
+
+                    cat.children ??= [];
+                    let target = cat.children;
+                    let currentParent = null;
+
+                    const subKey = this.subItemKey;
+                    if (subKey !== "" && subKey != null && subKey !== "null" && subKey !== "undefined") {
+                        const indices = String(subKey).split('-').map(Number);
+                        for (let idx of indices) {
+                            if (target[idx]) {
+                                currentParent = target[idx];
+                                currentParent.children ??= [];
+                                target = currentParent.children;
+                            } else {
+                                target = [];
+                                currentParent = null;
+                                break;
+                            }
+                        }
+                    }
+
+                    this._targetContainer = target;
+                    this.rows = target;
+                    this.parentItem = currentParent;
+                    this.updateCurrentCycleItems();
+                } catch (e) {
+                    this.rows = [];
+                    this.parentItem = null;
+                    this._targetContainer = null;
+                    this.updateCurrentCycleItems();
+                }
+            },
+
+            saveCostData() {
+                try {
+                    if (this._availableProjects) {
+                        localStorage.setItem("cost", JSON.stringify(this._availableProjects));
+                        this.updateCurrentCycleItems();
+                    }
+                } catch (e) { }
+            },
+
+            addRow() {
+                if (!this._targetContainer) return;
+                this._targetContainer.push({
+                    type: '자재',
+                    품목: '',
+                    규격: '',
+                    단위: '',
+                    수량: 0,
+                });
+                this.rows = this._targetContainer;
+                this.selectedIndex = this.rows.length - 1;
+                this.showMyData = false;
+                this.saveCostData();
+            },
+
+            editSelected() {
+                if (!this.canEnterSelected) return;
+                const selectedRow = this.rows[this.selectedIndex];
+                selectedRow.children ??= [];
+
+                try {
+                    const optData = JSON.parse(localStorage.getItem("option") || "{}");
+                    if (optData.comboboxsave) {
+                        const currentSubKey = optData.comboboxsave.subItemKey;
+                        if (currentSubKey === "" || currentSubKey == null || currentSubKey === "null" || currentSubKey === "undefined") {
+                            optData.comboboxsave.subItemKey = String(this.selectedIndex);
+                        } else {
+                            optData.comboboxsave.subItemKey = currentSubKey + "-" + this.selectedIndex;
+                        }
+
+                        this.subItemKey = optData.comboboxsave.subItemKey;
+                        localStorage.setItem("option", JSON.stringify(optData));
+                        this.loadDataFromOption();
+                        this.selectedIndex = null;
+                    }
+                } catch (e) { }
+            },
+
+            goBack() {
+                try {
+                    const optData = JSON.parse(localStorage.getItem("option") || "{}");
+                    if (optData.comboboxsave && optData.comboboxsave.subItemKey) {
+                        const parts = String(optData.comboboxsave.subItemKey).split('-');
+                        parts.pop();
+                        optData.comboboxsave.subItemKey = parts.length > 0 ? parts.join('-') : "";
+
+                        this.subItemKey = optData.comboboxsave.subItemKey;
+                        localStorage.setItem("option", JSON.stringify(optData));
+                        this.loadDataFromOption();
+                        this.selectedIndex = null;
+                    }
+                } catch (e) { }
+            },
+
+            addItemToCurrent(item) {
+                if (!this._targetContainer) return;
+                const newItem = {
+                    type: item.type || item.타입 || item.구분 || '자재',
+                    품목: item.품목 || item.품명 || '',
+                    규격: item.규격 || '',
+                    단위: item.단위 || '',
+                    수량: 1,
+                    재료비단가: item.재료비단가 || 0,
+                    노무비단가: item.노무비단가 || 0,
+                    경비단가: item.경비단가 || 0
+                };
+                this._targetContainer.push(newItem);
+                this.rows = this._targetContainer;
+                this.saveCostData();
+            },
+
+            removeRow(index) {
+                if (!this._targetContainer) return;
+                const item = this._targetContainer[index];
+                const message = `'${item.품목 || '선택한 항목'}'을(를) 삭제하시겠습니까?` +
+                    (item.children?.length ? '\n하위 항목도 함께 삭제됩니다.' : '');
+                if (!confirm(message)) return;
+                this._targetContainer.splice(index, 1);
+                this.rows = this._targetContainer;
+                if (this.selectedIndex === index) {
+                    this.selectedIndex = null;
+                } else if (this.selectedIndex > index) {
+                    this.selectedIndex--;
+                }
+                this.saveCostData();
+            },
+
+            moveSelected(direction) {
+                if (this.selectedIndex === null || !this._targetContainer) return;
+                const targetIndex = this.selectedIndex + direction;
+                if (targetIndex < 0 || targetIndex >= this.rows.length) return;
+
+                const item = this._targetContainer.splice(this.selectedIndex, 1)[0];
+                this._targetContainer.splice(targetIndex, 0, item);
+                this.rows = this._targetContainer;
+                this.selectedIndex = targetIndex;
+                this.saveCostData();
+            },
+
+            getProjectClassifiedItems() {
+                const classified = {};
+                this.cycleTypes.forEach(t => classified[t] = []);
+
+                if (!this._availableProjects || !this.currentProjectKey) return classified;
+
+                const proj = this._availableProjects[this.currentProjectKey];
+                if (!proj) return classified;
+
+                const traverseNet = (items) => {
+                    if (!Array.isArray(items)) return;
+                    for (let item of items) {
+                        if (item && (item.품목 || item.품명 || item.규격 || item.qty !== undefined || item.수량 !== undefined)) {
+                            let t = item.type || item.타입 || item.구분 || '자재';
+                            t = String(t).trim();
+
+                            if (!classified[t]) {
+                                classified[t] = [];
+                            }
+
+                            classified[t].push({
+                                type: t,
+                                품목: item.품목 || item.품명 || '',
+                                규격: item.규격 || '',
+                                단위: item.단위 || '',
+                                qty: 1,
+                                재료비단가: item.재료비단가 || 0,
+                                노무비단가: item.노무비단가 || 0,
+                                경비단가: item.경비단가 || 0
+                            });
+                        }
+                        if (item && item.children) {
+                            traverseNet(item.children);
+                        }
+                    }
+                };
+
+                if (proj.공종별내역서) {
+                    for (let group of proj.공종별내역서) {
+                        if (Array.isArray(group)) {
+                            for (let cat of group) {
+                                if (cat && cat.children) traverseNet(cat.children);
+                            }
+                        } else if (group && group.children) {
+                            traverseNet(group.children);
+                        }
+                    }
+                }
+
+                if (proj.일위대가 && Array.isArray(proj.일위대가)) {
+                    if (!classified['일위대가']) classified['일위대가'] = [];
+                    for (let item of proj.일위대가) {
+                        if (item && (item.품목 || item.품명 || item.규격 || item.qty !== undefined || item.수량 !== undefined)) {
+                            classified['일위대가'].push({
+                                type: '일위대가',
+                                품목: item.품목 || item.품명 || '',
+                                규격: item.규격 || '',
+                                단위: item.단위 || '',
+                                qty: item.수량 !== undefined ? Number(item.수량) || 0 : (item.qty !== undefined ? Number(item.qty) || 0 : 0)
+                            });
+                        }
+                    }
+                }
+
+                return classified;
+            },
+
+            updateParentCosts() {
+                if (!this.parentItem || !this.selectedCategoryKey) return;
+                try {
+                    const [groupIndex, categoryIndex] = this.selectedCategoryKey.split('-').map(Number);
+                    let items = this._availableProjects[this.selectedProjectKey]?.공종별내역서?.[groupIndex]?.[categoryIndex]?.children;
+                    if (!items) return;
+
+                    const parents = this.subItemKey.split('-').map(index => {
+                        const parent = items[Number(index)];
+                        items = parent?.children || [];
+                        return parent;
+                    });
+
+                    for (let i = parents.length - 1; i >= 0; i--) {
+                        const parent = parents[i];
+                        if (!parent || !parent.children) continue;
+
+                        for (const key of ['재료비단가', '노무비단가', '경비단가']) {
+                            parent[key] = parent.children.reduce((sum, item) => {
+                                return sum + (Number(item.수량) || 0) * (Number(item[key]) || 0);
+                            }, 0);
+                        }
+                    }
+                } catch (e) { }
+            },
+
+            formatInput(event, row, key) {
+                let val = event.target.value.replace(/[^0-9.]/g, '');
+                row[key] = val === '' ? 0 : Number(val);
+                this.updateParentCosts();
+                this.saveCostData();
+            },
+
+            getDisplayValue(val) {
+                if (val === '-' || isNaN(val) || val === '' || val == 0) return val || '';
+                return Number(val).toLocaleString();
+            },
+
+            formatNum(val) {
+                if (val === '-' || isNaN(val)) return '-';
+                return Number(val || 0).toLocaleString();
+            }
+        };
+    }
+</script>

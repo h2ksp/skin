@@ -1,0 +1,650 @@
+<style>
+    .bottom-love-bar {
+        visibility: visible;
+        opacity: 1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 0.85rem;
+        color: #1e293b;
+    }
+
+    #status {
+        margin: 10px 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #475569;
+    }
+
+    .search-toolbar {
+        background-color: #f9f9f9e7;
+        text-align: left;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 5px 16px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .sub-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        margin-top: 8px;
+        overflow: hidden;
+        margin-bottom: 216px;
+    }
+
+    .sub-table th {
+        font-size: 0.85rem;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        padding: 8px;
+        text-align: center;
+        font-weight: normal
+    }
+
+    .sub-table td {
+        border: 1px solid #e2e8f0;
+        font-size: 0.85rem;
+        padding: 6px 4px;
+    }
+
+    .cell-center {
+        text-align: center;
+    }
+
+    .cell-left {
+        text-align: left;
+    }
+
+    .cell-right {
+        text-align: right;
+    }
+
+    select,
+    input {
+        padding: 5px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    /* 마우스 올렸을 때 */
+    .sub-table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+
+    /* 클릭해서 선택된 상태일 때 배경색 */
+    .sub-table tbody tr.selected-row {
+        background-color: #dbeafe !important;
+        /* 연한 파란색 계열 (원하는 색으로 변경 가능) */
+    }
+
+    /* 웹 주소창 형태의 경로 선택 바 컨테이너 */
+    .native-path-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+    }
+
+    /* 브라우저 기본 셀렉트 스타일 다듬기 */
+    .path-select {
+        font-size: 0.85rem;
+        cursor: pointer;
+        font-family: inherit;
+        border: none;
+    }
+
+    .path-select:hover {
+        border-color: #94a3b8;
+    }
+
+    /* 슬래시(/) 구분자 */
+    .path-slash {
+        color: #94a3b8;
+        font-weight: bold;
+        user-select: none;
+    }
+</style>
+
+
+<div id="noticeBanner"
+    style="background: linear-gradient(135deg, #fffef7, #fffde7); border: 2px dashed #ef5350; border-radius: 8px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; position: sticky; top: 10px; z-index: 9999; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div style="display: flex; align-items: center; gap: 8px; color: #333333;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="3.5"
+            stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-8deg);">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>조달청에서 제공하는 가격정보 입니다. </span>
+    </div>
+    <span onclick="document.getElementById('noticeBanner').style.display='none'"
+        style="cursor: pointer; color: #888; font-size: 13px; text-decoration: underline; white-space: nowrap;"
+        onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color='#888'">닫기</span>
+</div>
+
+
+
+<div x-data="materialSearch">
+
+    <!-- 🔗 주소창 스타일 3단 경로 선택 바 (기본 select 버전) -->
+    <div class="native-path-bar">
+        <label>　*저장위치: </label>
+
+        <!-- 1단계: 프로젝트명 -->
+        <select class="path-select" x-model="selectedProjectKey"
+            @change="selectedCategoryKey = ''; selectedSubItemKey = ''; saveSelectionState()">
+            <option value="">프로젝트 선택</option>
+            <template x-for="(proj, pKey) in availableProjects" :key="pKey">
+                <option :value="pKey" x-text="proj.name || pKey"></option>
+            </template>
+        </select>
+
+        <!-- 구분자 -->
+        <span class="path-slash" x-show="selectedProjectKey">/</span>
+
+        <!-- 2단계: 공종명 -->
+        <select class="path-select" x-model="selectedCategoryKey"
+            @change="selectedSubItemKey = ''; saveSelectionState()">
+            <option value="">공종 선택</option>
+            <template x-for="cat in availableCategories" :key="cat.id">
+                <option :value="cat.id" x-text="cat.name"></option>
+            </template>
+        </select>
+
+        <!-- 구분자 -->
+        <span class="path-slash" x-show="selectedCategoryKey && availableSubItems.length > 0">/</span>
+
+        <!-- 3단계: 일위대가 -->
+        <select class="path-select" x-model="selectedSubItemKey" @change="saveSelectionState()">
+            <option value="">-- 해당 없음 --</option>
+            <template x-for="sub in availableSubItems" :key="sub.id">
+                <option :value="sub.id" x-text="sub.name"></option>
+            </template>
+        </select>
+
+    </div>
+
+
+
+    <!-- 1) 상단 검색 툴바 영역 (조달청 가격정보 분류 선택 + 품명 검색) -->
+    <div x-show="showSearchBar" class="search-toolbar">
+        <label for="apiSelect">분류:&nbsp;</label>
+        <select id="apiSelect" x-model="selectedApiId" @change="loadData()">
+            <template x-for="api in apiList" :key="api.id">
+                <option :value="api.id" x-text="api.name"></option>
+            </template>
+        </select>
+
+        <label for="searchNm"> 품명:&nbsp;</label>
+        <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm" @keyup.enter="filterItems()">
+        &nbsp;
+        <button type="button" @click="filterItems()" :disabled="loading">검색하기</button>
+        &nbsp;
+        <button type="button" @click="registerFinalItem(selectedItem)"
+            :disabled="loading || !selectedItem">등록하기</button>
+    </div>
+
+    <!-- 2) 응답결과 모드 선택 바 (라디오 버튼) -->
+    <div x-show="shouldShowRadioBar()" style="margin-bottom: 10px;">
+        <!-- 3) 상태 메시지 -->
+        <span id="status" x-text="statusMessage"></span>&nbsp;　　&nbsp;
+        <template x-for="mode in currentApi.resultModes" :key="mode.id">
+            <label style="margin-right: 12px; cursor: pointer; font-size: 0.85rem;">
+                <input type="radio" name="result_mode_group" :value="mode.id" x-model="selectedRegType">
+                <span x-text="mode.label"></span>
+            </label>
+        </template>
+    </div>
+
+    <!-- 4) 메인 결과 목록 테이블 -->
+    <div class="table-container" x-show="filteredItems.length > 0">
+        <table class="sub-table">
+            <thead>
+                <tr>
+                    <template x-for="(head, hIdx) in getHeaders()" :key="hIdx">
+                        <th :style="head.width ? 'width:' + head.width : ''" x-text="head.label"></th>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(item, idx) in filteredItems" :key="idx">
+                    <tr @click="selectedRowIndex = idx" :class="{ 'selected-row': selectedRowIndex === idx }"
+                        style="cursor: pointer;">
+                        <template x-for="(cell, cIdx) in getMaterialRow(item)" :key="cIdx">
+                            <td :class="cell.class" x-text="cell.val"></td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('materialSearch', () => ({
+            showSearchBar: true,
+            selectedApiId: "civil1",
+            selectedRegType: "No1",
+
+            searchNm: "",
+            selectedRowIndex: null, // 👈 어떤 행이
+
+            selectedRegTypes: {},
+            statusMessage: "데이터 로딩 중...",
+            loading: false,
+            allItems: [],
+            filteredItems: [],
+
+            apiList: [
+                {
+                    id: "civil1", name: "1. 토목 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/1.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false,
+                    searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [
+                        {
+                            id: "No1", label: "기본",
+                            columns: [
+                                { key: "nticeDt", label: "공고일시" },
+                                { key: "prdctClsfcNoNm", label: "품명" },
+                                { key: "krnPrdctNm", label: "규격" },
+                                { key: "unit", label: "단위", width: "30px", class: "cell-center" },
+                                { key: "prce", label: "가격(원)", width: "80px", class: "cell-right" },
+
+                                { key: "vatYnNm", label: "부가세 여부", class: "cell-center" },
+
+
+                            ]
+                        },
+
+                        {
+                            id: "No2", label: "추가정보",
+                            columns: [
+                                { key: "nticeDt", label: "공고일시", class: "cell-center" },
+                                { key: "prdctClsfcNo", label: "분류번호", class: "cell-center" },
+                                { key: "prdctIdntNo", label: "식별번호", class: "cell-center" },
+                                { key: "dlvryCndtnNm", label: "납품조건", class: "cell-center" },
+                                { key: "prceDiv", label: "가격구분", class: "cell-center" },
+
+                                { key: "invstDeptNm", label: "부서명", class: "cell-center" },
+                                { key: "invstDeptTelNo", label: "전화번호", width: "100px" },
+                                { key: "invstOfclNm", label: "담당자", width: "60px", class: "cell-center" },
+                            ]
+                        }
+                    ]
+                },
+
+                {
+                    id: "civil2", name: "2. 건축 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/2.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B1%B4%EC%B6%95)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false,
+                    searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [{ id: "all", label: "전체 보기", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+                {
+                    id: "civil3", name: "3. 기계설비 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/3.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B8%B0%EA%B3%84%EC%84%A4%EB%B9%84)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [{ id: "all", label: "전체 보기", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                },
+                {
+                    id: "civil4", name: "4. 전기, 정보통신 시설공통자재",
+                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/4.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EC%A0%84%EA%B8%B0%2C%EC%A0%95%EB%B3%B4%ED%86%B5%EC%8B%A0)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
+                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "all",
+                    resultModes: [{ id: "all", label: "전체 보기", columns: [{ key: "nticeDt", label: "공고일" }, { key: "prdctClsfcNoNm", label: "품명" }, { key: "krnPrdctNm", label: "규격" }, { key: "unit", label: "단위", width: "60px" }, { key: "prce", label: "가격(원)", width: "100px", class: "cell-right" }, { key: "vatYnNm", label: "부가세 여부" }, { key: "prceDiv", label: "가격구분" }, { key: "dlvryCndtnNm", label: "납품조건" }] }]
+                }
+            ],
+
+            // 상태 변수
+            availableProjects: {},
+
+            // 프로젝트명
+            selectedProjectKey: "",
+
+            selectedCategoryKey: "",
+            selectedSubItemKey: "",
+            openDropdown: null,
+
+
+            init() {
+                this.loadCostData();
+                this.loadData();
+                // 💡 로컬스토리지 'option'에서 comboboxsave 불러와서 복구
+                try {
+                    const savedOpt = JSON.parse(localStorage.getItem("option"));
+                    if (savedOpt && savedOpt.comboboxsave) {
+                        this.selectedProjectKey = savedOpt.comboboxsave.projectKey || "";
+                        this.selectedCategoryKey = savedOpt.comboboxsave.categoryKey || "";
+                        this.selectedSubItemKey = savedOpt.comboboxsave.subItemKey || "";
+                    }
+                } catch (e) {
+                    console.error("옵션 로드 실패:", e);
+                }
+            },
+
+            loadCostData() {
+                try {
+                    const saved = localStorage.getItem("cost");
+                    this.availableProjects = saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    console.error("로컬스토리지 로드 실패:", e);
+                    this.availableProjects = {};
+                }
+            },
+            // 강제 토글 함수 (이미 열려있으면 닫고, 아니면 염)
+            toggleDropdown(menuName) {
+                this.openDropdown = this.openDropdown === menuName ? null : menuName;
+            },
+
+            get selectedItem() {
+                return this.selectedRowIndex === null
+                    ? null
+                    : this.filteredItems[this.selectedRowIndex] ?? null;
+            },
+            selectProject(pKey) {
+                this.selectedProjectKey = pKey;
+                this.selectedCategoryKey = "";
+                this.selectedSubItemKey = "";
+                this.openDropdown = null;
+            },
+
+            selectCategory(cId) {
+                this.selectedCategoryKey = cId;
+                this.selectedSubItemKey = "";
+                this.openDropdown = null;
+            },
+
+            selectSubItem(sId) {
+                this.selectedSubItemKey = sId;
+                this.openDropdown = null;
+            },
+
+            // 선택된 공종의 이름을 반환
+            // 1. 공종 목록 (그룹명 + 카테고리명 조합해서 1차원 배열로 쫙 펼치기)
+            get availableCategories() {
+                if (!this.selectedProjectKey) return [];
+                const proj = this.availableProjects[this.selectedProjectKey];
+
+                const costList = proj.공종별내역서 || [];
+                const groups = proj.옵션?.그룹명 || [];
+                let categories = [];
+
+                // 2차원 배열을 순회하면서 하나씩 깔끔하게 꺼내기
+                costList.forEach((groupArray, gIdx) => {
+                    if (!Array.isArray(groupArray)) return;
+
+                    // 해당 그룹의 이름 가져오기 (문자열 또는 객체 대응)
+                    let groupName = groups[gIdx] || '';
+                    if (typeof groupName === 'object') groupName = groupName.name || groupName.title || '';
+
+                    groupArray.forEach((item, cIdx) => {
+                        const itemName = item.name || item.title || '이름없음';
+                        // 그룹명이 있으면 "그룹명     카테고리명", 없으면 그냥 카테고리명
+                        const displayName = groupName ? `${groupName}     ${itemName}` : itemName;
+
+                        categories.push({
+                            id: `${gIdx}-${cIdx}`, // 고유 ID
+                            name: displayName,      // 화면에 보일 이름
+                            original: item          // 3단계(일위대가) 찾기용 원본 객체
+                        });
+                    });
+                });
+
+                return categories;
+            },
+
+            // 2. 일위대가(하위 항목) 목록
+            get availableSubItems() {
+                if (!this.selectedCategoryKey) return [];
+
+                // 방금 고른 공종 찾기
+                const selected = this.availableCategories.find(c => String(c.id) === String(this.selectedCategoryKey));
+                if (!selected || !selected.original) return [];
+
+                // 원본 객체에서 children 꺼내기
+                const subList = selected.original.children || [];
+
+                // 💡 원본 객체는 절대 건드리지 않고, 
+                // 원본 배열에서의 진짜 인덱스(realIdx)를 id로 박아주기!
+                const filteredList = [];
+                subList.forEach((sub, realIdx) => {
+                    if (sub.type === '일위대가') {
+                        filteredList.push({
+                            id: realIdx, // 원본 subList에서의 진짜 위치
+                            name: sub.품목 || sub.명칭 || '이름 없음'
+                        });
+                    }
+                });
+
+                return filteredList;
+            },
+
+            // 3. 이름 찾아주는 도우미 함수들
+            getCategoryName(cId) {
+                const cat = this.availableCategories.find(c => String(c.id) === String(cId));
+                return cat ? cat.name : '공종 선택 ▾';
+            },
+
+            getSubItemName(sId) {
+                const sub = this.availableSubItems.find(s => String(s.id) === String(sId));
+                return sub ? sub.name : '일위대가 선택 ▾';
+            },
+
+
+            // 현재 선택된 API 객체 반환
+            get currentApi() {
+                return this.apiList.find(api => api.id === this.selectedApiId) || this.apiList[0];
+            },
+
+            get currentRegType() {
+                return this.selectedRegTypes[this.currentApi.id]
+                    || this.currentApi.defaultResultMode
+                    || this.currentApi.resultModes[0]?.id;
+            },
+
+            get currentResultMode() {
+                return this.currentApi.resultModes.find(mode => mode.id === this.selectedRegType)
+                    || this.currentApi.resultModes[0];
+            },
+
+            setRegType(type) {
+                this.selectedRegTypes[this.currentApi.id] = type;
+            },
+
+            shouldShowRadioBar() {
+                return this.showSearchBar && this.currentApi.resultModes.length > 0;
+            },
+
+            getHeaders() {
+                return this.currentResultMode?.columns || [];
+            },
+
+            // 각 항목의 행 데이터를 생성하는 함수
+            getMaterialRow(item) {
+                const mode = this.currentResultMode;
+                if (mode && mode.columns) {
+                    return mode.columns.map(column => {
+                        let val = column.getValue ? column.getValue(item) : item[column.key];
+                        if (column.key === 'nticeDt') {
+                            val = val ? String(val).split(' ')[0] : '';
+                        } else if (column.key === 'prce') {
+                            const price = Number(val);
+                            val = (val === undefined || val === null || val === '' || isNaN(price)) ? (val || '') : price.toLocaleString('ko-KR');
+                        } else {
+                            val = val ?? '';
+                        }
+                        return { class: column.class || '', val };
+                    });
+                }
+                return [];
+            },
+
+            async loadData() {
+                const api = this.currentApi;
+                if (!api || !api.url) return;
+                if (api && api.resultModes && api.resultModes.length > 0) {
+                    this.selectedRegType = api.resultModes[0].id; // 👈 API 바뀔 때 첫 번째 모드로 자동 선택
+                }
+
+                this.loading = true;
+                this.statusMessage = "데이터 요청 중...";
+                this.filteredItems = [];
+                this.selectedRowIndex = null; // 데이터 새로 불러올 때 선택 초기화
+
+                const cleanUrl = encodeURI(decodeURI(api.url));
+                const targetUrl = `${cleanUrl}?v=${new Date().getTime()}`;
+
+                try {
+                    const response = await fetch(targetUrl);
+                    if (!response.ok) throw new Error(`HTTP 에러! 상태 코드: ${response.status}`);
+
+                    const jsonObj = await response.json();
+                    let rawItems = jsonObj?.response?.body?.items || jsonObj || [];
+
+                    if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
+                        this.statusMessage = "데이터가 비어있거나 불러올 수 없어.";
+                        this.loading = false;
+                        return;
+                    }
+
+                    this.allItems = Array.isArray(rawItems) ? rawItems : [rawItems];
+
+                    if (this.searchNm.trim() !== "") {
+                        this.filterItems();
+                    } else {
+                        this.statusMessage = "데이터 준비 완료";
+                    }
+                } catch (error) {
+                    console.error("오류 발생:", error);
+                    this.statusMessage = "데이터 로드 실패: " + error.message;
+                } finally {
+                    this.loading = false;
+                }
+            },
+            // 현재 선택된 상태를 로컬스토리지의 'option' 최상위 키에 저장
+            saveSelectionState() {
+                // 기존 option 데이터를 불러오거나 없으면 빈 객체 생성
+                let savedOpt = {};
+                try {
+                    savedOpt = JSON.parse(localStorage.getItem("option")) || {};
+                } catch (e) {
+                    savedOpt = {};
+                }
+
+                // comboboxsave 객체에 현재 선택값 담기
+                savedOpt.comboboxsave = {
+                    projectKey: this.selectedProjectKey,
+                    categoryKey: this.selectedCategoryKey,
+                    subItemKey: this.selectedSubItemKey
+                };
+
+                // 로컬스토리지 최상위 'option'에 저장
+                localStorage.setItem("option", JSON.stringify(savedOpt));
+            },
+
+            filterItems() {
+                if (this.allItems.length === 0) return;
+                const query = this.searchNm.trim().toLowerCase();
+                this.selectedRowIndex = null; // 검색할 때도 선택 초기화
+
+                if (!query) {
+                    this.filteredItems = [];
+                    this.statusMessage = "검색어를 입력해줘.";
+                    return;
+                }
+
+                const searchKey = this.currentApi.searchKey;
+                this.filteredItems = this.allItems.filter(item => {
+                    const val = item[searchKey] || item.prdctClsfcNoNm || item.품명;
+                    return val && String(val).toLowerCase().includes(query);
+                });
+
+                if (this.filteredItems.length === 0) {
+                    this.statusMessage = `'${query}' 검색 결과가 없어.`;
+                    return;
+                }
+
+                this.statusMessage = `총 ${this.filteredItems.length}건 출력 완료 (전체 ${this.allItems.length}건 중)`;
+            },
+
+            registerFinalItem(item) {
+                // 1. 프로젝트랑 공종이 선택되어 있는지 체크
+                if (!this.selectedProjectKey) {
+                    alert("프로젝트를 선택해주세요!");
+                    return;
+                }
+                if (!this.selectedCategoryKey) {
+                    alert("공종을 선택해주세요!");
+                    return;
+                }
+
+                const proj = this.availableProjects[this.selectedProjectKey];
+                if (!proj) return;
+
+                // 2. 선택된 공종(2번째)의 원본 객체 찾기
+                const selectedCat = this.availableCategories.find(c => String(c.id) === String(this.selectedCategoryKey));
+                if (!selectedCat || !selectedCat.original) {
+                    alert("선택한 공종 정보를 찾을 수 없습니다.");
+                    return;
+                }
+
+                const title = item.prdctClsfcNoNm || item.품명 || item.명칭 || '해당 자재';
+                const spec = (item.krnPrdctNm || item.규격) ? ` (${item.krnPrdctNm || item.규격})` : '';
+
+                if (!confirm(`'${title}${spec}' 자재를 현재 선택된 경로에 등록하시겠습니까?`)) {
+                    return;
+                }
+
+                let targetContainer = null;
+                let targetName = "";
+
+                // 3. 3번째(일위대가)가 선택되었는지 확인
+                if (this.selectedSubItemKey) {
+                    // 하위 항목(일위대가) 목록에서 선택된 것 찾기
+                    const subList = selectedCat.original.children || selectedCat.original.subItems || selectedCat.original.items || [];
+                    const selectedSub = subList.find((sub, idx) => String(sub.id || sub.name || idx) === String(this.selectedSubItemKey));
+
+                    if (selectedSub) {
+                        // 일위대가 밑에 자재를 담을 배열(children 등)이 없으면 생성
+                        if (!selectedSub.children) selectedSub.children = [];
+                        targetContainer = selectedSub.children;
+                        targetName = selectedSub.name || selectedSub.title || '일위대가';
+                    }
+                }
+
+                // 4. 만약 3번째가 "해당 없음"이라 비어있다면 -> 2번째(공종)에 직접 등록!
+                if (!targetContainer) {
+                    if (!selectedCat.original.children) selectedCat.original.children = [];
+                    targetContainer = selectedCat.original.children;
+                    targetName = selectedCat.name || '공종';
+                }
+
+                const customItem = {
+                    고시일시: item.nticeDt ? item.nticeDt.split(' ')[0] : '',
+                    분류번호: item.prdctClsfcNo,
+                    식별번호: item.prdctIdntNo,
+                    type: '자재',
+                    품목: item.prdctClsfcNoNm,
+                    규격: item.krnPrdctNm,
+                    단위: item.unit,
+                    재료비단가: item.prce ? Number(item.prce).toLocaleString() : "0",
+                };
+
+                targetContainer.push(customItem);
+                // console.log("🟢 [등록된 자재 객체]:", customItem);
+                // console.log("📂 [자재가 쏙 들어간 위치(배열)]:", targetContainer);
+                localStorage.setItem("cost", JSON.stringify(this.availableProjects));
+            },
+        }));
+    });
+</script>

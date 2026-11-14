@@ -45,14 +45,41 @@
         text-align: left;
     }
 
+    .money-box {
+        margin-top: 10px;
+    }
+
+    .mText2 {
+        border-collapse: collapse;
+        font-style: italic;
+        font-size: 15px;
+    }
+
+    .mText2 td {
+        padding: 1px 4px;
+        line-height: 1.2;
+    }
+
+    .mText2 .align-right {
+        width: 100px;
+        text-align: right;
+    }
+
+    /* 마지막 합계 줄 위쪽 테두리랑 볼드 처리 */
+    .mText2 .sum-row td {
+        border-top: 1px solid #000;
+        padding-top: 3px;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
     /* 1. 모든 인풋 박스 기본 스타일 (밑줄 형태 + 폰트 설정) */
     #print-container input[type="text"],
     #print-container input[type="number"] {
-        font-size: 16px;
-        /* 글자 크기 16px */
-        font-weight: 600;
-        /* 글자 두께 700 (두껍게) */
-        color: #333333;
+        font-size: 14px;
+
         /* 글자 색상 */
         font-style: italic;
         /* 기울임꼴 */
@@ -60,7 +87,6 @@
         /* 왼쪽 여백 33px */
         text-align: left;
 
-        /* 인풋 배경 투명 & 밑줄 스타일 */
         background: transparent;
         border: none;
         border-bottom: 1px solid #aaa;
@@ -175,54 +201,47 @@
                 margin: 16px 0;
         ">
 
-            <select x-model="activeProject" @change="saveActiveProject()" style="width: 450px;">
+            <select x-model="activeProject" @change="saveActiveProject()" style="width: 300px;">
                 <option value="">프로젝트 선택</option>
                 <template x-for="proj in projectList" :key="proj">
                     <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
                 </template>
             </select>
             &nbsp;
-            <select x-model="activeGroup" @change="saveActiveGroup()" style="width: 250px;">
+            <select x-model="activeGroup" @change="saveActiveGroup()" style="width: 150px;">
                 <option value="">전체보기</option>
                 <template x-for="(group, idx) in groupList" :key="idx">
                     <option :value="idx" x-text="group"></option>
                 </template>
             </select>
-
-            <button type="button" @click="editGroups()">편집</button>
-            <button type="button" @click="moneyView()">금액보기</button>
+            &nbsp;
+            <button type="button" @click="editGroups()">그룹편집</button>
+            <button type="button" @click="moneyView()">합계보기</button>
+            <button type="button" @click="editMode()">편집모드</button>
         </div>
 
-        <div x-show="showMoney" class="mText">
-            <div>재료비</div>
-            <div>재료비</div>
-            <div>재료비</div>
-        </div>
 
-        <ul id="group-list" style="margin-left: -30px;">
+        <ul id="group-list" style="margin-left: -25px;">
             <template x-for="(groupName, gIndex) in groupList" :key="gIndex">
                 <li x-show="activeGroup === '' || Number(activeGroup) === gIndex">
 
-                    <div style="margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                            <div id="title" x-text="groupName"></div>
+                    <div style="display: flex; align-items: center;">
+                        <div id="title" x-text="groupName"></div>
 
-                            <!-- 우측 정렬 컨트롤 -->
-                            <div
-                                style="margin-left: auto; display: flex; align-items: center; gap: 11px; font-size: 13px;">
-                                <a href="#" @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
-                                    :class="{ 'disabled': gIndex === 0 }">▲</a>
-                                <a href="#" @click.prevent="if (gIndex < groupList.length - 1) moveDownGroup(gIndex)"
-                                    :class="{ 'disabled': gIndex === (groupList.length - 1) }">▼</a>
-                                <a href="#" @click.prevent="addLevel1(gIndex)" style="font-weight: 500;">+ 공종 추가</a>
-                            </div>
+                        <!-- 우측 정렬 컨트롤 -->
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 11px; font-size: 13px;">
+                            <a href="#" @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
+                                :class="{ 'disabled': gIndex === 0 }">▲</a>
+                            <a href="#" @click.prevent="if (gIndex < groupList.length - 1) moveDownGroup(gIndex)"
+                                :class="{ 'disabled': gIndex === (groupList.length - 1) }">▼</a>
+                            <a href="#" @click.prevent="addLevel1(gIndex)" style="font-weight: 500;">+ 공종 추가</a>
                         </div>
-                        <hr style="margin-bottom: 8px;">
                     </div>
+                    <hr style="margin-bottom: 8px;">
 
-                    <ul>
+                    <ul style="margin-bottom: 120px;">
                         <template x-for="(lvl1, l1Index) in (subGroupList[gIndex] || [])" :key="l1Index">
-                            <li style="margin-left: -20px;">
+                            <li style="margin-left: -25px;">
                                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
                                     <input type="text" x-model="lvl1.name" @input="saveToStore()"
                                         placeholder="1차 하위 항목 입력" style="width: 350px;">
@@ -231,23 +250,21 @@
                                     <a href="#"
                                         @click.prevent="if (l1Index < subGroupList[gIndex].length - 1) moveDownLevel1(gIndex, l1Index)"
                                         :class="{ 'disabled': l1Index === (subGroupList[gIndex].length - 1) }">▼</a>
-                                    <button type="button" @click="addLevel2(gIndex, l1Index)">+ 추가</button>
+                                    <button type="button" @click="addLevel2(gIndex, l1Index)"> + </button>
                                     <a href="#" @click.prevent="deleteLevel1(gIndex, l1Index)"
                                         style="color: #dc2626; font-weight: 500; margin-left: 4px; text-decoration: none;">x</a>
                                 </div>
 
-                                <ul style="margin-left: -40px; margin-bottom: 50px;">
-                                    <div x-show="showMoney" class="mText">
-                                        <div>재료비</div>
-                                        <div>재료비</div>
-                                        <div>재료비</div>
-                                    </div>
+                                <ul style="margin-left: -60px; margin-bottom: 50px;">
+
                                     <template x-for="(lvl2, l2Index) in (lvl1.children || [])" :key="l2Index">
-                                        <div style="margin-left: -20px;">
+                                        <div style="margin-left: -25px;"
+                                            :style="lvl2.selected ? 'background-color: #eff6fe;' : ''">
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <div
                                                     style="display: flex; align-items: center; gap: 6px; font-size: 11px; flex-shrink: 0;">
-                                                    <span style="flex-shrink: 0;">┕ &nbsp;</span>
+                                                    <span @click.stop="toggleLevel2Selection(gIndex, l1Index, l2Index)"
+                                                        style="flex-shrink: 0; cursor: pointer;">┕ &nbsp;</span>
                                                     <a href="#"
                                                         @click.prevent="if (l2Index > 0) moveUpLevel2(gIndex, l1Index, l2Index)"
                                                         :class="{ 'disabled': l2Index === 0 }">▲</a>
@@ -257,17 +274,16 @@
                                                 </div>
 
                                                 <!-- 밑줄 스타일 일괄 적용 영역 -->
-                                                <input type="text" x-model="lvl2.name" @input="saveToStore()"
-                                                    style="width: 350px;" placeholder="품명">
-                                                <input type="text" x-model="lvl2.spec" @input="saveToStore()"
-                                                    style="width: 300px;" placeholder="규격">
-                                                <input type="text" class="text-center" x-model="lvl2.unit"
+                                                <input type="text" x-model="lvl2.품목" @input="saveToStore()"
+                                                    style="width: 320px;" placeholder="품명">
+                                                <input type="text" x-model="lvl2.규격" @input="saveToStore()"
+                                                    style="width: 330px;" placeholder="규격">
+                                                <input type="text" class="text-center" x-model="lvl2.단위"
                                                     @input="saveToStore()" style="width: 50px;" placeholder="단위">
 
-                                                <input type="text" class="text-center" x-model="lvl2.qty"
-                                                    @input="calcItems(lvl2, 'unit', $event)" style="width: 60px;"
+                                                <input type="text" class="text-center" x-model="lvl2.수량"
+                                                    @input="calcItems(lvl2, '수량', $event)" style="width: 60px;"
                                                     placeholder="수량">
-
 
                                                 <div
                                                     style="margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 12px; flex-shrink: 0;">
@@ -288,14 +304,8 @@
                                                         <option value="손료">손료</option>
 
                                                     </select>
-                                                    <!-- 💡 option1(일반)일 때는 숨겨지고, option2/3/4 일 때만 나타나는 편집 버튼 -->
                                                     <a href="#"
-                                                        :style="lvl2.type && lvl2.type !== '일반' ? 'visibility: visible;' : 'visibility: hidden; pointer-events: none;'"
-                                                        @click.prevent="handleOptionLink(lvl2)"
-                                                        style="color: #2563eb; text-decoration: none; font-weight: 500;">
-                                                        편집
-                                                    </a>
-                                                    <a href="#" @click.prevent="deleteLevel2(gIndex, l1Index, l2Index)"
+                                                        @click.prevent="confirm('삭제하시겠습니까?') && deleteLevel2(gIndex, l1Index, l2Index)"
                                                         style="color: #dc2626; text-decoration: none; font-weight: 500;">x</a>
                                                 </div>
                                             </div>
@@ -309,24 +319,24 @@
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item1"
-                                                            @input="calcItems(lvl2, 'item1', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.재료비단가"
+                                                            @input="calcItems(lvl2, '재료비단가', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
                                                     <label
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item2"
-                                                            @input="calcItems(lvl2, 'item2', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.노무비단가"
+                                                            @input="calcItems(lvl2, '노무비단가', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
                                                     <label
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <span style="width: 65px; flex-shrink: 0; text-align: right;">단가
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item3"
-                                                            @input="calcItems(lvl2, 'item3', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.경비단가"
+                                                            @input="calcItems(lvl2, '경비단가', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
                                                     <label
@@ -334,8 +344,8 @@
                                                         <span
                                                             style="width: 75px; flex-shrink: 0; text-align: right;">단가합계
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item4"
-                                                            @input="calcItems(lvl2, 'item4', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.단가합계"
+                                                            @input="calcItems(lvl2, '단가합계', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
 
@@ -344,8 +354,8 @@
                                                         <span
                                                             style="width: 65px; flex-shrink: 0; text-align: right;">재료비
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item5"
-                                                            @input="calcItems(lvl2, 'item5', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.재료비"
+                                                            @input="calcItems(lvl2, '재료비', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
                                                     <label
@@ -353,29 +363,29 @@
                                                         <span
                                                             style="width: 65px; flex-shrink: 0; text-align: right;">노무비
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item6"
-                                                            @input="calcItems(lvl2, 'item6', $event)" placeholder="0"
+                                                        <input type="text" :value="lvl2.노무비"
+                                                            @input="calcItems(lvl2, '노무비', $event)" placeholder="0"
                                                             style="text-align: right; width: 100%;">
                                                     </label>
                                                     <label
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <span style="width: 65px; flex-shrink: 0; text-align: right;">경비
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item7" placeholder="0"
+                                                        <input type="text" :value="lvl2.경비" placeholder="0"
                                                             style="text-align: right; width: 100%;" readonly>
                                                     </label>
                                                     <label
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <span style="width: 75px; flex-shrink: 0; text-align: right;">합계
                                                             :</span>
-                                                        <input type="text" :value="lvl2.item8" placeholder="0"
+                                                        <input type="text" :value="lvl2.합계" placeholder="0"
                                                             style="text-align: right; width: 100%;" readonly>
                                                     </label>
                                                     <label
                                                         style="display: flex; align-items: center; gap: 6px; width: 100%; grid-column: span 2;">
                                                         <span style="width: 65px; flex-shrink: 0; text-align: right;">비고
                                                             :</span>
-                                                        <input type="text" x-model="lvl2.item9" @input="saveToStore()"
+                                                        <input type="text" x-model="lvl2.비고" @input="saveToStore()"
                                                             placeholder="비고" style="text-align: left; width: 100%;">
                                                     </label>
                                                 </div>
@@ -384,6 +394,39 @@
 
                                         </div>
                                     </template>
+
+                                    <div x-show="showMoney" class="money-box">
+                                        <table class="mText2">
+                                            <tbody>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>재료비:</td>
+                                                    <td x-text="lvl1.재료비" class="align-right"></td>
+                                                    <td>원</td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td>노무비:</td>
+                                                    <td x-text="lvl1.노무비" class="align-right"></td>
+                                                    <td>원</td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td>경　비:</td>
+                                                    <td x-text="lvl1.경비" class="align-right"></td>
+                                                    <td>원</td>
+                                                </tr>
+                                                <tr class="sum-row">
+                                                    <td></td>
+                                                    <td>합　계:</td>
+                                                    <td x-text="lvl1.합계" class="align-right"></td>
+                                                    <td>원</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
                                 </ul>
 
 
@@ -408,13 +451,33 @@
         const activeProject = option?.activeProject || '';
         const store = JSON.parse(localStorage.getItem('cost')) || {}
 
-
         return {
-            init() { },
+            init() {
+                // 1. 뒤로 가기로 돌아올 때 실행될 이벤트 리스너 등록
+                window.addEventListener('pageshow', (event) => {
+                    if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+
+                        // 2. 로컬스토리지에서 최신 cost 데이터를 다시 싹 긁어옴
+                        const freshStore = JSON.parse(localStorage.getItem('cost')) || {};
+                        this.store = freshStore;
+
+                        // 3. 현재 활성화된 프로젝트 기준으로 화면에 쓰이는 목록들도 최신화!
+                        if (this.activeProject && freshStore[this.activeProject]) {
+                            this.groupList = freshStore[this.activeProject]?.옵션?.그룹명 || [];
+                            this.subGroupList = freshStore[this.activeProject]?.공종별내역서 || {};
+                        }
+
+                        console.log("새로고침 없이 최신 데이터 갱신 완료!");
+                    }
+                });
+
+            },
+
 
             activeProject: activeProject,
             projectList: option?.projectList || [],
             store: store,
+            showMoney: false, // 처음에는 숨겨져 있게 시작
 
             // 현재 프로젝트의 그룹 목록 가져오기
             groupList: (activeProject && store[activeProject]?.옵션?.그룹명) || [],
@@ -424,7 +487,44 @@
             // 공종별 내역서 데이터 (없으면 빈 객체)
             subGroupList: (activeProject && store[activeProject]?.공종별내역서) || {},
 
-            
+            // [역할] 금액 영역을 토글하면서 전체 공종 합계도 같이 싹 계산하는 함수
+            moneyView() {
+                this.showMoney = !this.showMoney;
+
+                const getNum = (val) => Number(String(val || 0).replace(/,/g, '')) || 0;
+
+                // 1단계: 대그룹 리스트 순회 (forEach)
+                this.subGroupList.forEach(groupList => {
+                    if (!groupList) return;
+
+                    // 2단계: 각 공종 그룹 순회
+                    groupList.forEach(group => {
+                        if (!group || !group.children) return;
+
+                        // 3단계: reduce로 자재들의 재료비, 노무비, 경비를 한 번에 싹 합산
+                        const totals = group.children.reduce((acc, c) => {
+                            acc.mtrl += getNum(c.재료비 || c.재료비단가 || c.prce);
+                            acc.lbr += getNum(c.노무비 || c.노무비단가);
+                            acc.exp += getNum(c.경비 || c.경비단가);
+                            return acc;
+                        }, { mtrl: 0, lbr: 0, exp: 0 });
+
+                        const sumTotal = totals.mtrl + totals.lbr + totals.exp;
+
+                        // 4단계: 포맷팅해서 공종 객체에 바로 꽂아넣기
+                        group.재료비 = totals.mtrl ? totals.mtrl.toLocaleString('ko-KR') : '0';
+                        group.노무비 = totals.lbr ? totals.lbr.toLocaleString('ko-KR') : '0';
+                        group.경비 = totals.exp ? totals.exp.toLocaleString('ko-KR') : '0';
+                        group.합계 = sumTotal ? sumTotal.toLocaleString('ko-KR') : '0';
+                    });
+                });
+                this.saveToStore();
+            },
+
+            editMode() {
+                window.location.href = 'https://study-with-words.blogspot.com/2026/11/blog-post_12.html?group=group3&sub=sub1';
+            },
+
             saveActiveProject() {
                 option.activeProject = this.activeProject;
                 localStorage.setItem('option', JSON.stringify(option));
@@ -454,20 +554,25 @@
                 }
             },
 
-            // [역할] 2차 항목의 타입(일반, 일위대가 등)에 따른 분기 처리 함수
-            handleOptionLink(lvl2) {
-                switch (lvl2.type) {
-                    case '일반': console.log('옵션 1 실행', lvl2); break;
-                    case '일위대가': console.log('옵션 2 실행', lvl2); break;
-                    case '건설기계': console.log('옵션 3 실행', lvl2); break;
-                    case '표준시장단가': console.log('옵션 4 실행', lvl2); break;
-                }
-            },
-
             // [역할] 타입 변경 시 콘솔 로그를 남기고 스토어에 저장하는 함수
             handleTypeChange(lvl2) {
                 console.log("선택된 fg타입:", lvl2);
                 this.saveToStore();
+            },
+
+            toggleLevel2Selection(gIndex, l1Index, l2Index) {
+                const target = this.subGroupList[gIndex]?.[l1Index]?.children?.[l2Index];
+                if (!target) return;
+
+                const wasSelected = !!target.selected;
+                this.subGroupList.forEach(group => {
+                    group?.forEach(level1 => {
+                        level1.children?.forEach(level2 => {
+                            level2.selected = false;
+                        });
+                    });
+                });
+                target.selected = !wasSelected;
             },
 
             // [역할] 활성 그룹 저장 및 하단 바(Bottom Bar)의 UI 표시 여부를 제어하는 함수
@@ -489,36 +594,38 @@
                 this.saveToStore();
             },
 
-            // [역할] 입력창에 숫자를 입력할 때 콤마(,)를 적용하고 실시간으로 금액을 계산해 주는 함수
             calcItems(lvl2, field, event) {
-                let rawVal = event.target.value.replace(/,/g, '');
+                this.showMoney = false;
+                // 1. 입력된 값에서 콤마 제거하고 숫자만 추출
+                let rawVal = String(event.target.value).replace(/,/g, '');
 
+                // 2. 숫자가 아니면 비우고, 숫자면 천단위 콤마 포맷으로 데이터에만 반영
                 if (isNaN(rawVal) || rawVal === '') {
                     lvl2[field] = '';
-                    event.target.value = '';
                 } else {
+                    // 💡 event.target.value는 건드리지 않고, 알파인 데이터(lvl2[field])만 갱신!
                     lvl2[field] = Number(rawVal).toLocaleString('ko-KR');
-                    event.target.value = lvl2[field];
                 }
 
-                const getNum = (val) => Number(String(val).replace(/,/g, '')) || 0;
+                const getNum = (val) => Number(String(val || 0).replace(/,/g, '')) || 0;
 
-                const unit = getNum(lvl2.단위);
+                const qty = getNum(lvl2.수량);
                 const i1 = getNum(lvl2.재료비단가);
                 const i2 = getNum(lvl2.노무비단가);
                 const i3 = getNum(lvl2.경비단가);
 
                 const item4Val = i1 + i2 + i3;
-                const item5Val = i1 * unit;
-                const item6Val = i2 * unit;
-                const item7Val = i3 * unit;
+                const item5Val = i1 * qty;
+                const item6Val = i2 * qty;
+                const item7Val = i3 * qty;
                 const item8Val = item5Val + item6Val + item7Val;
 
-                lvl2.item4 = item4Val ? item4Val.toLocaleString('ko-KR') : '0';
-                lvl2.item5 = item5Val ? item5Val.toLocaleString('ko-KR') : '0';
-                lvl2.item6 = item6Val ? item6Val.toLocaleString('ko-KR') : '0';
-                lvl2.item7 = item7Val ? item7Val.toLocaleString('ko-KR') : '0';
-                lvl2.item8 = item8Val ? item8Val.toLocaleString('ko-KR') : '0';
+                // 3. 결과값들도 콤마 포맷으로 데이터에 반영
+                lvl2.단가합계 = item4Val ? item4Val.toLocaleString('ko-KR') : '0';
+                lvl2.재료비 = item5Val ? item5Val.toLocaleString('ko-KR') : '0';
+                lvl2.노무비 = item6Val ? item6Val.toLocaleString('ko-KR') : '0';
+                lvl2.경비 = item7Val ? item7Val.toLocaleString('ko-KR') : '0';
+                lvl2.합계 = item8Val ? item8Val.toLocaleString('ko-KR') : '0';
 
                 this.saveToStore();
             },
@@ -536,20 +643,12 @@
                 }
 
                 this.subGroupList[gIndex].push({
+                    재료비: '',
+                    노무비: '',
+                    경비: '',
+                    합계: '',
                     name: '',
                     children: [],
-                    get 재료비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.재료비).replace(/,/g, '')) || 0), 0);
-                    },
-                    get 노무비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.노무비).replace(/,/g, '')) || 0), 0);
-                    },
-                    get 경비() {
-                        return this.children.reduce((sum, c) => sum + (Number(String(c.경비).replace(/,/g, '')) || 0), 0);
-                    },
-                    get 합계() {
-                        return this.재료비 + this.노무비 + this.경비;
-                    }
                 });
 
                 this.saveToStore();
@@ -565,10 +664,10 @@
                 this.subGroupList[gIndex][l1Index].children.push({
                     showCost: false,
                     type: '자재',
-                    name: '',
-                    spec: '',
-                    unit: '',
-                    qty: 0,
+                    품목: '',
+                    규격: '',
+                    단위: '',
+                    수량: 0,
                     재료비단가: '',
                     재료비: '',
                     노무비단가: '',

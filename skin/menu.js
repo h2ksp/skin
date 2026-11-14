@@ -3306,7 +3306,7 @@ const menuData = {
         categories: [
 
           {
-            catTitle: "단가검색",
+            catTitle: "단가찾기",
             sections: [
               {
                 secTitle: "공통",
