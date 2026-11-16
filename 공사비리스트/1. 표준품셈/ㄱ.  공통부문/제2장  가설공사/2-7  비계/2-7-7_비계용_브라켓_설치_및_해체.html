@@ -1,0 +1,60 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-7-7 비계용 브라켓 설치 및 해체</h4>
+            <p>('16년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(10개소당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="3">구 분</th>
+                <th rowspan="3">규 격</th>
+                <th rowspan="3">단 위</th>
+                <th colspan="4">수 량</th>
+            </tr>
+            <tr>
+                <th colspan="2" style="width: 25%">벽 용</th>
+                <th colspan="2" style="width: 25%">슬래브발코니, 난간용</th>
+            </tr>
+            <tr>
+                <th>설 치</th>
+                <th>해 체</th>
+                <th>설 치</th>
+                <th>해 체</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공
+                </td>
+                <td>
+                    설치, 해체
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.45
+                </td>
+                <td>
+                    0.34
+                </td>
+                <td>
+                    0.34
+                </td>
+                <td>
+                    0.26
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>[주] 본 품은 벽, 슬래브, 난간에 비계용 브라켓의 설치 및 해체 작업 기준이다.</p>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="비계용 브라켓" %}
+{% endblock %}
+

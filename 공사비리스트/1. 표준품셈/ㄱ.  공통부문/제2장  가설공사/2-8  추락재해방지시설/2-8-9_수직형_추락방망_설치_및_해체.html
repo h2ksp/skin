@@ -1,0 +1,72 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-8-9 수직형 추락방망 설치 및 해체</h4>
+            <p>('20년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(10개소당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="5">개구부 면적</th>
+            </tr>
+            <tr>
+                <th>1.0㎡이하</th>
+                <th>1.0~3.0㎡이하</th>
+                <th>3.0~6.0㎡이하</th>
+                <th>6.0~9.0㎡이하</th>
+                <th>9.0~12.0㎡이하</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.49
+                </td>
+                <td>
+                    0.63
+                </td>
+                <td>
+                    1.01
+                </td>
+                <td>
+                    1.30
+                </td>
+                <td>
+                    1.60
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 창호, 발코니 등 개구부에 추락의 위험을 방지하기 위한 수직형 방망을 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 앵커 구멍뚫기, 방망 설치 및 해체 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>공구손료 및 경장비(전동드릴 등)의 기계경비는 인력품의 2%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="수직형 추락" %}
+{% endblock %}
+

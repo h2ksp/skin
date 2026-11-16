@@ -1,0 +1,77 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-7-3 강관틀 비계 설치 및 해체</h4>
+            <p>('16년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="2">수 량</th>
+            </tr>
+            <tr>
+                <th>10m이하</th>
+                <th>
+                    10m초과∼<br>
+                    20m이하
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    설치, 해체<br>
+                    설치, 해체
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.02<br>
+                    0.01
+                </td>
+                <td>
+                    0.03<br>
+                    0.01
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①</td>
+                <td>본 품은 강관틀 비계의 설치 및 해체 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품은 비계(발판 및 이동용 내부계단) 설치, 해체 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>높이 20m 초과 시 비계설치, 해체 및 비계안전 보강재 설치 품은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>가설계단 및 방호시설은 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="강관틀" li=2 %}
+{% endblock %}
+

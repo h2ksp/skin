@@ -1,0 +1,89 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-10-2 방진망 설치 및 해체</h4>
+            <p>('17년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(10㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    비 계 공
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.16
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: top;">[주]</td>
+                <td style="vertical-align: top;">①</td>
+                <td>본 품은 가설울타리 및 가설방음벽 상부에 설치하는 그물망 설치 및 해체 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>비계 등의 가시설이 필요한 경우는 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>보양지 붙이기는 천막지 및 골판지 등 보양지를 절단하여 테이프로 붙이는 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>재료량은 다음을 참고한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <div style="text-align: right; margin-top: -5px;">(㎡당)</div>
+                    <table class="box-table">
+                        <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>단위</th>
+                            <th>수량</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                방 진 망<br>
+                                철 선
+                            </td>
+                            <td>
+                                ㎡<br>
+                                kg
+                            </td>
+                            <td>
+                                1.06<br>
+                                0.115
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p>※ 위 재료량은 할증이 포함되어 있으며, 방진망의 손율은 1회사용 후 100%로 한다.</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="방진망 설치" %}
+{% endblock %}

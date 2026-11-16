@@ -1,0 +1,58 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-7 슬러지 제거</h4>
+            <p>('19년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(회당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구분</th>
+                <th>규격</th>
+                <th>단위</th>
+                <th>수량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부
+                </td>
+                <td></td>
+                <td>인</td>
+                <td>0.63</td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    굴 착 기
+                </td>
+                <td>0.2㎥</td>
+                <td>hr</td>
+                <td>1.00</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 자동세륜기(슬러지함 2.0×1.2×1.2m) 슬러지를 제거하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>세륜기 세척, 슬러지 제거, 공급수 교체 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>공구손료 및 경장비(살수장비, 양수기 등)의 기계경비는 인력품의 7%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="슬러지" index="[2]" %}
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-10-4 박스형 간이흙막이 설치 및 해체</h4>
+            <p>('22년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(개당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="2">설치깊이</th>
+            </tr>
+            <tr>
+                <th>H=3.0m이하</th>
+                <th>4.0m이하</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부<br>
+                    보 통 인 부
+                </td>
+                <td>
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.17<br>
+                    0.06
+                </td>
+                <td>
+                    0.24<br>
+                    0.09
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    크 레 인
+                </td>
+                <td>
+                    10ton
+                </td>
+                <td>
+                    hr
+                </td>
+                <td>
+                    0.26
+                </td>
+                <td>
+                    0.44
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 버팀대(연결대) 및 판넬이 Box형태로 조립된 상태의 간이흙막이를 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>간이흙막이(판넬)의 개당 길이는 3.0m 이하, 폭은 2.0m이하 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>가설흙막이 설치를 위한 터파기 및 뒤채우기 등의 토공작업은 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="박스형 간이흙막이" li=2 %}
+{% endblock %}

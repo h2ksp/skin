@@ -1,0 +1,65 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-5 비산먼지 발생 억제를 위한 살수</h4>
+            <p>('02년 신설, '09년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(100㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>규 격</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    물탱크(살수차)
+                </td>
+                <td>16,000ℓ</td>
+                <td>시간</td>
+                <td>0.008</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 공사현장의 비산먼지 발생억제를 위하여 물탱크(살수차)로 살수하는 품이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품의 살수두께는 1.5㎜/회를 기준한 것이며, 살수폭은 4.0m를 기준한 것이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>본 품은 1회당의 살수작업을 기준한 것이므로, 살수면적은 살수횟수를 감안하여 산출해야 하며, 살수횟수는 현장여건을 고려하여 정한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <p style="border: 1px solid #000000; padding: 5px;">
+                        　&lt;살수면적 계산예&gt;<br>
+                        ◦ 폭이 6m이고 길이가 l00m인 부지를 1일 5회 살수하며, 살수 일수가 10일인 경우<br>
+                        　- 살수면적 = 6m × 100m × 5회/일 × 10일 = 30,000㎡
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>살수에 필요한 물을 현장에서 구득하기 어려워 급수시설을 설치하거나 상수도 등을 이용해야 할 경우에는 그 비용을 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="비산먼지 발생" li=1 %}
+{% endblock %}

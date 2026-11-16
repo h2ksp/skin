@@ -1,0 +1,47 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-8-17 수평지지로프 설치 및 해체</h4>
+            <p>('23년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(m당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.02
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 고소작업 시 안전대를 걸기 위해 수평지지로프(구명줄)를 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 브라켓 지주, 수평지지로프 설치 작업을 포함한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="수평지지" li=1 %}
+{% endblock %}

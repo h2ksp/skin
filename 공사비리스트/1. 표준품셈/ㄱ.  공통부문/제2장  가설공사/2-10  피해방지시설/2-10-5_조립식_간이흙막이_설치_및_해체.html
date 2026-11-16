@@ -1,0 +1,99 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-10-5 조립식 간이흙막이 설치 및 해체</h4>
+            <p>('22년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(m당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="4">설치깊이</th>
+            </tr>
+            <tr>
+                <th>H=3.0m이하</th>
+                <th>H=4.0m이하</th>
+                <th>H=5.0m이하</th>
+                <th>H=6.0m이하</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부<br>
+                    보 통 인 부
+                </td>
+                <td>
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.19<br>
+                    0.07
+                </td>
+                <td>
+                    0.28<br>
+                    0.10
+                </td>
+                <td>
+                    0.40<br>
+                    0.15
+                </td>
+                <td>
+                    0.57<br>
+                    0.22
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    크 레 인
+                </td>
+                <td>
+                    10ton
+                </td>
+                <td>
+                    hr
+                </td>
+                <td>
+                    0.46
+                </td>
+                <td>
+                    0.90
+                </td>
+                <td>
+                    1.48
+                </td>
+                <td>
+                    2.20
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 간이흙막이를 조립하면서 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 기둥(레일), 버팀대(연결대), 판넬의 조립, 설치 및 해체를 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>가설흙막이 설치를 위한 터파기 및 뒤채우기 등의 토공작업은 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="조립식 간이흙막이" li=4 %}
+{% endblock %}

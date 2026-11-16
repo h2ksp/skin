@@ -1,0 +1,133 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-1 건축물보양</h4>
+            <p>('23년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(보양면적 ㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>단 위</th>
+                <th>부직포 깔기</th>
+                <th>보양지 붙이기</th>
+                <th>목재 붙이기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    건 축 목 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    -<br>
+                    0.003
+                </td>
+                <td>
+                    -<br>
+                    0.01
+                </td>
+                <td>
+                    0.03<br>
+                    -
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: top;">[주]</td>
+                <td style="vertical-align: top;">①</td>
+                <td>본 품은 시공부위의 파손 및 오염을 방지하기 위하여 보양재를 설치 및 철거하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>부직포 깔기는 보양재를 바닥에 깔기하는 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>보양지 붙이기는 천막지 및 골판지 등 보양지를 절단하여 테이프로 붙이는 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>목재 붙이기는 판재·각재로 주위를 보호하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤</td>
+                <td>보양재는 신품을 기준하며, 재료의 손율은 100%를 적용한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑥</td>
+                <td>재료량은 다음을 참고하여 적용한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <table class="box-table">
+                        <thead>
+                        <tr>
+                            <th colspan="2">구분</th>
+                            <th>단위</th>
+                            <th>수량</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>부직포 깔기</td>
+                            <td>부직포</td>
+                            <td>㎡</td>
+                            <td>1.10</td>
+                        </tr>
+                        <tr>
+                            <td>보양지 붙이기</td>
+                            <td>
+                                하드롱지<br>
+                                풀
+                            </td>
+                            <td>
+                                ㎡<br>
+                                kg
+                            </td>
+                            <td>
+                                1.20<br>
+                                0.06
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>목재 붙이기</td>
+                            <td>
+                                목재<br>
+                                못
+                            </td>
+                            <td>
+                                ㎥<br>
+                                kg
+                            </td>
+                            <td>
+                                0.007<br>
+                                0.02
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="건축물보양" %}
+{% endblock %}

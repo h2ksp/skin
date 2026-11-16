@@ -1,0 +1,50 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-7-6 타워형 가설 계단 설치 및 해체</h4>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="3">구 분</th>
+                <th rowspan="3">규 격</th>
+                <th rowspan="3">단 위</th>
+                <th colspan="4">수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    설치, 해체<br>
+                    설치, 해체
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.20<br>
+                    0.07
+                </td>
+            </tr>
+            <tr>
+                <td>크 레 인</td>
+                <td>10ton</td>
+                <td>hr</td>
+                <td>0.06</td>
+            </tr>
+            </tbody>
+        </table>
+        <p>[주] 본 품은 벽, 슬래브, 난간에 비계용 브라켓의 설치 및 해체 작업 기준이다.</p>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="타워형 가설" li=1 %}
+{% endblock %}
+

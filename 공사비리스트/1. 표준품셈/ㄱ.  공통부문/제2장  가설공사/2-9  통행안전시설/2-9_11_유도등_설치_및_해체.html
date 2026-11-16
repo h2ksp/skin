@@ -1,0 +1,37 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-9-11 유도등 설치 및 해체</h4>
+            <p>('23년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(m당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    특 별 인 부
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.01
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>[주] 본 품은 유도등(윙카호스)을 설치 및 해체하는 기준이다.</p>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="유도등 설치" li=1 %}
+{% endblock %}
+

@@ -1,0 +1,78 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-8 지능형 CCTV 설치 및 해체</h4>
+            <p>('24년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(개당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구분</th>
+                <th rowspan="2">규격</th>
+                <th rowspan="2">단위</th>
+                <th colspan="2">수량</th>
+            </tr>
+            <tr>
+                <th>지상 또는 건물 설치</th>
+                <th>x타워크레인 설치</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    S/W 시험사<br>
+                    중급기술자<br>
+                    특별인부
+                </td>
+                <td>
+                    설치<br>
+                    설치, 해체<br>
+                    설치
+                </td>
+                <td>
+                    인<br>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.2<br>
+                    0.5<br>
+                    0.2
+                </td>
+                <td>
+                    0.5<br>
+                    1.0<br>
+                    0.5
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 건설현장 내 IT기반 지능형 CCTV(고정형)를 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 CCTV설치 및 결선, 유무선연결, 시운전 및 교정을 포함하며 라인포설, 고정대(용접) 또는 폴대설치 등은 제외한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>브라켓 및 고정대 등 용접 작업, 고소작업차 등은 필요 시 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④&nbsp;</td>
+                <td>공구손료 및 경장비(전동드릴 등)의 기계경비는 인력품의 1.0%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="지능형 CCTV" index="[3,4]" %}
+{% endblock %}

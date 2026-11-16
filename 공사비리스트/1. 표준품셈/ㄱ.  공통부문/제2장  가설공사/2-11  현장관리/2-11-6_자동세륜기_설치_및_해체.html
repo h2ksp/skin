@@ -1,0 +1,79 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-6 자동세륜기 설치 및 해체</h4>
+            <p>('09, '12, '19년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(회당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2" style="width: 25%">구분</th>
+                <th rowspan="2">규격</th>
+                <th rowspan="2">단위</th>
+                <th colspan="2">수량</th>
+            </tr>
+            <tr>
+                <th>설치</th>
+                <th>해체</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부
+                </td>
+                <td></td>
+                <td>인</td>
+                <td>1.59</td>
+                <td>2.44</td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    크 레 인
+                </td>
+                <td>10ton</td>
+                <td>hr</td>
+                <td>2.60</td>
+                <td>3.30</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 자동세륜기(8롤, 10롤)를 설치 및 철거하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>설치는 수조함 설치, 세륜기 설치, 슬러지함 설치 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>해체는 슬러지 청소, 퇴수, 슬러지함 철거, 세륜기 철거, 수조함 철거 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④&nbsp;</td>
+                <td>터파기, 골재포설, 콘크리트 타설 및 깨기 작업은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤&nbsp;</td>
+                <td>자동세륜기 가동을 위한 전기배선 및 급수 등에 소요되는 재료 및 품은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑥&nbsp;</td>
+                <td>공구손료 및 경장비(살수장비, 양수기 등)의 기계경비는 인력품의 2%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="자동세륜기" li=3 %}
+{% endblock %}

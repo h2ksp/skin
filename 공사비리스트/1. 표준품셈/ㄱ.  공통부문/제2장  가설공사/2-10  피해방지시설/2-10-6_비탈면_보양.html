@@ -1,0 +1,51 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-10-6 비탈면 보양</h4>
+            <p>('23년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th style="width: 33%">구분</th>
+                <th>단위</th>
+                <th>수량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.02<br>
+                    0.01
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 비탈면의 토사유출 등 방지하기 위해 보양재(천막 등)를 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 보양재 설치, P.P마대 만들기 및 설치 작업을 포함한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="비탈면 보양" li=1 %}
+{% endblock %}

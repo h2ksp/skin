@@ -1,0 +1,44 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-8-15 개구부 수평보호덮개 설치 및 해체</h4>
+            <p>('22년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(개당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="2">수 량</th>
+            </tr>
+            <tr>
+                <th>1.0㎡이하</th>
+                <th>3.0㎡이하</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.05
+                </td>
+                <td>
+                    0.07
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>[주] 본 품은 추락 등의 위험이 있는 수평개구부에 보호덮개를 설치 및 해체하는 기준이다.</p>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="개구부 수평" li=2 %}
+{% endblock %}
+

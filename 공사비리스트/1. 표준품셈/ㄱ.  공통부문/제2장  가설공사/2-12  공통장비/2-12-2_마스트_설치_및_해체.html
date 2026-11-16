@@ -1,0 +1,99 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-12-2 마스트 설치 및 해체</h4>
+            <p>('23년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(층당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th style="width: 33%">구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    비 계 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.80<br>
+                    0.27
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 건설용리프트(싱글 1.2ton)의 마스트를 설치 및 해체하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>본 품은 마스트 설치, 층간 출입구 및 작동센서 설치와 해체 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③&nbsp;</td>
+                <td>
+                    높이에 따라 다음 할증률에 의한 품을 가산할 수 있으며 19층 이상은 매 3층 증가마다 4%씩 가산할 수 있다.
+                    <table class="box-table">
+                        <thead>
+                        <tr>
+                            <th>
+                                지하층 및<br>
+                                1~3층
+                            </th>
+                            <th>
+                                4~6층
+                            </th>
+                            <th>
+                                7~9층
+                            </th>
+                            <th>
+                                10~12층
+                            </th>
+                            <th>
+                                13~15층
+                            </th>
+                            <th>
+                                16~18층
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>5%</td>
+                            <td>8%</td>
+                            <td>12%</td>
+                            <td>16%</td>
+                            <td>20%</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    ※ 외벽에서 층의 구분을 할 수 없을 때에는 층고를 3.6m로 기준하여 층수를 환산 적용한다.
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④&nbsp;</td>
+                <td>공구손료 및 경장비(윈치 등)의 기계경비는 인력품이 3%로 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="마스트 설치" index="[2]" %}
+{% endblock %}
+

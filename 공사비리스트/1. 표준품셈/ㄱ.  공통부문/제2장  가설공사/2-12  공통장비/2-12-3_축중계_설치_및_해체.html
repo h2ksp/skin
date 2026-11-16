@@ -1,0 +1,37 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-12-3 축중계 설치 및 해체</h4>
+            <p>('09년 신설, '10년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(회당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th style="width: 35%">구 분</th>
+                <th>단 위</th>
+                <th>수 량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    특 별 인 부
+                </td>
+                <td>
+                    인
+                </td>
+                <td>
+                    0.51
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>[주] 본 품은 이동식 축중계 및 계측기의 조립･설치･해체 기준이다.</p>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="축중계" index="[2]" %}
+{% endblock %}
+

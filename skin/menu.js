@@ -94,38 +94,38 @@ const menuData = {
               {
                 secTitle: "2-3　가설건축물",
                 items: [
-                  { text: "2-3-1　철제조립식 가설건축물 설치 및 해체", url: "#1-1" },
-                  { text: "2-3-2　콘테이너형 가설건축물 설치 및 해체", url: "#1-1" },
+                  { text: "2-3-1　철제조립식 가설건축물 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-3-1.html" },
+                  { text: "2-3-2　콘테이너형 가설건축물 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-3-2.html" },
                 ]
               },
               {
                 secTitle: "2-4　가설울타리 및 가설방음벽",
                 items: [
-                  { text: "2-4-1　강관 지주 설치 및 해체", url: "#1-1" },
-                  { text: "2-4-2　H형강 지주 설치 및 해체", url: "#1-1" },
-                  { text: "2-4-3　가설울타리관 설치 및 해체", url: "#1-1" },
-                  { text: "2-4-4　세로형 가설방음판 설치 및 해체", url: "#1-1" },
-                  { text: "2-4-5　가로형 가설방음판 설치 및 해체", url: "#1-1" },
+                  { text: "2-4-1　강관 지주 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-4-1.html" },
+                  { text: "2-4-2　H형강 지주 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-4-2-h.html" },
+                  { text: "2-4-3　가설울타리관 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-4-3.html" },
+                  { text: "2-4-4　세로형 가설방음판 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-4-4.html" },
+                  { text: "2-4-5　가로형 가설방음판 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-4-5.html" },
                 ]
               },
               {
                 secTitle: "2-5　규준틀",
                 items: [
-                  { text: "2-5-1　목재 비탈 규준틀 설치 및 철거", url: "#1-1" },
-                  { text: "2-5-2　목재 수평규준틀 설치 및 철거", url: "#1-1" },
-                  { text: "2-5-3　철재 수평규준틀 설치 및 철거", url: "#1-1" },
-                  { text: "2-5-4　목재 평, 귀규준틀 설치 및 철거", url: "#1-1" },
+                  { text: "2-5-1　목재 비탈 규준틀 설치 및 철거", url: "https://study-with-words.blogspot.com/2026/11/2-5-1.html" },
+                  { text: "2-5-2　목재 수평규준틀 설치 및 철거", url: "https://study-with-words.blogspot.com/2026/11/2-5-2.html" },
+                  { text: "2-5-3　철재 수평규준틀 설치 및 철거", url: "https://study-with-words.blogspot.com/2026/11/2-5-3.html" },
+                  { text: "2-5-4　목재 평, 귀규준틀 설치 및 철거", url: "https://study-with-words.blogspot.com/2026/11/2-5-4.html" },
                 ]
               },
 
               {
                 secTitle: "2-6　동바리",
                 items: [
-                  { text: "2-6-1　강관 동바리 설치 및 해체(토목)", url: "#1-1" },
-                  { text: "2-6-2　강관 동바리 설치 및 해체(건축, 기계설비)", url: "#1-1" },
-                  { text: "2-6-3　시스템 동바리 설치 및 해체", url: "#1-1" },
-                  { text: "2-6-4　알루미늄 폼 동바리 설치 및 해체", url: "#1-1" },
-                  { text: "2-6-5　잭서포트 설치 및 해체", url: "#1-1" },
+                  { text: "2-6-1　강관 동바리 설치 및 해체(토목)", url: "https://study-with-words.blogspot.com/2026/11/2-6-1.html" },
+                  { text: "2-6-2　강관 동바리 설치 및 해체(건축, 기계설비)", url: "https://study-with-words.blogspot.com/2026/11/2-6-2.html" },
+                  { text: "2-6-3　시스템 동바리 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-6-3.html" },
+                  { text: "2-6-4　알루미늄 폼 동바리 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-6-4.html" },
+                  { text: "2-6-5　잭서포트 설치 및 해체", url: "https://study-with-words.blogspot.com/2026/11/2-6-5.html" },
                 ]
               },
 

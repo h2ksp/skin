@@ -1,0 +1,90 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-7-2 시스템비계 설치 및 해체</h4>
+            <p>('16년 신설)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(㎡당)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th rowspan="2">구 분</th>
+                <th rowspan="2">규 격</th>
+                <th rowspan="2">단 위</th>
+                <th colspan="3">수 량</th>
+            </tr>
+            <tr>
+                <th>10m이하</th>
+                <th>
+                    10m초과∼<br>
+                    20m이하
+                </th>
+                <th>
+                    20m초과∼<br>
+                    30m이하
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    비 계 공<br>
+                    보 통 인 부
+                </td>
+                <td>
+                    설치, 해체<br>
+                    설치, 해체
+                </td>
+                <td>
+                    인<br>
+                    인
+                </td>
+                <td>
+                    0.04<br>
+                    0.01
+                </td>
+                <td>
+                    0.05<br>
+                    0.01
+                </td>
+                <td>
+                    0.06<br>
+                    0.01
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①</td>
+                <td>본 품은 시스템비계(연결핀 조립)의 설치 및 해체 작업 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②</td>
+                <td>본 품은 비계(발판 및 내부계단 포함) 설치, 해체 작업을 포함한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">③</td>
+                <td>높이 30m 초과 시 비계설치, 해체 및 비계안전 보강재 설치 품은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">④</td>
+                <td>가설 계단 및 방호시설은 별도 계상한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">⑤</td>
+                <td>현장여건에 따라 장비(크레인 등)가 필요한 경우 기계경비는 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="시스템비계" %}
+{% endblock %}
+

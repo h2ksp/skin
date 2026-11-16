@@ -1,0 +1,48 @@
+{% extends 'cost/directory/1_표준품셈/Algorithm/_표준품셈.html' %}
+{% block 본문 %}
+    <div class="print-content">
+        {{ block.super }}
+        <div style="position: sticky; top: 30px; background-color: white; z-index: 1000; padding-bottom: 5px;">
+            <h4>2-11-2 건축물 현장정리</h4>
+            <p>('23년 보완)</p>
+        </div>
+        {#-------------------------------------------------------------------------------------------------------------------#}
+        <div style="text-align: right; margin-top: -5px;">(연면적 ㎡)</div>
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th>구분</th>
+                <th>단위</th>
+                <th>
+                    철근콘크리트조<br>
+                    철골, 철근콘크리트조
+                </th>
+                <th>목조,철골조,조적조</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align:left; padding-left: 20px;">
+                    보 통 인 부
+                </td>
+                <td>인</td>
+                <td>0.13</td>
+                <td>0.05</td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>본 품은 공사 중 옥·내외를 청소하는 기준이다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>재료량(청소용 소모품 등)은 별도 계상한다.</td>
+            </tr>
+        </table>
+    </div>
+    {% include 'cost/directory/1_표준품셈/Algorithm/search_results.html' with item="건축물 현장정리" li=2 %}
+{% endblock %}
