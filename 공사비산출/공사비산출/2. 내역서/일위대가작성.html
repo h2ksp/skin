@@ -243,7 +243,7 @@
                 :disabled="selectedIndex === null || selectedIndex === 0">위로</button>
             <button type="button" @click="moveSelected(1)"
                 :disabled="selectedIndex === null || selectedIndex === rows.length - 1">아래로</button>
-            <button type="button" @click="addRow()">줄추가</button>
+            <button type="button" @click="addRow()">항목추가</button>
         </div>
 
         <div class="radio-group">
@@ -399,6 +399,10 @@
 </div>
 
 <script>
+    function costNumber(value) {
+        return Number(String(value ?? '').replace(/,/g, '')) || 0;
+    }
+
     function costCalculator() {
         return {
             currentView: 'view1',
@@ -469,7 +473,7 @@
 
             views: {
                 view1: {
-                    label: '기본',
+                    label: '기본사항',
                     columns: [
                         {
                             key: 'type', title: 'TYPE', type: 'select', width: '60px', alignClass: 'text-left',
@@ -487,10 +491,10 @@
                         { key: '수량', title: '수량', type: 'input-num', width: '40px', alignClass: 'text-right' },
                         {
                             key: '합계', title: '합계', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.수량) || 0) * (
-                                (Number(r.재료비단가) || 0) +
-                                (Number(r.노무비단가) || 0) +
-                                (Number(r.경비단가) || 0)
+                            calcFn: r => costNumber(r.수량) * (
+                                costNumber(r.재료비단가) +
+                                costNumber(r.노무비단가) +
+                                costNumber(r.경비단가)
                             ),
                             totalFn: () => '-'
                         },
@@ -506,30 +510,30 @@
                         { key: '경비단가', title: '경비단가', type: 'input-num', width: '65px', alignClass: 'text-right' },
                         {
                             key: '재료비', title: '재료비', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.수량) || 0) * (Number(r.재료비단가) || 0),
+                            calcFn: r => costNumber(r.수량) * costNumber(r.재료비단가),
                             totalFn: () => '-'
                         },
                         {
                             key: '노무비', title: '노무비', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.수량) || 0) * (Number(r.노무비단가) || 0),
+                            calcFn: r => costNumber(r.수량) * costNumber(r.노무비단가),
                             totalFn: () => '-'
                         },
                         {
                             key: '경비', title: '경비', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.수량) || 0) * (Number(r.경비단가) || 0),
+                            calcFn: r => costNumber(r.수량) * costNumber(r.경비단가),
                             totalFn: () => '-'
                         },
                         {
                             key: '단가합계', title: '단가합계', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.재료비단가) || 0) + (Number(r.노무비단가) || 0) + (Number(r.경비단가) || 0),
+                            calcFn: r => costNumber(r.재료비단가) + costNumber(r.노무비단가) + costNumber(r.경비단가),
                             totalFn: () => '-'
                         },
                         {
                             key: '합계', title: '합계', type: 'calc', width: '65px', alignClass: 'text-right',
-                            calcFn: r => (Number(r.수량) || 0) * (
-                                (Number(r.재료비단가) || 0) +
-                                (Number(r.노무비단가) || 0) +
-                                (Number(r.경비단가) || 0)
+                            calcFn: r => costNumber(r.수량) * (
+                                costNumber(r.재료비단가) +
+                                costNumber(r.노무비단가) +
+                                costNumber(r.경비단가)
                             ),
                             totalFn: () => '-'
                         },
@@ -577,12 +581,12 @@
                 this.loadDataFromOption();
             },
 
-            updateAvailableCategories() {
+            updateAvailableCategories(projects) {
                 this.availableCategories = [];
                 if (!this.selectedProjectKey) return;
 
                 try {
-                    const projects = JSON.parse(localStorage.getItem("cost") || "{}");
+                    projects = projects || JSON.parse(localStorage.getItem("cost") || "{}");
                     this._availableProjects = projects; // 여기도 안전하게 추가
                     const proj = projects[this.selectedProjectKey];
                     if (!proj || !proj.공종별내역서) return;
@@ -630,7 +634,7 @@
                     if (opt?.projectKey) {
                         this.selectedProjectKey = opt.projectKey;
                         this.currentProjectKey = opt.projectKey;
-                        this.updateAvailableCategories();
+                        this.updateAvailableCategories(projects);
                     } else {
                         this.selectedProjectKey = '';
                         this.currentProjectKey = null;
@@ -699,7 +703,9 @@
                         localStorage.setItem("cost", JSON.stringify(this._availableProjects));
                         this.updateCurrentCycleItems();
                     }
-                } catch (e) { }
+                } catch (e) {
+                    console.error('공사비 데이터를 저장하지 못했습니다.', e);
+                }
             },
 
             addRow() {
@@ -710,6 +716,9 @@
                     규격: '',
                     단위: '',
                     수량: 0,
+                    재료비: '0',
+                    노무비: '0',
+                    경비: '0',
                 });
                 this.rows = this._targetContainer;
                 this.selectedIndex = this.rows.length - 1;
@@ -768,6 +777,7 @@
                     노무비단가: item.노무비단가 || 0,
                     경비단가: item.경비단가 || 0
                 };
+                this.updateRowCosts(newItem);
                 this._targetContainer.push(newItem);
                 this.rows = this._targetContainer;
                 this.saveCostData();
@@ -813,7 +823,7 @@
                 const traverseNet = (items) => {
                     if (!Array.isArray(items)) return;
                     for (let item of items) {
-                        if (item && (item.품목 || item.품명 || item.규격 || item.qty !== undefined || item.수량 !== undefined)) {
+                        if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
                             let t = item.type || item.타입 || item.구분 || '자재';
                             t = String(t).trim();
 
@@ -826,7 +836,7 @@
                                 품목: item.품목 || item.품명 || '',
                                 규격: item.규격 || '',
                                 단위: item.단위 || '',
-                                qty: 1,
+                                수량: 1,
                                 재료비단가: item.재료비단가 || 0,
                                 노무비단가: item.노무비단가 || 0,
                                 경비단가: item.경비단가 || 0
@@ -853,13 +863,13 @@
                 if (proj.일위대가 && Array.isArray(proj.일위대가)) {
                     if (!classified['일위대가']) classified['일위대가'] = [];
                     for (let item of proj.일위대가) {
-                        if (item && (item.품목 || item.품명 || item.규격 || item.qty !== undefined || item.수량 !== undefined)) {
+                        if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
                             classified['일위대가'].push({
                                 type: '일위대가',
                                 품목: item.품목 || item.품명 || '',
                                 규격: item.규격 || '',
                                 단위: item.단위 || '',
-                                qty: item.수량 !== undefined ? Number(item.수량) || 0 : (item.qty !== undefined ? Number(item.qty) || 0 : 0)
+                                수량: item.수량 !== undefined ? Number(item.수량) || 0 : (item.수량 !== undefined ? Number(item.수량) || 0 : 0)
                             });
                         }
                     }
@@ -887,16 +897,25 @@
 
                         for (const key of ['재료비단가', '노무비단가', '경비단가']) {
                             parent[key] = parent.children.reduce((sum, item) => {
-                                return sum + (Number(item.수량) || 0) * (Number(item[key]) || 0);
+                                return sum + costNumber(item.수량) * costNumber(item[key]);
                             }, 0);
                         }
+                        this.updateRowCosts(parent);
                     }
                 } catch (e) { }
+            },
+
+            updateRowCosts(row) {
+                for (const key of ['재료비', '노무비', '경비']) {
+                    row[key] = (costNumber(row.수량) * costNumber(row[key + '단가']))
+                        .toLocaleString('ko-KR', { maximumFractionDigits: 20 });
+                }
             },
 
             formatInput(event, row, key) {
                 let val = event.target.value.replace(/[^0-9.]/g, '');
                 row[key] = val === '' ? 0 : Number(val);
+                this.updateRowCosts(row);
                 this.updateParentCosts();
                 this.saveCostData();
             },

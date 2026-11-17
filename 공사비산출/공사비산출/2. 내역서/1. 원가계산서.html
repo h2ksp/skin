@@ -3,7 +3,7 @@
         border: 1px solid black;
         border-collapse: collapse;
         width: 100%;
-        font-size: 0.9em;
+        font-size: 0.85em;
         margin-bottom: 300px;
     }
 
@@ -21,17 +21,47 @@
     .toolbar {
         margin: 5px 0;
     }
+
+    .rateCell {
+        cursor: pointer;
+        user-select: none;
+        text-align: center;
+    }
+
+    .rateCell:hover {
+        background-color: #f0f7ff;
+    }
+
+    /* 테이블 셀을 꽉 채우는 풀사이즈 인풋 스타일 */
+    .table-input-cell {
+        padding: 0 !important;
+        /* td 기본 여백 제거 */
+    }
+
+    .table-input {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        /* 테두리나 패딩 때문에 삐져나가는 것 방지 */
+        border: none;
+        background: transparent;
+        padding: 6px 8px;
+        outline: none;
+        font-size: inherit;
+        /* 부모 폰트 사이즈 상속 */
+    }
+
+    /* 인풋창에 마우스 올렸거나 포커스 갔을 때 살짝 포인트 주기 (선택사항) */
+    .table-input:focus {
+        background-color: #f0f7ff;
+    }
 </style>
 
 
 
-<div id="title">원가계산서</div>
-
-
-
-
-<div class="cost-estimate" x-data="costEstimate()" x-init="init()">
-
+<div class="cost-estimate" x-data="costEstimate()" x-init="init()"
+    style="margin-left: -140px;width: calc(100% + 140px)">
+    <br>
     <div class="toolbar">
         <label for="costEstimateProject">프로젝트 선택:</label>
         <select id="costEstimateProject" x-model="activeProject" @change="saveActiveProject()">
@@ -42,9 +72,6 @@
         </select>
     </div>
 
-    <div class="status" x-text="statusMessage"></div>
-
-    <div class="money" x-text="total(activeProject).직접재료비">asdf</div>
 
     <div class="tables-wrapper">
 
@@ -52,186 +79,279 @@
             <thead style="text-align: center;">
                 <tr>
                     <td colspan="3">비 목</td>
-                    <td style="width: 110px;">금액</td>
+                    <td style="width: 100px;">금액</td>
                     <td style="width: 55px;">요율(%)</td>
-                    <td style="width: 440px;">구 성 비</td>
+                    <td style="width: 360px;">구 성 비</td>
                     <td>비고</td>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td rowspan="24" style="width: 5px"></td>
+                    <td :rowspan="24 + (showAdd ? getItemsByType('추가경비').length : 0)" style="width: 5px"></td>
                     <td rowspan="4" style="width: 20px;">재<br>료<br>비</td>
-                    <td style="width: 200px;">직접재료비</td>
+                    <td style="width: 1px; white-space: nowrap;">직접재료비</td>
+                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).직접재료비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.직접재료비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>간접재료비</td>
-                    <td class="money">322,111,222,333</td>
+                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).간접재료비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.간접재료비" class="table-input">
+                    </td>
+                </tr>
                 <tr>
                     <td>작업설,부산물</td>
+                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).작업설부산물)" </td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.작업설부산물" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>[ 소계 ]</td>
+                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).재료비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.재료비" class="table-input">
+                    </td>
                 </tr>
 
                 <tr>
                     <td rowspan="3">노<br>무<br>비</td>
                     <td>직접노무비</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).직접노무비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.직접노무비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>간접노무비</td>
-                    <td></td>
-                    <td></td>
-                    <td>직접노무비 × 율</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).간접노무비)"> </td>
+                    <td @click="onRateClick('간접노무비')" class="rateCell">
+                        <span x-text="요율.간접노무비"></span>
+                    </td>
+                    <td> 직접노무비 × 율 </td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.간접노무비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>[ 소계 ]</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).노무비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.노무비" class="table-input">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td rowspan="17">경<br>비</td>
+                    <td :rowspan="17 + (showAdd ? getItemsByType('추가경비').length : 0)">경<br>비</td>
                     <td>산출경비</td>
-
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).산출경비)"></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.산출경비" class="table-input">
+                    </td>
                 </tr>
 
                 <tr>
                     <td>기계경비</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).기계경비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.기계경비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>산재보험료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).산재보험료)"></td>
+                    <td @click="onRateClick('산재보험료')" class="rateCell">
+                        <span x-text="요율.산재보험료"></span>
+                    </td>
                     <td>노무비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.산재보험료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>고용보험료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).고용보험료)"></td>
+                    <td @click="onRateClick('고용보험료')" class="rateCell">
+                        <span x-text="요율.고용보험료"></span>
+                    </td>
                     <td>노무비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.고용보험료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>건강보험료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건강보험료)"></td>
+                    <td @click="onRateClick('건강보험료')" class="rateCell">
+                        <span x-text="요율.건강보험료"></span>
+                    </td>
                     <td>직접노무비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.건강보험료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>연급보험료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).연금보험료)"></td>
+                    <td @click="onRateClick('연금보험료')" class="rateCell">
+                        <span x-text="요율.연금보험료"></span>
+                    </td>
                     <td>직접노무비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.연금보험료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>노인장기요양보험료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).노인장기요양보험료)"></td>
+                    <td @click="onRateClick('노인장기요양보험료')" class="rateCell">
+                        <span x-text="요율.노인장기요양보험료"></span>
+                    </td>
                     <td>건강보험료 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.노인장기요양보험료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>퇴직공제부금비</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).퇴직공제부금비)"></td>
+                    <td @click="onRateClick('퇴직공제부금비')" class="rateCell">
+                        <span x-text="요율.퇴직공제부금비"></span>
+                    </td>
                     <td>직접노무비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.퇴직공제부금비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>산업안전보건관리비</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).산업안전보건관리비)"></td>
+                    <td @click="onRateClick('산업안전보건관리비')" class="rateCell">
+                        <span x-text="요율.산업안전보건관리비"></span>
+                    </td>
+                    <td x-text="isCapped
+                        ? '(재료비 + 직접노무비) × 율 + 기초액'
+                        : (isCapped2
+                        ? '(재료비+직접노무비+도급자관급)×요율 + 기초액'
+                        : '[(재료비+직접노무비)×요율+기초액]×1.2')"></td>
+                    <td @click="onRateClick('기초액')" class="rateCell" style="text-align: left !important;">
+                        <span x-text="`기초액:　${Number(요율.기초액 || 0).toLocaleString()} (천원)`"></span>
+                    </td>
                 </tr>
                 <tr>
                     <td>　</td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td
+                        x-text="isCapped ? ''
+                        : '( ' + (total(activeProject).산업안전보건관리비1 || 0).toLocaleString() + '　or　' + (total(activeProject).산업안전보건관리비2 || 0).toLocaleString() + '　작은값 )'">
+                    </td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.산업안전보건관리비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>환경보전비</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).환경보전비)"></td>
+                    <td @click="onRateClick('환경보전비')" class="rateCell">
+                        <span x-text="요율.환경보전비"></span>
+                    </td>
                     <td>직접공사비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.환경보전비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>기타경비</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).기타경비)"></td>
+                    <td @click="onRateClick('기타경비')" class="rateCell">
+                        <span x-text="요율.기타경비"></span>
+                    </td>
                     <td>(재료비+노무비) × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.기타경비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>건설하도급대금 발급수수료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건설하도급대금발급수수료)">
+                    </td>
+                    <td @click="onRateClick('건설하도급대금발급수수료')" class="rateCell">
+                        <span x-text="요율.건설하도급대금발급수수료"></span>
+                    </td>
                     <td>직접공사비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.건설하도급대금발급수수료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>건설기계대여대금 발급금액</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건설기계대여금발급액)">
+                    </td>
+                    <td @click="onRateClick('건설기계대여금발급액')" class="rateCell">
+                        <span x-text="요율.건설기계대여금발급액"></span>
+                    </td>
                     <td>직접공사비 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.건설기계대여금발급액" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td>공사이행보증수수료</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).공사이행보증수수료)"></td>
+                    <td @click="onRateClick('공사이행보증수수료')" class="rateCell">
+                        <span x-text="요율.공사이행보증수수료"></span>
+                    </td>
                     <td>[직접공사비×율] × 공사기간: 1(년)</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.공사이행보증수수료" class="table-input">
+                    </td>
                 </tr>
                 <tr>
-                    <td>추가경비</td>
+                    <td @click="showAdd = !showAdd" class="rateCell" style="text-align: left !important;">추가경비</td>
+                    <td class="money"
+                        x-text="showAdd ? '-' : (v => v !== '0' ? `${v}` : '-')(total(activeProject).추가경비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.추가경비" class="table-input">
+                    </td>
                 </tr>
+                <template x-for="(item, index) in getItemsByType('추가경비')" :key="index">
+                    <tr x-show="showAdd">
+                        <td x-text="`—　${item.품목 || '추가경비'}`"></td>
+                        <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
                 <tr>
                     <td>소계</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).경비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.경비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">　</td>
@@ -242,48 +362,64 @@
                 </tr>
                 <tr>
                     <td colspan="3">순 공사원가</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).순공사원가)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.순공사원가" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td colspan="2">직접 공사비</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).직접공사비)"></td>
                     <td></td>
                     <td>재료비+직접노무비 + (산출경비+기계경비+추가경비항목)</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.직접공사비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td colspan="2">간접 공사비</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).간접공사비)"></td>
                     <td></td>
                     <td>간접노무비 + (제비율항목)</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.간접공사비" class="table-input">
+                    </td>
                 </tr>
 
                 <tr>
                     <td colspan="3">일반관리비</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).일반관리비)"></td>
+                    <td @click="onRateClick('일반관리비')" class="rateCell">
+                        <span x-text="요율.일반관리비"></span>
+                    </td>
                     <td>(재료비+노무비+경비) × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.일반관리비" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">이 윤</td>
-                    <td></td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).이윤)"></td>
+                    <td @click="onRateClick('이윤')" class="rateCell">
+                        <span x-text="요율.이윤"></span>
+                    </td>
                     <td>(노무비+경비+일반관리비) × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.이윤" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">부가세 미포함</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세미포함)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.부가세미포함" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">　</td>
@@ -294,17 +430,19 @@
                 </tr>
                 <tr>
                     <td colspan="3">**공급가액</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).공급가액)"></td>
                     <td></td>
                     <td>순공사원가 + 일반관리비 + 이윤 + 부가세미포함</td>
                     <td></td>
                 </tr>
                 <tr>
                     <td colspan="3">낙찰률 제외금액</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).낙찰률제외금액)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.낙찰률제외금액" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">　</td>
@@ -315,24 +453,30 @@
                 </tr>
                 <tr>
                     <td colspan="3">낙찰률적용 공금가액</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).낙찰률적용공급가액)"></td>
                     <td></td>
                     <td>(공급가액 - 낙찰률 제외금액) × 낙찰률(%) + 낙찰률 제외금액</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.낙찰률적용공급가액" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">부가가치세</td>
-                    <td></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가가치세)"></td>
                     <td></td>
                     <td>낙찰률 적용 금액 × 율</td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.부가가치세" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">부가세포함 항목</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세포함항목)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.부가세포함항목" class="table-input">
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">　</td>
@@ -343,10 +487,12 @@
                 </tr>
                 <tr>
                     <td colspan="3">총 공사비</td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).총공사비)"></td>
                     <td></td>
                     <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="table-input-cell">
+                        <input type="text" x-model="비고.총공사비" class="table-input">
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -361,8 +507,12 @@
             projectList: [],
             activeProject: '',
             statusMessage: '',
-            // 💡 1. 컴포넌트 내부에 cost 데이터 선언
+            isCapped: false,
+            isCapped2: false,
+            showAdd: false,
             cost: JSON.parse(localStorage.getItem('cost') || '{}'),
+            요율: {},
+            비고: {},
 
             init() {
                 this.projectList = Object.keys(this.cost);
@@ -370,49 +520,228 @@
                 this.activeProject = this.projectList.includes(savedProject)
                     ? savedProject
                     : (this.projectList[0] || '');
-                this.statusMessage = this.activeProject ? '' : '선택할 프로젝트가 없습니다. (localStorage에 cost 데이터를 확인하세요)';
+                this.statusMessage = this.activeProject ? '' : '선택할 프로젝트가 없습니다.';
+                this.loadRates();
+                this.$watch('cost', (value) => {
+                    localStorage.setItem('cost', JSON.stringify(value));
+                }, { deep: true });
+            },
+
+            loadRates() {
+                const project = this.cost[this.activeProject];
+                if (project) {
+                    project.옵션 = project.옵션 || {};
+
+                    project.옵션.요율 = project.옵션.요율 || {};
+                    this.요율 = project.옵션.요율;
+
+                    project.옵션.비고 = project.옵션.비고 || {};
+                    this.비고 = project.옵션.비고;
+                } else {
+                    this.요율 = {};
+                    this.비고 = {};
+                }
+            },
+
+            onRateClick(field) {
+                const project = this.cost[this.activeProject];
+                if (!project) return;
+                project.원가계산서 = project.원가계산서 || {};
+                project.옵션 = project.옵션 || {};
+                project.옵션.요율 = project.옵션.요율 || {};
+                const val = prompt(`${field}`, project.옵션.요율[field] || '');
+
+                if (val !== null) {
+                    project.옵션.요율[field] = val;
+                }
             },
 
             saveActiveProject() {
                 localStorage.setItem('activeProject', this.activeProject || '');
+                this.loadRates();
             },
 
             toNum(v) {
                 return Number(String(v || 0).replace(/,/g, '')) || 0;
             },
 
+
+            extractAllItems(data) {
+                let items = [];
+                if (!data) return items;
+                // 1. 배열이면 안의 요소들을 하나씩 돌면서 재귀 호출
+                if (Array.isArray(data)) {
+                    for (let item of data) {
+                        items.push(...this.extractAllItems(item));
+                    }
+                }
+                // 2. 객체면
+                else if (typeof data === 'object') {
+                    // 칠드런이 있으면? -> 안으로 들어가서 탐색
+                    if (Array.isArray(data.children) && data.children.length > 0) {
+                        items.push(...this.extractAllItems(data.children));
+                    }
+                    // 칠드런이 없으면? -> 여기가 말단이니까 가져옴!
+                    else {
+                        items.push(data);
+                    }
+                }
+                return items;
+            },
+
+            // type 이름을 여러 개 받아서 해당하는 항목들만 싹 필터링해 주는 함수
+            getItemsByType(targetType) {
+                // 토글 같은 조건이 있다면 여기서 체크 (예: showAdd 등, 필요 없으면 지워도 됨)
+                const project = this.cost[this.activeProject];
+                if (!project) return [];
+
+                return this.extractAllItems(project.공종별내역서)
+                    .filter(item => item?.type === targetType);
+            },
+
             total(projectName) {
                 const project = this.cost[projectName];
-                const items = Object.values(project.공종별내역서).flat(2);
-                // if (project.옵션 && project.옵션.machineFilter) {
-                //     items = items.filter(c => c?.type !== '일위대가');
-                // }
+                const AllItems = this.extractAllItems(project.공종별내역서);
+                const excludeTypes = ['간접재료비', '작업설, 부산물', '추가경비', '부가세미포함', '부가세포함', '도급자관급', '관급자관급'];
+
+                // 옵션에 따라 건설기계를 일반 항목에서 제외 목록에 추가
+                const isExcludeConstruct = project.옵션?.건설기계 === true;
+                if (isExcludeConstruct) {
+                    excludeTypes.push('건설기계');
+                }
+
+                // 🛠️ [핵심] 프로젝트 계산 방식(trunc/round/ceil)에 맞춰 중간 소수점을 원 단위로 깔끔하게 끊어주는 내부 함수
+                const applyMode = (val) => {
+                    const mode = project.옵션?.계산방식 || 'trunc';
+                    const safe = Number(Number(val).toFixed(10));
+                    switch (mode) {
+                        case 'trunc': return Math.trunc(safe);
+                        case 'round': return Math.round(safe);
+                        case 'ceil': return Math.ceil(safe);
+                        default: return Math.trunc(safe);
+                    }
+                };
+
+                // 1. 옵션에 따라 건설기계가 빠지거나 포함된 일반 항목들
+                const items = AllItems.filter(c => !excludeTypes.includes(c?.type));
 
                 const a1 = items.reduce((sum, c) => sum + this.toNum(c.재료비), 0);
-                const a2 = items.reduce((sum, c) => sum + this.toNum(c.), 0);
-                const a3 = items.reduce((sum, c) => sum + this.toNum(c.item7), 0);
-                // const a4 = a1 + a2 - a3;
+                const a2 = AllItems.filter(c => c?.type === '간접재료비').reduce((sum, c) => sum + this.toNum(c.합계), 0);
+                const a3 = AllItems.filter(c => c?.type === '작업설, 부산물').reduce((sum, c) => sum + this.toNum(c.합계), 0);
+                const a4 = a1 + a2 - a3;
 
-                // const b1 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
-                // const b2 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
+                const b1 = items.reduce((sum, c) => sum + this.toNum(c.노무비), 0);
+                // 간접노무비도 금액 항목이므로 계산 방식 적용 추천!
+                const b2 = applyMode(b1 * this.요율.간접노무비 / 100);
+                const b3 = b1 + b2;
 
-                // const c1 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
-                // const c2 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
-                // const c3 = items.reduce((sum, c) => sum + this.toNum(c.item8), 0);
-                console.log(a1);
+                const c1 = items.reduce((sum, c) => sum + this.toNum(c.경비), 0);
+                const c2 = isExcludeConstruct
+                    ? AllItems.filter(c => c?.type === '건설기계').reduce((sum, c) => sum + this.toNum(c.합계), 0)
+                    : 0;
+                const c15 = AllItems.filter(c => c?.type === '추가경비').reduce((sum, c) => sum + this.toNum(c.합계), 0);
+
+                const d2 = a4 + b1 + (c1 + c2 + c15);  // 직접공사비
+
+                // 🛠️ 각각의 경비/보험료 항목 계산 때마다 applyMode를 태워서 소수점 오차를 원 단위로 딱 잡아줌!
+                const c3 = applyMode(b3 * this.요율.산재보험료 / 100);
+                const c4 = applyMode(b3 * this.요율.고용보험료 / 100);
+                const c5 = applyMode(b1 * this.요율.건강보험료 / 100);
+                const c6 = applyMode(b1 * this.요율.연금보험료 / 100);
+                const c7 = applyMode(c5 * this.요율.노인장기요양보험료 / 100);
+                const c8 = applyMode(c1 * this.요율.퇴직공제부금비 / 100);
+
+                const c9 = AllItems.filter(c => c?.type === '도급자관급').reduce((sum, c) => sum + this.toNum(c.합계), 0);
+                let c9_1 = 0;
+                let c9_2 = 0;
+                let c9_3 = 0;  // 산업안전보건관리비 최종값
+
+                if (c9 === 0) {
+                    c9_3 = applyMode((a4 + b1) * this.요율.산업안전보건관리비 / 100 + (this.요율.기초액 * 1000));
+                    this.isCapped = true;
+                } else {
+                    c9_1 = applyMode((a4 + b1 + c9) * this.요율.산업안전보건관리비 / 100 + (this.요율.기초액 * 1000));
+                    c9_2 = applyMode(((a4 + b1) * this.요율.산업안전보건관리비 / 100 + (this.요율.기초액 * 1000)) * 1.2);
+                    c9_3 = Math.min(c9_1, c9_2);
+                    this.isCapped = false;
+                    this.isCapped2 = (c9_1 < c9_2);
+                }
+
+                const c10 = applyMode(d2 * this.요율.환경보전비 / 100);
+                const c11 = applyMode((a4 + b3) * this.요율.기타경비 / 100);
+                const c12 = applyMode(d2 * this.요율.건설하도급대금발급수수료 / 100);
+                const c13 = applyMode(d2 * this.요율.건설기계대여금발급액 / 100);
+                const c14 = applyMode(b1 * this.요율.공사이행보증수수료 / 100);
+
+                //이제 개별 항목들이 이미 정수로 딱 떨어져 있기 때문에 더할 때 오차가 안 생김!
+                const c16 = c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9_3 + c10 + c11 + c12 + c13 + c14 + c15;
+
+                const d1 = a4 + b1 + c16;  // 순공사원가
+                const d3 = b2 + (c3 + c4 + c5 + c6 + c7 + c8 + c9_3 + c10 + c11 + c12 + c13 + c14);  // 간접공사비
+
+                const d4 = applyMode((a4 + b3 + c16) * (this.요율.일반관리비 / 100));
+                const d5 = applyMode((a4 + b3 + c16) * (this.요율.이윤 / 100));
+                const d6 = applyMode((a4 + b3 + c16) * (this.요율.부가세미포함 / 100));
+
                 return {
-                    직접재료비: a1.toLocaleString('ko-KR'),
-                    // 간접재료비: a2.toLocaleString('ko-KR'),
-                    // 작업설부산물: a3.toLocaleString('ko-KR'),
-                    // 소계_1: a4.toLocaleString('ko-KR'),
-                    // 직접노무비: b1.toLocaleString('ko-KR'),
-                    // 간접노무비: b2.toLocaleString('ko-KR'),
-                    // 소계_2: (b1 + b2).toLocaleString('ko-KR'),
-                    // 산출경비: c1.toLocaleString('ko-KR'),
-                    // 기계경비: c2.toLocaleString('ko-KR'),
-                    // 산재보험료: c3.toLocaleString('ko-KR')
+                    직접재료비: this.formatNum(a1, project),
+                    간접재료비: this.formatNum(a2, project),
+                    작업설부산물: this.formatNum(a3, project),
+                    재료비: this.formatNum(a4, project),
+
+                    직접노무비: this.formatNum(b1, project),
+                    간접노무비: this.formatNum(b2, project),
+                    노무비: this.formatNum(b3, project),
+
+                    산출경비: this.formatNum(c1, project),
+                    기계경비: this.formatNum(c2, project),
+                    산재보험료: this.formatNum(c3, project),
+                    고용보험료: this.formatNum(c4, project),
+                    건강보험료: this.formatNum(c5, project),
+                    연금보험료: this.formatNum(c6, project),
+                    노인장기요양보험료: this.formatNum(c7, project),
+                    퇴직공제부금비: this.formatNum(c8, project),
+                    산업안전보건관리비1: this.formatNum(c9_1, project),
+                    산업안전보건관리비2: this.formatNum(c9_2, project),
+                    산업안전보건관리비: this.formatNum(c9_3, project),
+                    환경보전비: this.formatNum(c10, project),
+                    기타경비: this.formatNum(c11, project),
+                    건설하도급대금발급수수료: this.formatNum(c12, project),
+                    건설기계대여금발급액: this.formatNum(c13, project),
+                    공사이행보증수수료: this.formatNum(c14, project),
+                    추가경비: this.formatNum(c15, project),
+                    경비: this.formatNum(c16, project),
+
+                    순공사원가: this.formatNum(d1, project),
+                    직접공사비: this.formatNum(d2, project),
+                    간접공사비: this.formatNum(d3, project),
+
+                    일반관리비: this.formatNum(d4, project),
+                    이윤: this.formatNum(d5, project),
+                    부가세미포함: this.formatNum(d6, project),
+
+
                 };
+            },
+
+            applyMode(val, project) {
+                if (val === null || val === undefined || isNaN(val)) return 0;
+                const safe = Number(Number(val).toFixed(10));
+                const mode = project.옵션?.계산방식 || 'trunc';
+                switch (mode) {
+                    case 'trunc': return Math.trunc(safe);
+                    case 'round': return Math.round(safe);
+                    case 'ceil': return Math.ceil(safe);
+                    default: return Math.trunc(safe);
+                }
+            },
+
+            formatNum(num, project) {
+                const res = this.applyMode(num, project);
+                return res.toLocaleString('ko-KR');
             }
+
+
         };
     }
 </script>
