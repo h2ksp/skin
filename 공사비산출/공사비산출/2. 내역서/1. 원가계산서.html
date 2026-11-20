@@ -89,7 +89,7 @@
                 <tr>
                     <td :rowspan="24 + (showAdd ? getItemsByType('추가경비').length : 0)" style="width: 5px"></td>
                     <td rowspan="4" style="width: 20px;">재<br>료<br>비</td>
-                    <td style="width: 1px; white-space: nowrap;">직접재료비</td>
+                    <td>직접재료비</td>
                     <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).직접재료비)"></td>
                     <td></td>
                     <td></td>

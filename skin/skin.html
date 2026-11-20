@@ -457,7 +457,123 @@
           </div>
         </div>
         <div class="login-btn-area">
-          <a href="#" onclick="alert('로그인 기능 준비중!'); return false;">로그인</a>
+
+
+
+          <div x-data="loginWidget()" x-init="init()">
+            <a href="#" @click.prevent="toggleLogin()" x-text="loggedIn ? '로그아웃' : '로그인'"></a>
+
+            <div x-show="statusMessage" x-text="statusMessage"
+              style="margin:10px 0; padding:10px 14px; border-radius:8px; background:#e8f7ee; color:#166534; font-size:14px;">
+            </div>
+          </div>
+          <script>
+            const LOGIN_STORAGE_KEY = "spot_login_return_state";
+            const LOGIN_PAGE_URL = "https://study-with-words.blogspot.com/2026/11/blog-post_20.html";
+            const AUTH_STATUS_URL = "https://h2ksp3.cafe24.com/accounts/auth-status/";
+            const LOGOUT_URL = "https://h2ksp3.cafe24.com/accounts/auth-logout/";
+
+            function buildLoginPageUrl(group, sub) {
+              const target = new URL(LOGIN_PAGE_URL);
+              if (group) target.searchParams.set("group", group);
+              if (sub) target.searchParams.set("sub", sub);
+              return target.toString();
+            }
+
+            function loginWidget() {
+              return {
+                loggedIn: false,
+                statusMessage: "",
+
+                async init() {
+                  await this.checkAuth();
+                },
+
+                async toggleLogin() {
+                  if (this.loggedIn) {
+                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    try {
+                      const res = await fetch(LOGOUT_URL, {
+                        method: "GET",
+                        credentials: "include",
+                      });
+                      if (!res.ok) return;
+                    } catch (_) {
+                      return;
+                    }
+
+                    this.loggedIn = false;
+                    this.statusMessage = "";
+                    await this.checkAuth();
+                    return;
+                  }
+
+                  const url = new URL(window.location.href);
+                  const group = url.searchParams.get("group") || "";
+                  const sub = url.searchParams.get("sub") || "";
+
+                  const payload = {
+                    options: {
+                      redirect: {
+                        url: url.toString(),
+                        group,
+                        sub,
+                        scrollX: window.scrollX,
+                        scrollY: window.scrollY,
+                      },
+                    },
+                  };
+
+                  localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(payload));
+                  window.location.href = buildLoginPageUrl(group, sub);
+                },
+
+                restoreAfterLogin() {
+                  const raw = localStorage.getItem(LOGIN_STORAGE_KEY);
+                  if (!raw) return false;
+
+                  let redirect = null;
+                  try {
+                    redirect = JSON.parse(raw)?.options?.redirect || null;
+                  } catch (_) {
+                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    return false;
+                  }
+
+                  if (!redirect || !redirect.url) {
+                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    return false;
+                  }
+
+                  if (window.location.href !== redirect.url) {
+                    window.location.replace(redirect.url);
+                    return true;
+                  }
+
+                  window.scrollTo(redirect.scrollX || 0, redirect.scrollY || 0);
+                  localStorage.removeItem(LOGIN_STORAGE_KEY);
+                  return false;
+                },
+
+                async checkAuth() {
+                  try {
+                    const res = await fetch(AUTH_STATUS_URL, { credentials: "include" });
+                    const data = await res.json();
+
+                    if (data?.authenticated) {
+                      this.loggedIn = true;
+                      this.statusMessage = data.username ? `${data.username}님, 로그인됐어!` : "로그인됐어!";
+                      this.restoreAfterLogin();
+                    } else {
+                      this.loggedIn = false;
+                      this.statusMessage = "";
+                    }
+                  } catch (_) { }
+                },
+              };
+            }
+          </script>
+
         </div>
 
         <!-- [2번째 컬럼] 목차 사이드바 -->
@@ -662,6 +778,7 @@
                 <Blogger>
                   <div class="post">
                     <div class="post-body">
+
                       <$BlogItemBody$>
                         <ItemPageBlogAuthor>
                           <span id="meta-blog-id" style="display:none;">

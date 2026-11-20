@@ -1,4 +1,10 @@
 <style>
+    .unit-price-list {
+        color: #333;
+        font-size: 13px;
+        text-align: right;
+    }
+
     /* 표 스타일 (.table-container 내부만 적용) */
     .table-container {
         overflow-x: auto;
@@ -78,8 +84,6 @@
     /* 1. 모든 인풋 박스 기본 스타일 (밑줄 형태 + 폰트 설정) */
     #print-container input[type="text"],
     #print-container input[type="number"] {
-        font-size: 14px;
-
         /* 글자 색상 */
         font-style: italic;
         /* 기울임꼴 */
@@ -167,11 +171,11 @@
     }
 
     /* 4. 일반 텍스트 (li, div 등의 기본 텍스트) */
-    #print-container {
+    /* #print-container {
         color: #333333;
         font-size: 13px;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
+    } */
 
     /* 5. 강조용 span (필요시 class="fw-bold" 적용) */
     #print-container span.fw-bold {
@@ -188,9 +192,10 @@
 
 
 <div id="print-container" x-data="appData()" x-init="init()">
-    <div id="title">공종별 내역서</div>
 
-    <div style="width: 100%; margin-bottom: 800px;">
+
+    <div class="unit-price-list" style="width: 100%; margin-bottom: 800px;">
+        <h1>공종별 내역서</h1>
         <!-- 최상단 컨트롤 영역 -->
         <div style="
                 background-color: #f9f9f9e7;
@@ -250,7 +255,7 @@
                                     <a href="#"
                                         @click.prevent="if (l1Index < subGroupList[gIndex].length - 1) moveDownLevel1(gIndex, l1Index)"
                                         :class="{ 'disabled': l1Index === (subGroupList[gIndex].length - 1) }">▼</a>
-                                    <button type="button" @click="addLevel2(gIndex, l1Index)"> + </button>
+                                    <a href="#" @click.prevent="addLevel2(gIndex, l1Index)"> + 항목추가 </a>
                                     <a href="#" @click.prevent="deleteLevel1(gIndex, l1Index)"
                                         style="color: #dc2626; font-weight: 500; margin-left: 4px; text-decoration: none;">x</a>
                                 </div>
@@ -298,11 +303,10 @@
                                                         <option value="자재">자재</option>
                                                         <option value="노무">노무</option>
                                                         <option value="경비">경비</option>
+                                                        <option value="손료">손료</option>
                                                         <option value="일위대가">일위대가</option>
                                                         <option value="건설기계">건설기계</option>
                                                         <option value="표준시장단가">표준시장단가</option>
-                                                        <option value="외주">외주비</option>
-                                                        <option value="손료">손료</option>
 
                                                         <option value="간접재료비">간접재료비</option>
                                                         <option value="작업설, 부산물">작업설, 부산물</option>
@@ -310,9 +314,11 @@
                                                         <option value="부가세 미포함">부가세 미포함</option>
                                                         <option value="부가세 포함">부가세 포함</option>
 
+                                                        <option value="견적단가">견적단가</option>
+                                                        <option value="외주비">외주비</option>
                                                         <option value="도급자관급">도급자관급</option>
-                                                        <option value="부가세 포함">관급자관급</option>
-                                                        
+                                                        <option value="관급자관급">관급자관급</option>
+
 
                                                     </select>
                                                     <a href="#"

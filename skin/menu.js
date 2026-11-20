@@ -3365,10 +3365,11 @@ const menuData = {
               },
 
               {
-                secTitle: "내보내기",
+                secTitle: "Excel",
                 items:
                   [
-                    { text: "Excel 다운로드", url: "#4-1" },
+                    { text: "엑셀 내보내기", url: "https://study-with-words.blogspot.com/2026/11/blog-post_19.html?group=group3&sub=sub1" },
+                    { text: "프로젝트 작업파일", url: "https://study-with-words.blogspot.com/2026/11/blog-post_767.html?group=group3&sub=sub1" },
                   ]
               },
 

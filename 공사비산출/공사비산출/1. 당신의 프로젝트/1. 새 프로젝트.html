@@ -1,74 +1,27 @@
-<div x-data="projectManager()" id="print-container">
-
-    <h1>새 프로젝트</h1>
-
-    <!-- 현재 활성 프로젝트 표시 -->
-    <div class="active-box">
-        <span>현재 활성: </span>
-        <span id="activeDisplay" x-text="option.activeProject || '선택된 프로젝트 없음'"></span>
-    </div>
-
-    <!-- 프로젝트 입력 폼 및 샘플 추가 버튼 -->
-    <div class="input-row" x-data="{ newName: '' }">
-        <input type="text" x-model="newName" @keyup.enter="addProject(newName); newName = '';"
-            placeholder=" 새 프로젝트 이름 입력..." autocomplete="off">
-        <button @click="addProject(newName); newName = '';">추가</button>
-        <!-- 💡 샘플 프로젝트 추가 버튼 -->
-        <button @click="addSampleProject()">샘플프로젝트</button>
-    </div>
-
-    <!-- 프로젝트 목록 테이블 -->
-    <div style="margin-top: 50px;">
-        <div class="tbl-text">프로젝트 목록</div>
-        <table id="projectTable">
-            <tbody id="projectList">
-                <template x-for="(project, index) in option.projectList" :key="project">
-                    <tr>
-                        <!-- 1. 순번 -->
-                        <td class="tbl-num" x-text="(index + 1) + '.'"></td>
-
-                        <!-- 2. 프로젝트 이름 -->
-                        <td>
-                            <div class="tbl-text" :class="{ 'is-active-project': project === option.activeProject }"
-                                x-text="project"></div>
-                        </td>
-
-                        <!-- 3. 선택, 편집, 삭제 버튼 -->
-                        <td style="width: 170px; text-align: right;">
-                            <div class="btn-group">
-                                <button @click="setActive(project)">선택</button>
-                                <button @click="editProject(project)">편집</button>
-                                <button @click="deleteProject(project)">삭제</button>
-                            </div>
-                        </td>
-
-                        <!-- 4. 위아래(▲, ▼) 버튼 -->
-                        <td style="width: 90px; text-align: right;">
-                            <div class="btn-group">
-                                <button @click="moveUp(index)" :disabled="index === 0">▲</button>
-                                <button @click="moveDown(index)"
-                                    :disabled="index === option.projectList.length - 1">▼</button>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-
-                <!-- 등록된 프로젝트가 없을 때 -->
-                <template x-if="option.projectList.length === 0">
-                    <tr>
-                        <td colspan="4" style="color: gray; font-size: 17px; padding: 6px 2px;">등록된 프로젝트가 없습니다.</td>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
-    </div>
-
-</div>
-
 <style>
-    #main {
-        position: relative;
-        left: -70px;
+    .project-drop-zone {
+        width: 120px;
+        height: 120px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px dashed #aaa;
+        border-radius: 12px;
+        color: #666;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    .project-drop-zone>* {
+        pointer-events: none;
+    }
+
+    .project-drop-zone.is-dragging {
+        border-color: #555;
+        background: #f5f5f5;
     }
 
     .active-box {
@@ -81,17 +34,18 @@
 
     .input-row {
         display: flex;
+        align-items: center;
         gap: 6px;
         margin-bottom: 12px;
     }
 
     .input-row input {
         width: 40%;
+        padding: 3px 8px;
         outline: none;
     }
 
     .input-row button {
-        padding: 5px 12px;
         font-size: 13px;
         cursor: pointer;
     }
@@ -131,6 +85,88 @@
     }
 </style>
 
+
+
+<div x-data="projectManager()" id="print-container">
+
+    <h1>새 프로젝트</h1>
+
+    <div class="project-drop-zone" x-data="{ dragging: false }" :class="{ 'is-dragging': dragging }"
+        @dragenter.prevent="dragging = true" @dragover.prevent @dragleave.prevent="dragging = false"
+        @drop.prevent="dragging = false; importProject($event)">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
+            <path d="M12 16V8m-3 3 3-3 3 3" />
+        </svg>
+        <span>프로젝트<br>여기에 놓기</span>
+    </div>
+
+    <!-- 현재 활성 프로젝트 표시 -->
+    <div class="active-box">
+        <span>현재 활성: </span>
+        <span id="activeDisplay" x-text="option.activeProject || '선택된 프로젝트 없음'"></span>
+    </div>
+
+    <!-- 프로젝트 입력 폼 및 샘플 추가 버튼 -->
+    <div class="input-row" x-data="{ newName: '' }">
+        <input type="text" x-model="newName" @keyup.enter="addProject(newName); newName = '';"
+            placeholder=" 새 프로젝트 이름 입력..." autocomplete="off">
+        <button @click="addProject(newName); newName = '';">추가</button>
+        <!-- 💡 샘플 프로젝트 추가 버튼 -->
+        <button @click="addSampleProject()">샘플프로젝트</button>
+    </div>
+
+    <!-- 프로젝트 목록 테이블 -->
+    <div style="margin-top: 50px;">
+        <div class="tbl-text">프로젝트 목록</div>
+        <table id="projectTable">
+            <tbody id="projectList">
+                <template x-for="(project, index) in option.projectList" :key="project">
+                    <tr>
+                        <!-- 1. 순번 -->
+                        <td class="tbl-num" x-text="(index + 1) + '.'"></td>
+
+                        <!-- 2. 프로젝트 이름 -->
+                        <td>
+                            <div class="tbl-text" :class="{ 'is-active-project': project === option.activeProject }"
+                                x-text="project"></div>
+                        </td>
+
+                        <!-- 3. 선택, 편집, 다운로드, 삭제 버튼 -->
+                        <td style="width: 230px; text-align: right;">
+                            <div class="btn-group">
+                                <button @click="setActive(project)">선택</button>
+                                <button @click="editProject(project)">편집</button>
+                                <button @click="downloadProject(project)">파일저장</button>
+                                <button @click="deleteProject(project)">삭제</button>
+                            </div>
+                        </td>
+
+                        <!-- 4. 위아래(▲, ▼) 버튼 -->
+                        <td style="width: 90px; text-align: right;">
+                            <div class="btn-group">
+                                <button @click="moveUp(index)" :disabled="index === 0">▲</button>
+                                <button @click="moveDown(index)"
+                                    :disabled="index === option.projectList.length - 1">▼</button>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+
+                <!-- 등록된 프로젝트가 없을 때 -->
+                <template x-if="option.projectList.length === 0">
+                    <tr>
+                        <td colspan="4" style="color: gray; font-size: 17px; padding: 6px 2px;">등록된 프로젝트가 없습니다.</td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
 <script>
     function projectManager() {
         return {
@@ -165,6 +201,106 @@
             saveAll() {
                 localStorage.setItem('option', JSON.stringify(this.option));
                 localStorage.setItem('cost', JSON.stringify(this.costData));
+            },
+
+            downloadProject(name) {
+                if (!confirm(`저장 하시겠습니까?`)) return;
+
+                const data = JSON.stringify({ [name]: this.costData[name] }, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${name.replace(/[\\/:*?"<>|]/g, '_')}.json`;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 0);
+            },
+
+            async importProject(event) {
+                const files = event.dataTransfer.files;
+                if (files.length !== 1) {
+                    alert('프로젝트 JSON 파일을 하나씩 놓아주세요.');
+                    return;
+                }
+
+                try {
+                    const data = JSON.parse(await files[0].text());
+                    const names = data && typeof data === 'object' && !Array.isArray(data)
+                        ? Object.keys(data) : [];
+                    const name = names[0];
+                    if (names.length !== 1 || !name.trim() ||
+                        ['__proto__', 'constructor', 'prototype'].includes(name) ||
+                        !data[name] || typeof data[name] !== 'object' || Array.isArray(data[name])) {
+                        alert('프로젝트 JSON 형식이 아닙니다. 프로젝트 하나가 포함된 파일을 선택해주세요.');
+                        return;
+                    }
+
+                    const project = data[name];
+                    const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+                    const isValidItems = items => {
+                        const pending = [...items];
+                        while (pending.length) {
+                            const item = pending.pop();
+                            if (!isObject(item)) return false;
+                            if (item.children != null) {
+                                if (!Array.isArray(item.children)) return false;
+                                for (const child of item.children) pending.push(child);
+                            }
+                        }
+                        return true;
+                    };
+                    const validGroups = Array.isArray(project.공종별내역서) &&
+                        project.공종별내역서.every(group =>
+                            group === null || (Array.isArray(group) && isValidItems(group))
+                        );
+                    const validOptionalArrays = ['일위대가', '중기단가산출근거'].every(key =>
+                        !(key in project) || Array.isArray(project[key])
+                    );
+                    const validOptions = !('옵션' in project) || (
+                        isObject(project.옵션) &&
+                        (!('그룹명' in project.옵션) ||
+                            (Array.isArray(project.옵션.그룹명) &&
+                                project.옵션.그룹명.every(group => typeof group === 'string'))) &&
+                        ['요율', '비고'].every(key =>
+                            !(key in project.옵션) || isObject(project.옵션[key])
+                        )
+                    );
+                    const validStandards = !('적용기준' in project) || isObject(project.적용기준);
+                    if (!validGroups || !validOptionalArrays || !validOptions || !validStandards ||
+                        (Array.isArray(project.일위대가) && !isValidItems(project.일위대가))) {
+                        alert('프로젝트 데이터 구조가 올바르지 않아 추가할 수 없습니다.');
+                        return;
+                    }
+
+                    let targetName = name;
+                    let counter = 1;
+                    while (Object.prototype.hasOwnProperty.call(this.costData, targetName)) {
+                        targetName = `${name}_(${counter++})`;
+                    }
+
+                    if (!confirm(`"${targetName}" 추가하시겠습니까?`)) return;
+
+                    const costData = { ...this.costData, [targetName]: data[name] };
+                    const option = {
+                        ...this.option,
+                        projectList: [...this.option.projectList, targetName],
+                        activeProject: this.option.activeProject || targetName
+                    };
+                    const previousCost = localStorage.getItem('cost');
+                    localStorage.setItem('cost', JSON.stringify(costData));
+                    try {
+                        localStorage.setItem('option', JSON.stringify(option));
+                    } catch (err) {
+                        if (previousCost === null) localStorage.removeItem('cost');
+                        else localStorage.setItem('cost', previousCost);
+                        throw err;
+                    }
+                    this.costData = costData;
+                    this.option = option;
+                } catch (err) {
+                    console.error('프로젝트 가져오기 실패:', err);
+                    alert('프로젝트를 가져오지 못했습니다. JSON 파일과 저장 공간을 확인해주세요.');
+                }
             },
 
             addProject(inputName) {

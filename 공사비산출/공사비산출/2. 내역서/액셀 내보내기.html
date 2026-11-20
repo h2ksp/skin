@@ -1,0 +1,559 @@
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<style>
+    .export-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px 0;
+        padding: 8px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background-color: rgba(249, 249, 249, 0.9);
+    }
+
+    .fileList {
+        margin-left: 16px;
+    }
+
+
+    .export-toolbar select {
+        min-width: 180px;
+        padding: 5px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        font-size: 13px;
+    }
+</style>
+
+<div x-data="unitPriceProjectSelection()" x-init="init()">
+    <div id="title">엑셀(.xlsx) 다운로드</div>
+    <div class="export-toolbar">
+        <label for="exportProject">프로젝트:</label>
+        <select id="exportProject" x-model="activeProject" @change="saveActiveProject()">
+            <option value="">프로젝트 선택</option>
+            <template x-for="project in projectList" :key="project">
+                <option :value="project" x-text="project"></option>
+            </template>
+        </select>
+
+    </div>
+
+    <div class="fileList">
+
+        <div x-data="unitPriceSummaryExport()">
+            <a href="#" :aria-disabled="!activeProject"
+                @click.prevent="activeProject && confirm('일위대가 목록을 다운로드하시겠습니까?') && downloadExcel()">
+                일위대가 목록
+            </a>
+            <span x-text="errorMessage"></span>
+        </div>
+
+        <div x-data="unitPriceDetailExport()">
+            <a href="#" :aria-disabled="!activeProject"
+                @click.prevent="activeProject && confirm('일위대가를 다운로드하시겠습니까?') && downloadExcel()">
+                일위대가
+            </a>
+            <span x-text="errorMessage"></span>
+        </div>
+
+        <div x-data="unitPriceExcelExport()">
+            <a href="#" :aria-disabled="!activeProject"
+                @click.prevent="activeProject && confirm('단가대비표를 다운로드하시겠습니까?') && downloadExcel()">
+                단가대비표
+            </a>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+<!-- 공통요소 -->
+<script>
+    function unitPriceProjectSelection() {
+        return {
+            projectList: [],
+            activeProject: '',
+            costData: {},
+
+            init() {
+                const rawCost = localStorage.getItem('cost');
+                try {
+                    this.costData = rawCost ? JSON.parse(rawCost) || {} : {};
+                } catch (error) {
+                    console.error('COST 로컬스토리지 파싱 실패:', error);
+                    this.costData = {};
+                    return;
+                }
+
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                this.projectList = Array.isArray(option.projectList)
+                    ? option.projectList
+                    : Object.keys(this.costData);
+                this.activeProject = option.activeProject || '';
+
+                if (!this.projectList.includes(this.activeProject)) {
+                    this.activeProject = this.projectList[0] || '';
+                }
+            },
+
+            saveActiveProject() {
+                const option = JSON.parse(localStorage.getItem('option') || '{}');
+                option.activeProject = this.activeProject;
+                localStorage.setItem('option', JSON.stringify(option));
+            },
+
+            getUnitPriceItems() {
+                const data = this.costData?.[this.activeProject]?.공종별내역서;
+                const items = [];
+                const visit = value => {
+                    if (Array.isArray(value)) {
+                        value.forEach(visit);
+                    } else if (value && typeof value === 'object') {
+                        if (value.type === '일위대가') items.push(value);
+                        if (Array.isArray(value.children)) visit(value.children);
+                    }
+                };
+                visit(data);
+                return items;
+            }
+        };
+    }
+    
+    async function downloadUnitPriceWorkbook(projectName, title, columns, rows, showProjectHeader = false) {
+        if (typeof ExcelJS === 'undefined') {
+            throw new Error('엑셀 라이브러리를 불러오지 못했습니다.');
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        if (showProjectHeader) {
+            workbook.calcProperties.fullCalcOnLoad = true;
+        }
+        const sheet = workbook.addWorksheet(title);
+        sheet.columns = columns.map(column => ({ width: column.width }));
+        sheet.mergeCells(1, 1, 1, columns.length);
+        sheet.getCell(1, 1).value = showProjectHeader ? title : `${title} - ${projectName}`;
+        sheet.getCell(1, 1).font = { bold: true, size: 15, underline: showProjectHeader };
+        if (showProjectHeader) {
+            sheet.getCell(1, 1).alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+        sheet.getRow(1).height = 28;
+        if (showProjectHeader) {
+            sheet.mergeCells(2, 1, 2, columns.length);
+            sheet.getCell(2, 1).value = `[프로젝트 명 : ${projectName}]`;
+            sheet.getCell(2, 1).alignment = { horizontal: 'left', vertical: 'middle' };
+            sheet.getRow(2).height = 20;
+        }
+        const headerRow = sheet.addRow(columns.map(column => column.label));
+        headerRow.font = { bold: true };
+        if (showProjectHeader) {
+            headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+
+        const border = {
+            top: { style: 'thin' }, left: { style: 'thin' },
+            bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+        const totalRows = Math.max(30, rows.length);
+        for (let index = 0; index < totalRows; index++) {
+            const values = rows[index] || [];
+            const row = sheet.addRow(columns.map((column, columnIndex) => {
+                const value = values[columnIndex] ?? '';
+                if (!column.numeric || value === '') return value;
+                const rawValue = String(value).replace(/,/g, '').trim();
+                if (!rawValue) return '';
+                const number = Number(rawValue);
+                return Number.isFinite(number) ? number : value;
+            }));
+            row.height = 20;
+            if (showProjectHeader) {
+                const material = row.getCell(4);
+                const labor = row.getCell(5);
+                const expense = row.getCell(6);
+                const result = [material, labor, expense].reduce(
+                    (sum, cell) => sum + (typeof cell.value === 'number' ? cell.value : 0), 0
+                );
+                row.getCell(7).value = {
+                    formula: `SUM(${material.address}:${expense.address})`,
+                    result
+                };
+                columns.forEach((column, columnIndex) => {
+                    if (column.numeric) {
+                        row.getCell(columnIndex + 1).numFmt =
+                            '_(* #,##0_);_(* \\(#,##0\\);_(* "-"_);_(@_)';
+                    }
+                    if (column.label === '단위' || column.label === '번호') {
+                        row.getCell(columnIndex + 1).alignment = { horizontal: 'center', vertical: 'middle' };
+                    }
+                });
+            }
+        }
+        for (let rowIndex = headerRow.number; rowIndex <= headerRow.number + totalRows; rowIndex++) {
+            for (let columnIndex = 1; columnIndex <= columns.length; columnIndex++) {
+                sheet.getCell(rowIndex, columnIndex).border = border;
+            }
+        }
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = URL.createObjectURL(blob);
+        try {
+            const link = document.createElement('a');
+            link.href = url;
+            const safeProjectName = projectName.replace(/[\\/:*?"<>|]/g, '_');
+            link.download = `일위대가목록_${safeProjectName}.xlsx`;
+            link.click();
+        } finally {
+            URL.revokeObjectURL(url);
+        }
+    }
+</script>
+
+<!-- 일위대가 목록 -->
+<script>
+    function unitPriceSummaryExport() {
+        return {
+            errorMessage: '',
+
+            async downloadExcel() {
+                if (!this.activeProject) {
+                    this.errorMessage = '프로젝트를 선택해 주세요.';
+                    return;
+                }
+
+                const columns = [
+                    { label: '품명', width: 30 },
+                    { label: '규격', width: 25 },
+                    { label: '단위', width: 10 },
+                    { label: '재료비', width: 16, numeric: true },
+                    { label: '노무비', width: 16, numeric: true },
+                    { label: '경비', width: 16, numeric: true },
+                    { label: '합계', width: 16, numeric: true },
+                    { label: '번호', width: 12 },
+                    { label: '비고', width: 24 }
+                ];
+
+                try {
+                    const grouped = new Map();
+                    const text = value => String(value ?? '').trim();
+                    const number = value => Number(text(value).replace(/,/g, '')) || 0;
+                    this.getUnitPriceItems().forEach(item => {
+                        const key = JSON.stringify([
+                            item.type, text(item.품목), text(item.규격), text(item.단위),
+                            number(item.재료비단가), number(item.노무비단가), number(item.경비단가)
+                        ]);
+                        if (!grouped.has(key)) grouped.set(key, item);
+                    });
+                    const rows = [...grouped.values()].map((item, index) => [
+                        item.품목, item.규격, item.단위,
+                        item.재료비단가, item.노무비단가, item.경비단가,
+                        '', `호표${index + 1}`, item.비고
+                    ]);
+                    await downloadUnitPriceWorkbook(this.activeProject, '일 위 대 가  목 록', columns, rows, true);
+                    this.errorMessage = '';
+                } catch (error) {
+                    this.errorMessage = '일위대가 목록 생성에 실패했습니다.';
+                    console.error(this.errorMessage, error);
+                }
+            }
+        };
+    }
+</script>
+
+<!-- 일위대가 -->
+<script>
+    function unitPriceDetailExport() {
+        return {
+            errorMessage: '',
+
+            async downloadExcel() {
+                if (!this.activeProject) {
+                    this.errorMessage = '프로젝트를 선택해 주세요.';
+                    return;
+                }
+
+                const columns = [
+                    { label: '일위대가 품명', width: 30 },
+                    { label: '일위대가 규격', width: 25 },
+                    { label: '일위대가 단위', width: 12 },
+                    { label: '구분', width: 14 },
+                    { label: '품명', width: 30 },
+                    { label: '규격', width: 25 },
+                    { label: '단위', width: 10 },
+                    { label: '수량', width: 12, numeric: true },
+                    { label: '재료비단가', width: 16, numeric: true },
+                    { label: '노무비단가', width: 16, numeric: true },
+                    { label: '경비단가', width: 16, numeric: true },
+                    { label: '재료비', width: 16, numeric: true },
+                    { label: '노무비', width: 16, numeric: true },
+                    { label: '경비', width: 16, numeric: true },
+                    { label: '합계', width: 16, numeric: true },
+                    { label: '비고', width: 24 }
+                ];
+                const rows = this.getUnitPriceItems().flatMap(item => {
+                    const children = Array.isArray(item.children) && item.children.length
+                        ? item.children
+                        : [{}];
+                    return children.map(child => [
+                        item.품목, item.규격, item.단위,
+                        child.type, child.품목, child.규격, child.단위, child.수량,
+                        child.재료비단가, child.노무비단가, child.경비단가,
+                        child.재료비, child.노무비, child.경비, child.합계, child.비고
+                    ]);
+                });
+
+                try {
+                    await downloadUnitPriceWorkbook(this.activeProject, '일위대가 구성내역', columns, rows);
+                    this.errorMessage = '';
+                } catch (error) {
+                    this.errorMessage = '일위대가 구성내역 생성에 실패했습니다.';
+                    console.error(this.errorMessage, error);
+                }
+            }
+        };
+    }
+</script>
+
+
+
+<!-- 단가대비표 -->
+<script>
+    function unitPriceExcelExport() {
+        return {
+            errorMessage: '',
+
+            numberValue(value) {
+                return Number(String(value ?? '').replace(/,/g, '').trim()) || 0;
+            },
+
+            extractAllItems(data, path = []) {
+                if (!data) return [];
+
+                if (Array.isArray(data)) {
+                    return data.flatMap((item, index) =>
+                        this.extractAllItems(item, [...path, index])
+                    );
+                }
+
+                if (typeof data !== 'object') return [];
+
+                const items = [{ item: data, path }];
+                if (Array.isArray(data.children)) {
+                    items.push(...this.extractAllItems(data.children, path));
+                }
+                return items;
+            },
+
+            get rows() {
+                const data = this.costData?.[this.activeProject]?.공종별내역서;
+                if (!this.activeProject || !data || typeof data !== 'object') return [];
+
+                const grouped = new Map();
+                const normalizeText = value => String(value ?? '').trim();
+
+                this.extractAllItems(data).forEach(({ item, path }) => {
+                    const type = String(item?.type ?? '').trim();
+                    if (!type && Array.isArray(item?.children)) return;
+                    if (item?.type === '일위대가') return;
+
+                    const category = type || '미분류';
+                    const key = JSON.stringify([
+                        category,
+                        normalizeText(item.품목),
+                        normalizeText(item.규격),
+                        normalizeText(item.단위),
+                        this.numberValue(item.재료비단가),
+                        this.numberValue(item.노무비단가),
+                        this.numberValue(item.경비단가)
+                    ]);
+
+                    let row = grouped.get(key);
+                    if (!row) {
+                        row = { item, items: [], key: JSON.stringify(path) };
+                        grouped.set(key, row);
+                    }
+                    row.items.push(item);
+                });
+
+                return [...grouped.values()];
+            },
+
+
+            async downloadExcel() {
+                if (!this.activeProject) {
+                    this.errorMessage = '프로젝트를 선택해 주세요.';
+                    return;
+                }
+                if (typeof ExcelJS === 'undefined') {
+                    this.errorMessage = '엑셀 라이브러리를 불러오지 못했습니다.';
+                    console.error(this.errorMessage);
+                    return;
+                }
+
+                const thinBorder = {
+                    top: { style: 'thin', color: { argb: 'FF808080' } },
+                    left: { style: 'thin', color: { argb: 'FF808080' } },
+                    bottom: { style: 'thin', color: { argb: 'FF808080' } },
+                    right: { style: 'thin', color: { argb: 'FF808080' } }
+                };
+                const workbook = new ExcelJS.Workbook();
+                const sheet = workbook.addWorksheet('단가대비표');
+                const totalCols = 28;
+                const colWidths = [
+                    26, 30, 10, 11, 8, 11, 8, 11, 8, 11, 8, 11, 8, 13,
+                    14, 11, 8, 11, 8, 11, 8, 11, 8, 11, 8, 13, 12, 18
+                ];
+                sheet.columns = colWidths.map(width => ({ width }));
+
+                sheet.mergeCells(1, 1, 1, totalCols);
+                const titleCell = sheet.getCell(1, 1);
+                titleCell.value = '단 가 대 비 표';
+                titleCell.font = { bold: true, size: 15, underline: true };
+                titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+                sheet.getRow(1).height = 28;
+
+                sheet.mergeCells(2, 1, 2, totalCols);
+                const projectCell = sheet.getCell(2, 1);
+                projectCell.value = `[프로젝트 명 : ${this.activeProject}]`;
+                projectCell.font = { size: 10 };
+                projectCell.alignment = { horizontal: 'left', vertical: 'middle' };
+                sheet.getRow(2).height = 20;
+
+                sheet.getRow(3).height = 22;
+                sheet.getRow(4).height = 22;
+                ['품명', '규격', '단위'].forEach((label, index) => {
+                    const column = index + 1;
+                    sheet.mergeCells(3, column, 4, column);
+                    const cell = sheet.getCell(3, column);
+                    cell.value = label;
+                    cell.font = { bold: true, size: 10 };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                });
+
+                const subColumns = [
+                    '가격정보', 'PAGE', '거래가격', 'PAGE', '유통물가', 'PAGE',
+                    '물가자료', 'PAGE', '조사가격', 'PAGE', '적용단가'
+                ];
+                sheet.mergeCells(3, 4, 3, 14);
+                sheet.getCell(3, 4).value = '재료비';
+                sheet.getCell(3, 4).font = { bold: true, size: 10 };
+                sheet.getCell(3, 4).alignment = { horizontal: 'center', vertical: 'middle' };
+                subColumns.forEach((label, index) => {
+                    const cell = sheet.getCell(4, 4 + index);
+                    cell.value = label;
+                    cell.font = { bold: true, size: 9 };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                });
+
+                sheet.mergeCells(3, 15, 4, 15);
+                sheet.getCell(3, 15).value = '노무비';
+                sheet.getCell(3, 15).font = { bold: true, size: 10 };
+                sheet.getCell(3, 15).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                sheet.mergeCells(3, 16, 3, 26);
+                sheet.getCell(3, 16).value = '경비';
+                sheet.getCell(3, 16).font = { bold: true, size: 10 };
+                sheet.getCell(3, 16).alignment = { horizontal: 'center', vertical: 'middle' };
+                subColumns.forEach((label, index) => {
+                    const cell = sheet.getCell(4, 16 + index);
+                    cell.value = label;
+                    cell.font = { bold: true, size: 9 };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                });
+
+                [['번호', 27], ['비고', 28]].forEach(([label, column]) => {
+                    sheet.mergeCells(3, column, 4, column);
+                    const cell = sheet.getCell(3, column);
+                    cell.value = label;
+                    cell.font = { bold: true, size: 10 };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                });
+
+                for (let rowIndex = 3; rowIndex <= 4; rowIndex++) {
+                    for (let column = 1; column <= totalCols; column++) {
+                        sheet.getCell(rowIndex, column).border = thinBorder;
+                    }
+                }
+
+                const exportRows = this.rows;
+                const startDataRow = 5;
+                const minimumDataRows = 30;
+                const endDataRow = startDataRow + Math.max(minimumDataRows, exportRows.length) - 1;
+                const numberByCategory = {};
+                const categoryPriceColumns = {
+                    자재: { priceKey: '재료비단가', column: 14 },
+                    도급자관급: { priceKey: '재료비단가', column: 14 },
+                    노무: { priceKey: '노무비단가', column: 15 },
+                    경비: { priceKey: '경비단가', column: 26 },
+                    손료: { priceKey: '경비단가', column: 26 }
+                };
+                for (let rowIndex = startDataRow; rowIndex <= endDataRow; rowIndex++) {
+                    const row = sheet.getRow(rowIndex);
+                    const entry = exportRows[rowIndex - startDataRow];
+                    row.height = 20;
+
+                    for (let column = 1; column <= totalCols; column++) {
+                        const cell = row.getCell(column);
+                        cell.value = '';
+                        cell.border = thinBorder;
+                        cell.font = { size: 10 };
+                        cell.alignment = {
+                            horizontal: column <= 2 || column === 28
+                                ? 'left'
+                                : (column === 3 || column === 27 ? 'center' : 'right'),
+                            vertical: 'middle'
+                        };
+                    }
+
+                    if (!entry) continue;
+
+                    const item = entry.item;
+                    const category = String(item.type ?? '기타').trim() || '기타';
+                    numberByCategory[category] = (numberByCategory[category] || 0) + 1;
+                    const excelNumber = value => {
+                        const rawValue = String(value ?? '').replace(/,/g, '').trim();
+                        if (!rawValue) return '';
+                        const number = Number(rawValue);
+                        return Number.isFinite(number) ? number : '';
+                    };
+                    const mappedPrice = categoryPriceColumns[category];
+                    row.getCell(1).value = item.품목 ?? '';
+                    row.getCell(2).value = item.규격 ?? '';
+                    row.getCell(3).value = item.단위 ?? '';
+                    if (mappedPrice) {
+                        row.getCell(mappedPrice.column).value = excelNumber(item[mappedPrice.priceKey]);
+                    } else {
+                        row.getCell(14).value = excelNumber(item.재료비단가);
+                        row.getCell(15).value = excelNumber(item.노무비단가);
+                        row.getCell(26).value = excelNumber(item.경비단가);
+                    }
+                    row.getCell(27).value = `${category}${numberByCategory[category]}`;
+                    row.getCell(28).value = item.비고 ?? '';
+                }
+
+                try {
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    const safeProjectName = this.activeProject.replace(/[\\/:*?"<>|]/g, '_');
+                    link.download = `단가대비표_${safeProjectName}.xlsx`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    this.errorMessage = '';
+                } catch (error) {
+                    this.errorMessage = '엑셀 파일 생성에 실패했습니다.';
+                    console.error(this.errorMessage, error);
+                }
+            }
+        };
+    }
+</script>
