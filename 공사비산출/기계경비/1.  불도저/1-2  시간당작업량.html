@@ -476,29 +476,85 @@
 
 
 <script>
-function bulldozerCalc() {
-        // 로컬스토리지에서 가져오거나, 없으면 바로 빈 객체로 시작!
-        const initialData = JSON.parse(localStorage.getItem('site')) || {};
-
-        let defaultKey = '불도저';
-        let machineData = initialData['건설기계']?.[defaultKey]?.작업량 || {};
+    function bulldozerCalc() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const workIdxParam = urlParams.get('work');
+        const editIdxParam = urlParams.get('edit');
 
         return {
-            dbData: initialData,
-            machineKey: defaultKey,
+            storageTarget: 'site',
+            storageIndex: null,
+            machineKey: '불도저',
             subActive: '',
             subActive2: '',
 
-            valF: machineData.valF ?? '',
-            valE: machineData.valE ?? '',
-            q0: machineData.q0 ?? '',
-            e: machineData.e ?? '',
-            cm: machineData.cm ?? '',
+            valF: '',
+            valE: '',
+            q0: '',
+            e: '',
+            cm: '',
+
+            ensureSourceContainer(obj) {
+                if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+                    obj = {};
+                }
+                if (!Array.isArray(obj.children)) {
+                    obj.children = [];
+                }
+                return obj;
+            },
+
+            ensureOptionShape() {
+                let parsed = JSON.parse(localStorage.getItem('option') || '{}');
+                if (!parsed || typeof parsed !== 'object') parsed = {};
+                if (!parsed.machineData || typeof parsed.machineData !== 'object') {
+                    parsed.machineData = {};
+                }
+                if (!parsed.machineData.site || typeof parsed.machineData.site !== 'object' || Array.isArray(parsed.machineData.site)) {
+                    parsed.machineData.site = {};
+                }
+                parsed.machineData.work = this.ensureSourceContainer(parsed.machineData.work);
+                parsed.machineData.edit = this.ensureSourceContainer(parsed.machineData.edit);
+                return parsed;
+            },
+
+            getChildSlotObject(parsedOption) {
+                if ((this.storageTarget === 'work' || this.storageTarget === 'edit') && this.storageIndex !== null) {
+                    const container = this.ensureSourceContainer(parsedOption.machineData[this.storageTarget]);
+                    parsedOption.machineData[this.storageTarget] = container;
+                    if (!container.children[this.storageIndex] || typeof container.children[this.storageIndex] !== 'object') {
+                        container.children[this.storageIndex] = {};
+                    }
+                    return container.children[this.storageIndex];
+                }
+
+                return parsedOption.machineData.site;
+            },
 
             init() {
-                const urlParams = new URLSearchParams(window.location.search);
                 this.subActive = urlParams.get('tab1') || '';
                 this.subActive2 = urlParams.get('tab2') || '';
+
+                if (editIdxParam !== null && editIdxParam !== '') {
+                    this.storageTarget = 'edit';
+                    this.storageIndex = Number(editIdxParam);
+                } else if (workIdxParam !== null && workIdxParam !== '') {
+                    this.storageTarget = 'work';
+                    this.storageIndex = Number(workIdxParam);
+                } else {
+                    this.storageTarget = 'site';
+                    this.storageIndex = null;
+                }
+
+                const parsedOption = this.ensureOptionShape();
+                const slotObj = this.getChildSlotObject(parsedOption);
+                const savedCalc = slotObj.시간당작업량 || slotObj.작업량 || {};
+
+                this.valF = savedCalc.valF ?? '';
+                this.valE = savedCalc.valE ?? '';
+                this.q0 = savedCalc.q0 ?? '';
+                this.e = savedCalc.e ?? '';
+                this.cm = savedCalc.cm ?? '';
 
                 this.$watch('valF', () => this.saveToLocal());
                 this.$watch('valE', () => this.saveToLocal());
@@ -599,26 +655,20 @@ function bulldozerCalc() {
                 window.location.href = url;
             },
             saveToLocal() {
-                if (!this.dbData['건설기계']) {
-                    this.dbData['건설기계'] = {};
-                }
-                if (!this.dbData['건설기계'][this.machineKey]) {
-                    this.dbData['건설기계'][this.machineKey] = {};
-                }
+                const parsedOption = this.ensureOptionShape();
+                const slotObj = this.getChildSlotObject(parsedOption);
 
-                this.dbData['건설기계'][this.machineKey] = {
-                    작업량: {
-                        valF: this.valF,
-                        valE: this.valE,
-                        q0: this.q0,
-                        e: this.e,
-                        cm: this.cm,
-                        q: this.rawQ,
-                        Q: this.rawQTotal
-                    }
+                slotObj.시간당작업량 = {
+                    valF: this.valF,
+                    valE: this.valE,
+                    q0: this.q0,
+                    e: this.e,
+                    cm: this.cm,
+                    q: this.rawQ,
+                    Q: this.rawQTotal
                 };
 
-                localStorage.setItem('site', JSON.stringify(this.dbData));
+                localStorage.setItem('option', JSON.stringify(parsedOption));
             }
         }
     }

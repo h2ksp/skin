@@ -1,0 +1,815 @@
+<style>
+    .machine-note {
+        width: 800px;
+        max-width: 100%;
+        margin: 10px 0 0 0;
+        padding-left: 0;
+        font-size: 14px;
+    }
+
+    .machine-note-toolbar {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .machine-note-toolbar input {
+        width: 330px;
+    }
+
+    .machine-note-register-btn {
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    .machine-note input[type="text"] {
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 1px solid #aaa;
+        border-radius: 0;
+        outline: none;
+        padding: 3px 6px;
+        background: transparent;
+        font: inherit;
+    }
+
+    .machine-note input[type="text"]:focus {
+        border-bottom-color: #6c0a0a;
+        background-color: transparent;
+    }
+
+    .machine-note-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin-bottom: 14px;
+    }
+
+    .machine-note-table th,
+    .machine-note-table td {
+        border: 1px solid #000;
+        padding: 3px 4px;
+        text-align: center;
+    }
+
+    /* 칸별 개별 패딩 및 너비 */
+    .machine-note-table .col-item {
+        padding: 3px 6px;
+    }
+
+    .machine-note-table .col-spec {
+        padding: 3px 6px;
+    }
+
+    .machine-note-table .col-unit {
+        padding: 3px 1px;
+        width: 50px;
+    }
+
+    .machine-note-table .col-mat {
+        padding: 3px 4px;
+        width: 80px;
+    }
+
+    .machine-note-table .col-lab {
+        padding: 3px 4px;
+        width: 80px;
+    }
+
+    .machine-note-table .col-exp {
+        padding: 3px 4px;
+        width: 80px;
+    }
+
+    .machine-note-table .col-sum {
+        padding: 3px 4px;
+        width: 80px;
+    }
+
+    /* 표 헤더 배경 */
+    .machine-note-table th {
+        background-color: #f1f5f9;
+        color: #000;
+        font-weight: 400;
+    }
+
+    .machine-note-table input,
+    .machine-note-table input:focus {
+        width: 100%;
+        border-bottom: none;
+    }
+
+    .machine-note-table .money {
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .machine-note-item {
+        padding: 4px 0;
+        margin-bottom: 40px;
+    }
+
+    .machine-note-item-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 8px;
+        align-items: center;
+    }
+
+    /* 평소엔 투명, 손모양 호버 시 연한 회색 */
+    .machine-note-item-text {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        padding: 3px 6px;
+        border-radius: 2px;
+        font-size: 16px;
+    }
+
+    .machine-note-item-text:hover {
+        background-color: #f4f5f7;
+    }
+
+    .machine-note-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        padding-top: 9px;
+    }
+
+    .machine-note-action-sep {
+        color: #888;
+    }
+
+    .machine-note-detail {
+        margin: 6px 0 0 0;
+        padding: 0;
+        background: transparent;
+        border-left: none;
+    }
+
+    .machine-note-detail-edit-wrap {
+        margin: 4px 0 0 0;
+        padding-top: 9px;
+        text-align: left;
+    }
+
+    .machine-note-detail-editor {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        width: 100%;
+        min-height: 216px;
+        margin: 0;
+        box-sizing: border-box;
+        resize: vertical;
+        border: 1px solid #cbd5e1;
+        border-radius: 3px;
+        padding: 11px 11px;
+        text-align: left;
+        background: #fff;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .machine-note-detail-preview {
+        margin: 0;
+        padding-left: 15px;
+        white-space: pre-wrap;
+        font: inherit;
+        font-size: 15px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/master-items.js"></script>
+
+<div id="print-container" class="machine-note" x-data="sketchNoteApp()"
+    x-init="$watch('myData', () => saveMyDataToLocalStorage()); $watch('editForm', () => saveActiveObjectToLocalStorage(), { deep: true }); $watch('workItems', () => saveActiveObjectToLocalStorage(), { deep: true })">
+    <div class="machine-note-toolbar">
+        <input type="text" x-model="inputQuery" x-on:keyup="handleKeyup($event)"
+            x-on:keydown.enter.prevent="handleEnterKey()" placeholder="이곳에 숫자 입력 후 스페이스 2번 또는 엔터">
+        <button type="button" class="machine-note-register-btn" x-on:click="registerItem()">등록하기</button>
+    </div>
+
+    <table class="machine-note-table">
+        <thead>
+            <tr>
+                <th class="col-item">품목</th>
+                <th class="col-spec">규격</th>
+                <th class="col-unit">단위</th>
+                <th class="col-mat">재료비</th>
+                <th class="col-lab">노무비</th>
+                <th class="col-exp">경비</th>
+                <th class="col-sum">합계</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-item">
+                    <input type="text" x-model="editForm.품명" placeholder="품명">
+                </td>
+                <td class="col-spec">
+                    <input type="text" x-model="editForm.규격" placeholder="규격">
+                </td>
+                <td class="col-unit">
+                    <input type="text" x-model="editForm.단위" placeholder="단위">
+                </td>
+                <td class="col-mat money">
+                    <span x-text="formatMoney(sumChildren('재료비'))"></span>
+                </td>
+                <td class="col-lab money">
+                    <span x-text="formatMoney(sumChildren('노무비'))"></span>
+                </td>
+                <td class="col-exp money">
+                    <span x-text="formatMoney(sumChildren('경비'))"></span>
+                </td>
+                <td class="col-sum money">
+                    <span x-text="formatMoney(totalCost)"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <template x-for="(item, index) in workItems" x-bind:key="index">
+            <div class="machine-note-item">
+                <div class="machine-note-item-head">
+                    <div class="machine-note-item-text" x-on:dblclick="toggleDetailEditor(index)">
+                        <span x-text="item?.운전경비?.품명 || ''"></span>　&nbsp;
+                        <span x-text="item?.운전경비?.규격 || ''"></span>　&nbsp;
+                        <span x-text="item?.운전경비?.단위 || ''"></span>　&nbsp;
+                    </div>
+
+                    <span class="machine-note-actions">
+                        <template x-for="btn in getItemButtons(item)" x-bind:key="btn.name">
+                            <span>
+                                <a x-bind:href="getLinkWithParams(btn.link, index)"
+                                    x-on:click="saveActiveObjectToLocalStorage()" x-text="btn.name"></a>
+                                <span class="machine-note-action-sep">&nbsp;|&nbsp;</span>
+                            </span>
+                        </template>
+
+                        <a href="javascript:void(0)" x-on:click.prevent="deleteItem(index)">삭제</a>
+                    </span>
+                </div>
+
+                <div class="machine-note-detail">
+                    <pre class="machine-note-detail-preview" x-text="renderDetail(item)"></pre>
+                    <div class="machine-note-detail-edit-wrap" x-show="editingDetailIndex === index">
+                        <textarea class="machine-note-detail-editor" x-model="item.detail"
+                            placeholder="내용을 자유롭게 입력하세요. 예: 품명: {{품명}}"></textarea>
+                        <div style="font-size: 14px; color: #666; margin-top: 4px;">
+
+                            <template x-for="(key, kIdx) in getObjectKeys(item?.시간당작업량)" :key="key">
+                                <span>
+                                    <span x-text="'{{작업량.' + key + '}}'"></span>
+                                    <span x-if="kIdx < getObjectKeys(item?.시간당작업량).length - 1">, &nbsp;</span>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+    function sketchNoteApp() {
+        return {
+            inputQuery: '',
+            currentSiteMode: 'site',
+            activeSource: 'work',     // 'edit' 또는 'work' (option.machineData.activeSource)
+            editOriginPath: '',       // 편집 데이터가 온 위치값 (option.machineData.editOriginPath)
+            editForm: {
+                id: '',
+                품명: '',
+                규격: '',
+                단위: '',
+                재료비: 0,
+                노무비: 0,
+                경비: 0,
+                합계: 0
+            },
+            workItems: [],
+            myData: [],
+            editingDetailIndex: null,
+            validMasterItems: [
+              
+                {
+                    id: '2',
+                    품명: '리퍼(유압식)',
+                    규격: '',
+                    buttons: [
+                        { name: '운전경비', link: '#' },
+                        { name: '시간당작업량', link: '#' }
+                    ],
+                    detail: `분류: 토공기계
+품명: {{품명}}
+규격: {{규격}}
+비고: `,
+                },
+            ],
+
+            createEmptyForm() {
+                return {
+                    id: '',
+                    품명: '',
+                    규격: '',
+                    단위: '',
+                    재료비: 0,
+                    노무비: 0,
+                    경비: 0,
+                    합계: 0
+                };
+            },
+            getObjectKeys(obj) {
+                if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return [];
+                return Object.keys(obj);
+            },
+            createEmptyOpCost(master = {}) {
+                return {
+                    품명: master?.품명 || '',
+                    규격: master?.규격 || '',
+                    단위: '',
+                    재료비: 0,
+                    노무비: 0,
+                    경비: 0,
+                    합계: 0
+                };
+            },
+
+            sanitizeChildItem(item) {
+                if (!item || typeof item !== 'object') {
+                    return {
+                        운전경비: this.createEmptyOpCost(),
+                        detail: ''
+                    };
+                }
+
+                const existingOp = (item.운전경비 && typeof item.운전경비 === 'object' && !Array.isArray(item.운전경비))
+                    ? item.운전경비
+                    : {};
+
+                const opCost = {
+                    ...this.createEmptyOpCost(item),
+                    ...existingOp,
+                    품명: existingOp.품명 !== undefined ? existingOp.품명 : (item.품명 || ''),
+                    규격: existingOp.규격 !== undefined ? existingOp.규격 : (item.규격 || ''),
+                    단위: existingOp.단위 !== undefined ? existingOp.단위 : (item.단위 || ''),
+                    재료비: Number(existingOp.재료비 ?? item.재료비 ?? 0) || 0,
+                    노무비: Number(existingOp.노무비 ?? item.노무비 ?? 0) || 0,
+                    경비: Number(existingOp.경비 ?? item.경비 ?? 0) || 0,
+                    합계: Number(existingOp.합계 ?? item.합계 ?? 0) || 0
+                };
+
+                const { buttons, ...rest } = item;
+                return {
+                    ...rest,
+                    운전경비: opCost,
+                    detail: typeof item.detail === 'string' ? item.detail : ''
+                };
+            },
+
+            getCostValue(item, field) {
+                const opCost = item?.운전경비;
+
+                if (!opCost || typeof opCost !== 'object') return 0;
+                return Number(opCost[field]) || 0;
+            },
+
+            sumChildren(field) {
+                return (this.workItems || []).reduce((acc, cur) => {
+                    const workload = Number(cur?.시간당작업량?.Q) || 0;
+                    return acc + (this.getCostValue(cur, field) / workload);
+                }, 0);
+            },
+
+            get totalCost() {
+                return this.sumChildren('재료비')
+                    + this.sumChildren('노무비')
+                    + this.sumChildren('경비');
+            },
+
+            getItemTotal(item) {
+                const workload = Number(item?.시간당작업량?.Q) || 0;
+                return (this.getCostValue(item, '재료비')
+                    + this.getCostValue(item, '노무비')
+                    + this.getCostValue(item, '경비')) / workload;
+            },
+
+            formatMoney(val) {
+                const num = Number(val) || 0;
+                return num.toLocaleString('ko-KR');
+            },
+
+            getItemButtons(item) {
+                if (item?.id) {
+                    const matchedById = this.validMasterItems.find(
+                        m => String(m.id).trim() === String(item.id).trim()
+                    );
+                    if (matchedById?.buttons) return matchedById.buttons;
+                }
+
+                const title = String(item?.운전경비?.품명 || '').trim();
+                if (!title) {
+                    return [
+                        { name: '운전경비', link: '#' },
+                        { name: '작업량', link: '#' }
+                    ];
+                }
+                const matched = this.validMasterItems.find(
+                    m => {
+                        const masterTitle = String(m.품명 || '').trim();
+                        return masterTitle && (
+                            title === masterTitle ||
+                            title.startsWith(masterTitle)
+                        );
+                    }
+                );
+                return matched?.buttons || [
+                    { name: '운전경비', link: '#' },
+                    { name: '작업량', link: '#' }
+                ];
+            },
+
+            getItemDetail(item) {
+                return typeof item?.detail === 'string' ? item.detail : '';
+            },
+
+            stripLeadingSpacesPerLine(text) {
+                return String(text || '')
+                    .split('\n')
+                    .map(line => line.replace(/^\s+/, ''))
+                    .join('\n')
+                    .trim();
+            },
+
+            toggleDetailEditor(index) {
+                const nextIndex = this.editingDetailIndex === index ? null : index;
+                if (nextIndex !== null && this.workItems[index]) {
+                    this.workItems[index].detail = this.stripLeadingSpacesPerLine(this.workItems[index].detail);
+                }
+                this.editingDetailIndex = nextIndex;
+            },
+
+            // 상세 내용 렌더링 (줄 앞 공백 제거 후 치환)
+            renderDetail(item) {
+                const operatingCost = item?.운전경비 || {};
+                const hourlyWork = {
+                    valF: 0,
+                    valE: 0,
+                    q0: 0,
+                    e: 0,
+                    cm: 0,
+                    q: 0,
+                    Q: 0,
+                    ...(item?.시간당작업량 || {})
+                };
+
+                const getByPath = (obj, path) => {
+                    return path.split('.').reduce((acc, prop) => {
+                        if (acc === undefined || acc === null) return undefined;
+                        return acc[prop];
+                    }, obj);
+                };
+
+                const workload = Number(hourlyWork.Q) || 0;
+                const 재료비 = (Number(operatingCost.재료비) || 0) * workload;
+                const 노무비 = (Number(operatingCost.노무비) || 0) * workload;
+                const 경비 = (Number(operatingCost.경비) || 0) * workload;
+
+                const values = {
+                    운전경비: operatingCost,
+                    시간당작업량: hourlyWork,
+                    재료비: this.formatMoney(재료비),
+                    노무비: this.formatMoney(노무비),
+                    경비: this.formatMoney(경비),
+                    합계: this.formatMoney(재료비 + 노무비 + 경비)
+                };
+
+                const cleanedText = this.stripLeadingSpacesPerLine(this.getItemDetail(item));
+
+                return cleanedText.replace(
+                    /\{\{([^}]+)\}\}/g,
+                    (match, rawKey) => {
+                        const key = rawKey.trim();
+                        const val = getByPath(values, key);
+                        if (val === undefined || val === null) return match;
+                        if (typeof val === 'number' && Number.isFinite(val)) {
+                            return val.toLocaleString('ko-KR', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                        return typeof val === 'object' ? JSON.stringify(val) : String(val);
+                    }
+                );
+            },
+
+            hasObjectValue(obj) {
+                if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+                const hasTop = Boolean(
+                    (obj.품명 && String(obj.품명).trim()) ||
+                    (obj.규격 && String(obj.규격).trim()) ||
+                    (obj.단위 && String(obj.단위).trim()) ||
+                    (Number(obj.재료비) || 0) > 0 ||
+                    (Number(obj.노무비) || 0) > 0 ||
+                    (Number(obj.경비) || 0) > 0
+                );
+                const hasChildren = Array.isArray(obj.children) && obj.children.length > 0;
+                return hasTop || hasChildren;
+            },
+
+            normalizeSourceObject(obj) {
+                const base = this.createEmptyForm();
+                if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+                    return { ...base, children: [] };
+                }
+                const { buttons, children, ...cleanTop } = obj;
+                const cleanChildren = Array.isArray(children)
+                    ? children.map(ch => this.sanitizeChildItem(ch))
+                    : [];
+                return {
+                    ...base,
+                    ...cleanTop,
+                    children: cleanChildren
+                };
+            },
+
+            syncFormTotals() {
+                const mat = this.sumChildren('재료비');
+                const lab = this.sumChildren('노무비');
+                const exp = this.sumChildren('경비');
+                this.editForm.재료비 = mat;
+                this.editForm.노무비 = lab;
+                this.editForm.경비 = exp;
+                this.editForm.합계 = mat + lab + exp;
+            },
+
+            init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const siteParam = urlParams.get('sub');
+                this.currentSiteMode = (siteParam === 'sub3') ? 'site' : 'cost';
+
+                this.loadMachineDataFromLocalStorage();
+                this.loadMyDataFromLocalStorage();
+
+                window.addEventListener('pageshow', (event) => {
+                    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                        const currentParams = new URLSearchParams(window.location.search);
+                        const currentSiteParam = currentParams.get('sub');
+
+                        if (currentSiteParam) {
+                            this.currentSiteMode = (currentSiteParam === 'sub3') ? 'site' : 'cost';
+                        }
+
+                        this.loadMachineDataFromLocalStorage();
+                        this.loadMyDataFromLocalStorage();
+                    }
+                });
+            },
+
+            ensureOptionShape() {
+                let parsedOption = JSON.parse(localStorage.getItem('option') || '{}');
+                if (!parsedOption || typeof parsedOption !== 'object') {
+                    parsedOption = {};
+                }
+                if (!parsedOption.machineData || typeof parsedOption.machineData !== 'object') {
+                    parsedOption.machineData = {};
+                }
+                delete parsedOption.machineData.targetIndex;
+
+                parsedOption.machineData.work = this.normalizeSourceObject(parsedOption.machineData.work);
+                parsedOption.machineData.edit = this.normalizeSourceObject(parsedOption.machineData.edit);
+
+                if (parsedOption.machineData.activeSource !== 'edit' && parsedOption.machineData.activeSource !== 'work') {
+                    parsedOption.machineData.activeSource = 'work';
+                }
+                if (typeof parsedOption.machineData.editOriginPath !== 'string') {
+                    parsedOption.machineData.editOriginPath = '';
+                }
+                if (!Array.isArray(parsedOption['나의데이터'])) {
+                    parsedOption['나의데이터'] = [];
+                }
+                return parsedOption;
+            },
+
+            loadMachineDataFromLocalStorage() {
+                const parsedOption = this.ensureOptionShape();
+                const editObj = parsedOption.machineData.edit;
+                const workObj = parsedOption.machineData.work;
+                const editHasValue = this.hasObjectValue(editObj);
+
+                if (editHasValue) {
+                    this.activeSource = 'edit';
+                    this.editOriginPath = parsedOption.machineData.editOriginPath || 'option.나의데이터';
+                    const { children, ...topFields } = editObj;
+                    this.editForm = { ...this.createEmptyForm(), ...topFields };
+                    this.workItems = children.map(ch => this.sanitizeChildItem(ch));
+                } else {
+                    this.activeSource = 'work';
+                    this.editOriginPath = '';
+                    parsedOption.machineData.editOriginPath = '';
+                    const { children, ...topFields } = workObj;
+                    this.editForm = { ...this.createEmptyForm(), ...topFields };
+                    this.workItems = children.map(ch => this.sanitizeChildItem(ch));
+                }
+
+                this.syncFormTotals();
+                parsedOption.machineData.activeSource = this.activeSource;
+                localStorage.setItem('option', JSON.stringify(parsedOption));
+            },
+
+            loadMyDataFromLocalStorage() {
+                const parsedOption = this.ensureOptionShape();
+                localStorage.setItem('option', JSON.stringify(parsedOption));
+                this.myData = parsedOption['나의데이터'];
+            },
+
+            saveMyDataToLocalStorage() {
+                const parsedOption = this.ensureOptionShape();
+                parsedOption['나의데이터'] = this.myData;
+                localStorage.setItem('option', JSON.stringify(parsedOption));
+            },
+
+            saveActiveObjectToLocalStorage() {
+                this.syncFormTotals();
+                const parsedOption = this.ensureOptionShape();
+                const cleanedChildren = (this.workItems || []).map(item => this.sanitizeChildItem(JSON.parse(JSON.stringify(item))));
+                const sourceObj = {
+                    ...this.createEmptyForm(),
+                    ...this.editForm,
+                    children: cleanedChildren
+                };
+
+                parsedOption.machineData.activeSource = this.activeSource;
+                parsedOption.machineData.editOriginPath = this.editOriginPath;
+
+                if (this.activeSource === 'edit') {
+                    parsedOption.machineData.edit = sourceObj;
+                } else {
+                    parsedOption.machineData.work = sourceObj;
+                }
+
+                localStorage.setItem('option', JSON.stringify(parsedOption));
+            },
+
+            writeByOriginPath(originPath, payload) {
+                const parsedOption = this.ensureOptionShape();
+                const normalized = (originPath || '').replace(/^option\.?/, '');
+                if (!normalized || normalized === '나의데이터') {
+                    this.myData.push(payload);
+                    return;
+                }
+
+                const match = normalized.match(/^([^\[\]]+)\[(\d+)\]$/);
+                if (match) {
+                    const key = match[1];
+                    const idx = Number(match[2]);
+                    if (!Array.isArray(parsedOption[key])) {
+                        parsedOption[key] = [];
+                    }
+                    parsedOption[key][idx] = payload;
+                    localStorage.setItem('option', JSON.stringify(parsedOption));
+                    if (key === '나의데이터') {
+                        this.myData = parsedOption['나의데이터'];
+                    }
+                    return;
+                }
+
+                if (!Array.isArray(parsedOption[normalized])) {
+                    parsedOption[normalized] = [];
+                }
+                parsedOption[normalized].push(payload);
+                localStorage.setItem('option', JSON.stringify(parsedOption));
+            },
+
+            registerItem() {
+                this.syncFormTotals();
+
+                const 품명 = String(this.editForm.품명 || '').trim();
+                const 규격 = String(this.editForm.규격 || '').trim();
+                const 단위 = String(this.editForm.단위 || '').trim();
+                const 재료비 = Number(this.editForm.재료비) || 0;
+                const 노무비 = Number(this.editForm.노무비) || 0;
+                const 경비 = Number(this.editForm.경비) || 0;
+                const 합계 = Number(this.editForm.합계) || 0;
+                const childrenList = (this.workItems || [])
+                    .map(item => this.sanitizeChildItem(JSON.parse(JSON.stringify(item))));
+
+                if (!품명 && !규격 && !단위 && childrenList.length === 0) {
+                    return;
+                }
+
+                if (!confirm('현재 내용을 등록하시겠습니까?')) {
+                    return;
+                }
+
+                const payload = {
+                    id: this.editForm.id || '',
+                    품명,
+                    규격,
+                    단위,
+                    재료비,
+                    노무비,
+                    경비,
+                    합계,
+                    activeSource: this.activeSource,
+                    children: childrenList
+                };
+
+                if (this.activeSource === 'edit') {
+                    this.writeByOriginPath(this.editOriginPath, payload);
+
+                    const parsedOption = this.ensureOptionShape();
+                    parsedOption.machineData.edit = { ...this.createEmptyForm(), children: [] };
+                    parsedOption.machineData.editOriginPath = '';
+                    parsedOption.machineData.activeSource = 'work';
+                    localStorage.setItem('option', JSON.stringify(parsedOption));
+
+                    this.activeSource = 'work';
+                    this.editOriginPath = '';
+                    const { children, ...topFields } = parsedOption.machineData.work;
+                    this.editForm = { ...this.createEmptyForm(), ...topFields };
+                    this.workItems = children.map(ch => this.sanitizeChildItem(ch));
+                } else {
+                    this.myData.push(payload);
+                    this.editForm = this.createEmptyForm();
+                    this.workItems = [];
+                }
+
+                this.inputQuery = '';
+            },
+
+            handleKeyup(e) {
+                if (e.key === ' ') {
+                    const val = this.inputQuery;
+                    if (val.endsWith('  ')) {
+                        this.processRegistration();
+                    }
+                }
+            },
+
+            handleEnterKey() {
+                this.processRegistration();
+            },
+
+            processRegistration() {
+                const queryId = this.inputQuery.trim();
+                const matchedMaster = queryId
+                    ? this.validMasterItems.find(m => String(m.id).trim() === queryId)
+                    : null;
+
+                if (!matchedMaster) {
+                    this.inputQuery = '';
+                    return;
+                }
+
+                this.workItems.push({
+                    id: matchedMaster.id,
+                    운전경비: this.createEmptyOpCost(matchedMaster),
+                    detail: typeof matchedMaster.detail === 'string' ? matchedMaster.detail : ''
+                });
+
+                this.inputQuery = '';
+            },
+
+            deleteItem(index) {
+                if (confirm('삭제하시겠습니까?')) {
+                    this.workItems.splice(index, 1);
+                    if (this.editingDetailIndex === index) {
+                        this.editingDetailIndex = null;
+                    } else if (this.editingDetailIndex > index) {
+                        this.editingDetailIndex -= 1;
+                    }
+                }
+            },
+
+            getLinkWithParams(link, index) {
+                if (!link || link === '#') {
+                    return link;
+                }
+
+                const params = [];
+                if (this.currentSiteMode === 'cost') {
+                    params.push('site=cost');
+                }
+                if (typeof index === 'number') {
+                    const sourceKey = this.activeSource === 'edit' ? 'edit' : 'work';
+                    params.push(`${sourceKey}=${index}`);
+                }
+
+                if (params.length === 0) {
+                    return link;
+                }
+
+                const separator = link.includes('?') ? '&' : '?';
+                return `${link}${separator}${params.join('&')}`;
+            }
+        };
+    }
+</script>

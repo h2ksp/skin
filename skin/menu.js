@@ -3406,7 +3406,8 @@ const menuData = {
               {
                 secTitle: "WORK",
                 items: [
-                  { text: "산출근거 작성", url: "https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3" },
+                  { text: "단가산출", url: "https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3" },
+                  { text: "등록리스트", url: "https://study-with-words.blogspot.com/2026/11/blog-post_21.html?group=group3&sub=sub3" },
 
                 ]
               },

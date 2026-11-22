@@ -169,15 +169,35 @@
 
 <script>
     function projectManager() {
+        const readStoredObject = (key) => {
+            try {
+                const value = JSON.parse(localStorage.getItem(key));
+                return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+            } catch {
+                return {};
+            }
+        };
+
+        const storedOption = readStoredObject('option');
+        const storedCost = readStoredObject('cost');
+
         return {
-            option: JSON.parse(localStorage.getItem('option')) || {
+            option: {
                 projectList: [],
-                activeProject: null
+                activeProject: null,
+                ...storedOption
             },
 
-            costData: JSON.parse(localStorage.getItem('cost')) || {},
+            costData: storedCost,
 
             init() {
+                if (!Array.isArray(this.option.projectList)) {
+                    this.option.projectList = [];
+                }
+                if (!this.option.activeProject || typeof this.option.activeProject !== 'string') {
+                    this.option.activeProject = null;
+                }
+
                 const allKeys = Object.keys(this.costData);
                 let currentList = this.option.projectList;
 
@@ -304,7 +324,7 @@
             },
 
             addProject(inputName) {
-                const rawData = JSON.parse(localStorage.getItem('api_data')) || {};
+                const rawData = readStoredObject('api_data');
                 const fuelArray = rawData?.data?.oil?.fuelPrices || [];
                 const oil = (name) => {
                     const found = fuelArray.find(item => item.fuelType === name);

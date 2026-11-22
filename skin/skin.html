@@ -18,7 +18,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/menu.js?v=33"></script>
+  <script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/menu.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/style.css?v=6" type="text/css" />
 
   <style type="text/css">
@@ -362,9 +362,6 @@
 
 
 
-
-
-
 <body>
 
   <div id="content">
@@ -441,6 +438,8 @@
         </div>
       </div>
 
+
+
       <!-- 오른쪽 넓은 영역 -->
       <div id="right-area">
 
@@ -456,10 +455,8 @@
             </div>
           </div>
         </div>
+
         <div class="login-btn-area">
-
-
-
           <div x-data="loginWidget()" x-init="init()">
             <a href="#" @click.prevent="toggleLogin()" x-text="loggedIn ? '로그아웃' : '로그인'"></a>
 
@@ -467,6 +464,7 @@
               style="margin:10px 0; padding:10px 14px; border-radius:8px; background:#e8f7ee; color:#166534; font-size:14px;">
             </div>
           </div>
+
           <script>
             const LOGIN_STORAGE_KEY = "spot_login_return_state";
             const LOGIN_PAGE_URL = "https://study-with-words.blogspot.com/2026/11/blog-post_20.html";
@@ -595,7 +593,13 @@
         <div id="main">
           <div id="main2">
             <div id="main3">
+
+
+
+              <!-- Main Page Content -->
               <MainPage>
+
+                
                 <style type="text/css">
                   body.is-main #sidebar-left,
                   body.is-main #sidebar {
@@ -603,176 +607,94 @@
                   }
 
                   body.is-main #main {
-                    width: 100% !important;
-                    max-width: 1400px !important;
-                    float: none !important;
-                    margin: 0 auto !important;
-                  }
-
-                  body.is-main.show-sidebar #sidebar-left,
-                  body.is-main.show-sidebar #sidebar {
-                    display: block !important;
-                  }
-
-                  body.is-main.show-sidebar #main {
-                    width: 870px !important;
-                    float: right !important;
-                    margin: 5px 0 0 !important;
-                  }
-
-                  .main-typography {
-                    text-align: center;
-                    padding: 70px 20px 90px;
+                    width: 100%;
+                    max-width: 1400px;
                     margin: 0 auto;
-                  }
-
-                  .main-big-sub {
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #258;
-                    letter-spacing: 2px;
-                    text-transform: uppercase;
-                    margin-bottom: 18px;
-                  }
-
-                  .main-big-title {
-                    font-size: 60px;
-                    font-weight: 900;
-                    color: #111;
-                    line-height: 1.22;
-                    letter-spacing: -2px;
-                    margin: 0 0 24px;
-                    word-break: keep-all;
-                  }
-
-                  .main-big-desc {
-                    font-size: 21px;
-                    font-weight: 500;
-                    color: #333;
-                    line-height: 1.6;
-                    max-width: 860px;
-                    margin: 0 auto 20px;
-                    word-break: keep-all;
-                  }
-
-                  .main-detail-text {
-                    font-size: 16px;
-                    font-weight: 400;
-                    color: #666;
-                    line-height: 1.8;
-                    max-width: 800px;
-                    margin: 0 auto;
-                    word-break: keep-all;
-                  }
-
-                  .main-vert-list {
-                    max-width: 800px;
-                    margin: 60px auto 0;
-                    text-align: left;
-                    border-top: 2px solid #222;
-                    border-bottom: 1px solid #ddd;
-                  }
-
-                  .main-vert-item {
-                    padding: 22px 0;
-                    border-top: 1px solid #e5e5e5;
-                    display: flex;
-                    align-items: baseline;
-                    gap: 32px;
-                  }
-
-                  .main-vert-item:first-child {
-                    border-top: none;
-                  }
-
-                  .main-vert-num {
-                    font-size: 15px;
-                    font-weight: 800;
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
-                    color: #258;
-                    min-width: 42px;
-                    letter-spacing: 0.5px;
-                  }
-
-                  .main-vert-content {
-                    flex: 1;
-                  }
-
-                  .main-vert-title {
-                    font-size: 18px;
-                    font-weight: 800;
-                    color: #111;
-                    margin-bottom: 6px;
-                    letter-spacing: -0.3px;
-                    word-break: keep-all;
-                  }
-
-                  .main-vert-desc {
-                    font-size: 14.5px;
-                    font-weight: 400;
-                    color: #666;
-                    line-height: 1.65;
-                    margin: 0;
-                    word-break: keep-all;
                   }
                 </style>
-
                 <div class="post">
                   <div class="post-body">
-                    <div class="main-typography">
-                      <div class="main-big-sub">Standard Cost Engineering Reference</div>
-                      <div class="main-big-title">
-                        설계부터 공무까지,<br />
-                        가장 직관적인 표준 내역 기준
-                      </div>
-                      <div class="main-big-desc">
-                        방대한 토목·건축 표준품셈과 표준시장단가를 낭비 없이 검색하고 확인하세요.
-                      </div>
-                      <a href="https://study-with-words.blogspot.com/2026/10/blog-post_95.html?group=group3&sub=sub1">
-                        시작하기
-                      </a>
-                      <div class="main-detail-text">
-                        수백 페이지의 두꺼운 품셈 책자나 깨지기 쉬운 PDF를 일일이 뒤적일 필요가 없습니다.<br />
-                        공종별 품셈 수량, 기준 할증률, 인력 및 기계 장비 조합 내역을 한눈에 열람할 수 있으며,<br />
-                        상단 메뉴의 항목을 선택하면 좌측 목차를 통해 세부 단위 공종으로 즉시 이동합니다.
+                    <br />
+                    <br />
+                    <div style="max-width: 680px; margin: 48px auto; padding: 0 16px;">
+
+
+                      <!-- 픽셀 아트 시바견 SVG -->
+                      <svg viewBox="0 0 340 110" width="100%"
+                        style="max-width: 680px; height: auto; display: block; margin-bottom: 24px; image-rendering: pixelated;"
+                        role="img" aria-label="픽셀 아트 스타일의 귀여운 시바견">
+
+                        <!-- 배경색 -->
+                        <rect width="340" height="110" fill="#fff" />
+
+                        <!-- 시바견 몸통 (주황색) -->
+                        <rect x="130" y="35" width="80" height="50" fill="#e67e22" />
+                        <rect x="110" y="55" width="20" height="30" fill="#e67e22" />
+                        <rect x="210" y="55" width="20" height="30" fill="#e67e22" />
+                        <rect x="130" y="85" width="20" height="10" fill="#e67e22" />
+                        <rect x="190" y="85" width="20" height="10" fill="#e67e22" />
+
+                        <!-- 얼굴 (크림색) -->
+                        <rect x="140" y="45" width="60" height="40" fill="#fdfcf0" />
+                        <rect x="130" y="65" width="10" height="20" fill="#fdfcf0" />
+                        <rect x="200" y="65" width="10" height="20" fill="#fdfcf0" />
+                        <rect x="140" y="85" width="60" height="10" fill="#fdfcf0" />
+
+                        <!-- 귀 -->
+                        <polygon points="130,35 150,35 140,55" fill="#e67e22" />
+                        <polygon points="190,35 210,35 200,55" fill="#e67e22" />
+                        <polygon points="135,40 145,40 140,50" fill="#fdfcf0" />
+                        <polygon points="195,40 205,40 200,50" fill="#fdfcf0" />
+
+                        <!-- 눈 -->
+                        <rect x="155" y="60" width="5" height="10" fill="#1a1a1a" />
+                        <rect x="180" y="60" width="5" height="10" fill="#1a1a1a" />
+                        <rect x="150" y="55" width="15" height="5" fill="#fdfcf0" />
+                        <rect x="175" y="55" width="15" height="5" fill="#fdfcf0" />
+
+                        <!-- 코 & 입 -->
+                        <rect x="165" y="70" width="10" height="5" fill="#1a1a1a" />
+                        <rect x="170" y="75" width="5" height="5" fill="#1a1a1a" />
+                        <path d="M 165 75 L 160 80 M 175 75 L 180 80" fill="none" stroke="#1a1a1a" stroke-width="1" />
+
+                        <!-- 볼터치 -->
+                        <rect x="145" y="70" width="5" height="5" fill="#ffcdd2" />
+                        <rect x="190" y="70" width="5" height="5" fill="#ffcdd2" />
+
+                        <!-- 꼬리 -->
+                        <rect x="215" y="35" width="20" height="20" fill="#e67e22" />
+                        <rect x="225" y="25" width="10" height="10" fill="#e67e22" />
+
+                        <!-- 바닥 그림자 -->
+                        <ellipse cx="170" cy="100" rx="50" ry="5" fill="#f0f0f0" />
+
+                        <!-- 말풍선 (디테일) -->
+                        <g transform="translate(230 20)">
+                          <path d="M 0 0 L 40 0 L 40 20 L 20 20 L 10 30 L 10 20 L 0 20 Z" fill="#fdfcf0"
+                            stroke="#18181b" stroke-width="1" />
+                          <text x="20" y="14" font-family="sans-serif" font-size="10" fill="#18181b"
+                            text-anchor="middle" font-weight="bold">^^멍!</text>
+                        </g>
+                      </svg>
+
+
+                      <div style="text-align: center; font-size: 12px; color: #71717a;">Standard Cost Engineering
+                        Reference</div>
+                      <h1 style="text-align: center; margin: 12px 0 16px;">설계부터 공무까지,<br /><br />가장 직관적인 표준 내역 기준</h1>
+                      <p style="text-align: center; margin: 0 0 20px;">방대한 토목·건축 표준품셈과 표준시장단가를 낭비 없이 검색하고 확인하세요.</p>
+                      <div style="text-align: center; margin: 24px 0;">
+                        <a href="https://study-with-words.blogspot.com/2026/10/blog-post_95.html?group=group3&sub=sub1">공사비 산출하기
+                        </a>
+                        </a>
                       </div>
 
-                      <div class="main-vert-list">
-                        <div class="main-vert-item">
-                          <span class="main-vert-num">/ 01</span>
-                          <div class="main-vert-content">
-                            <div class="main-vert-title">A4 1장 규격 단면 최적화</div>
-                            <p class="main-vert-desc">
-                              인쇄 버튼 클릭 시 불필요한 레이아웃을 완전히 제거하고, 실무 제출 및 현장 보고용 양식에 맞춰 비율을 1:1로 정렬합니다.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div class="main-vert-item">
-                          <span class="main-vert-num">/ 02</span>
-                          <div class="main-vert-content">
-                            <div class="main-vert-title">즉각적인 단위 공종 인덱싱</div>
-                            <p class="main-vert-desc">
-                              상단 메뉴 선택 시 연동되는 3단 내비게이션을 통해 공통부문부터 전문 세부 공종까지 단 두 번의 클릭으로 접근합니다.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div class="main-vert-item">
-                          <span class="main-vert-num">/ 03</span>
-                          <div class="main-vert-content">
-                            <div class="main-vert-title">공신력 있는 표준 공사비 기준</div>
-                            <p class="main-vert-desc">
-                              한국건설기술연구원 및 국토교통부 표준시장단가 고시 기준을 기반으로 데이터 신뢰성을 유지합니다.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      <hr style="border: 0; border-top: 1px solid #e4e4e7; margin: 36px 0;" />
 
                     </div>
                   </div>
                 </div>
               </MainPage>
+
 
               <ItemPage>
                 <Blogger>
