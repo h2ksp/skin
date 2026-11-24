@@ -3341,6 +3341,21 @@ const menuData = {
           },
 
           {
+            catTitle: "Option",
+            sections: [
+
+              {
+                secTitle: "Helper",
+                items:
+                  [
+                    { text: "나의 데이터", url: "https://study-with-words.blogspot.com/2026/10/blog-post_15.html?group=group3&sub=sub1" },
+                    { text: "작성자연결", url: "#4-1" },
+                  ]
+              },
+            ]
+          },
+
+          {
             catTitle: "WORK",
             sections: [
               {
@@ -3374,21 +3389,6 @@ const menuData = {
                   ]
               },
 
-            ]
-          },
-
-          {
-            catTitle: "-",
-            sections: [
-
-
-              {
-                secTitle: "협업",
-                items:
-                  [
-                    { text: "작성자연결", url: "#4-1" },
-                  ]
-              },
             ]
           },
 
