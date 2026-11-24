@@ -199,7 +199,10 @@
         <!-- 최상단 컨트롤 영역 -->
         <div style="
                 background-color: #f9f9f9e7;
-                text-align: left; 
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
                 border: 1px solid #e2e8f0;
                 border-radius: 12px;
                 padding: 5px 16px;
@@ -212,17 +215,17 @@
                     <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
                 </template>
             </select>
-            &nbsp;
             <select x-model="activeGroup" @change="saveActiveGroup()" style="width: 150px;">
                 <option value="">전체보기</option>
                 <template x-for="(group, idx) in groupList" :key="idx">
                     <option :value="idx" x-text="group"></option>
                 </template>
             </select>
-            &nbsp;
-            <button type="button" @click="editGroups()">그룹편집</button>
-            <button type="button" @click="moneyView()">합계보기</button>
-            <button type="button" @click="editMode()">편집모드</button>
+            <div style="display: flex; gap: 8px; margin-left: auto;">
+                <button type="button" @click="editGroups()">그룹편집</button>
+                <button type="button" @click="moneyView()">합계보기</button>
+            </div>
+
         </div>
 
 
@@ -536,10 +539,6 @@
                     });
                 });
                 this.saveToStore();
-            },
-
-            editMode() {
-                window.location.href = 'https://study-with-words.blogspot.com/2026/11/blog-post_12.html?group=group3&sub=sub1';
             },
 
             saveActiveProject() {

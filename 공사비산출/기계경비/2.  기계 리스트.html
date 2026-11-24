@@ -1,0 +1,109 @@
+<style>
+    .my-data-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 0;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+
+    .my-data-row:hover {
+        background-color: #f5f8ff;
+    }
+
+    .my-data-delete-text {
+        color: #888;
+        font-size: 13px;
+        text-decoration: underline;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .my-data-delete-text:hover {
+        color: #ef5350;
+    }
+</style>
+
+
+<div id="title">중기단가 등록리스트</div>
+
+<div x-data="myDataList()" x-show="machineItems.length > 0" style="margin-top: 16px;">
+    <ul style="list-style: none; padding: 0; margin: 6px 0 0 0;">
+        <template x-for="row in machineItems" :key="row._idx">
+            <li class="my-data-row" @dblclick="goEdit(row)">
+                <span style="padding: 6px 0; flex: 1;">
+                    <span x-text="row.품명 ?? row.name ?? ''"></span>　&nbsp;
+                    <span x-text="row.규격 ?? row.spec ?? ''"></span>　&nbsp;
+                    <span x-text="row.단위 ?? row.unit ?? ''"></span>　&nbsp;
+                    <span x-text="row.합계 ?? row.price ?? ''"></span>
+                </span>
+
+                <span style="display: inline-flex; align-items: center; padding: 6px 0;" @dblclick.stop>
+                    <span class="my-data-delete-text" @click="removeItem(row._idx)">삭제</span>
+                </span>
+            </li>
+        </template>
+    </ul>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('myDataList', () => ({
+            rawList: [],
+            machineItems: [],
+            editPageUrl: 'https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3',
+            init() {
+                this.load();
+            },
+            load() {
+                try {
+                    const opt = JSON.parse(localStorage.getItem('option') || '{}');
+                    this.rawList = Array.isArray(opt['나의데이터']) ? opt['나의데이터'] : [];
+                } catch (e) {
+                    this.rawList = [];
+                }
+                this.rebuildList();
+            },
+            persist() {
+                const opt = JSON.parse(localStorage.getItem('option') || '{}');
+                opt['나의데이터'] = this.rawList;
+                localStorage.setItem('option', JSON.stringify(opt));
+                this.rebuildList();
+            },
+            rebuildList() {
+                this.machineItems = this.rawList
+                    .map((item, idx) => ({ ...item, _idx: idx }))
+                    .filter(item => String(item.type ?? '').trim() === '건설기계');
+            },
+            goEdit(row) {
+                const target = this.rawList[row._idx];
+                if (!target) return;
+
+                const opt = JSON.parse(localStorage.getItem('option') || '{}');
+                const currentMachineData =
+                    opt.machineData && typeof opt.machineData === 'object' ? opt.machineData : {};
+
+                opt.machineData = {
+                    ...currentMachineData,
+                    activeMode: `edit-${row._idx}`,
+                    edit: JSON.parse(JSON.stringify(target))
+                };
+
+                delete opt.machineData.activeSource;
+                delete opt.machineData.editOriginPath;
+                localStorage.setItem('option', JSON.stringify(opt));
+                const editUrl = new URL(this.editPageUrl);
+                editUrl.searchParams.set('edit', row._idx);
+                location.href = editUrl.href;
+            },
+            removeItem(idx) {
+                if (!confirm('정말 삭제할까?')) return;
+                this.rawList.splice(idx, 1);
+                this.persist();
+            }
+        }));
+    });
+</script>

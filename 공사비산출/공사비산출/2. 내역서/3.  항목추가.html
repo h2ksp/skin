@@ -239,11 +239,11 @@
             ↑ 위로
         </button>
         <button type="button" @click="editSelected()" :disabled="!canEnterSelected">세부항목</button>
-        <!-- 🔄 나의데이터 토글 버튼 (텍스트 고정) -->
-        <button type="button" @click="showMyData = !showMyData; selectedIndex = null;">
-            나의데이터
-        </button>　
         <span x-text="nestingDepthNumber"></span>
+        <div style="margin-left: auto; display: flex; gap: 7px; flex-shrink: 0;">
+            <button type="button" @click="toggleDataPanel('project')">나의데이터</button>
+            <button type="button" @click="toggleDataPanel('cart')">장바구니</button>
+        </div>
     </div>
 
 
@@ -296,7 +296,7 @@
 
                         <!-- 행 선택 시 나의데이터 창이 켜져있다면 자동으로 닫힘(!showMyData) -->
                         <td class="select-cell"
-                            @click.stop="selectedIndex = selectedIndex === index ? null : index; showMyData = false;">
+                            @click.stop="selectedIndex = selectedIndex === index ? null : index; showMyData = false; showCart = false;">
                         </td>
 
                         <template x-for="col in currentColumns">
@@ -361,25 +361,42 @@
     </div>
 
     <!-- 하단 '나의 데이터' 영역 -->
-    <div style="margin-top: 64px; margin-left: 24px;" x-show="showMyData && selectedIndex === null" x-cloak
+    <div style="margin-top: 64px; margin-left: 24px;" x-show="(showMyData || showCart) && selectedIndex === null" x-cloak
         @click="selectedMyDataIndex = null" @click.outside="selectedMyDataIndex = null">
+
+        <div style="margin-bottom: 10px;" x-show="showMyData">
+            <label style="display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+                조회할 프로젝트　-　&nbsp;
+                <select x-model="sourceProjectKey" @change="updateCurrentCycleItems()" style="width: auto;">
+                    <option value="">전체 프로젝트</option>
+                    <template x-for="projKey in projectKeys" :key="projKey">
+                        <option :value="projKey" x-text="projKey"></option>
+                    </template>
+                </select>
+            </label>
+        </div>
+
+        <div x-show="!_targetContainer" style="margin-bottom: 10px; color: #777;">
+            항목을 추가할 프로젝트와 공종그룹을 선택하세요.
+        </div>
+        <div x-show="dataPanelError" x-text="dataPanelError" style="margin-bottom: 10px; color: #b91c1c;"></div>
 
         <!-- 1. 일위대가, 노무, 자재 등을 텍스트와 '/' 구분자로 나열 -->
         <div
             style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; font-size: 0.85rem;">
-            <template x-for="(typeName, idx) in cycleTypes" :key="typeName">
+            <template x-for="(typeName, idx) in availableCycleTypes" :key="typeName">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <a href="#" @click.prevent="changeCycleType(typeName)" :style="{
                        textDecoration: 'none',
                        fontWeight: currentCycleTypeName === typeName ? 'bold' : 'normal'
                     }"
-                        x-text="typeName + ' (' + (getProjectClassifiedItems()[typeName] ? getProjectClassifiedItems()[typeName].length : 0) + ')'">
+                        x-text="typeName + ' (' + (classifiedItems[typeName] ? classifiedItems[typeName].length : 0) + ')'">
                     </a>
-                    <span x-show="idx < cycleTypes.length - 1" style="color: #ccc;">/</span>
+                    <span x-show="idx < availableCycleTypes.length - 1" style="color: #ccc;">/</span>
                 </div>
             </template>
             &nbsp;&nbsp;&nbsp;
-            <button type="button" @click.stop="addSelectedMyItem()" :disabled="selectedMyDataIndex === null">
+            <button type="button" @click.stop="addSelectedMyItem()" :disabled="selectedMyDataIndex === null || !_targetContainer">
                 항목추가
             </button>
         </div>
@@ -390,20 +407,20 @@
             <div class="my-data-item" :class="{ 'is-selected': selectedMyDataIndex === index }"
                 @click.stop="selectedMyDataIndex = selectedMyDataIndex === index ? null : index">
                 <span
-                    x-text="'- ' + (item.품목 || item.품명 || '품목없음') + ' / 규격: ' + (item.규격 || '-') + ' / 단위: ' + (item.단위 || '-')"></span>
+                    x-text="(showMyData && !sourceProjectKey ? '[' + item.sourceProjectKey + '] ' : '') + '- ' + (item.data.품목 || item.data.품명 || '품목없음') + ' / 규격: ' + (item.data.규격 || '-') + ' / 단위: ' + (item.data.단위 || '-')"></span>
             </div>
         </template>
-        <template x-if="currentCycleItems.length === 0">
+        <template x-if="currentCycleItems.length === 0 && !dataPanelError">
             <div
                 style="color: #999; text-align: center; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
-                <span x-text="selectedProjectKey ? '해당 타입의 항목이 없습니다.' : '프로젝트를 선택하면 나의 데이터를 확인할 수 있습니다.'"></span>
+                <span x-text="showCart ? '해당 타입의 장바구니 항목이 없습니다.' : (projectKeys.length ? '선택한 범위에 해당 타입의 항목이 없습니다.' : '프로젝트가 없습니다.')"></span>
             </div>
         </template>
 
     </div>
 
     <!-- 하단 JSON 상세 보기 영역 -->
-    <div x-show="selectedIndex !== null && rows[selectedIndex] && !showMyData" x-cloak style="margin-top: 14px;">
+    <div x-show="selectedIndex !== null && rows[selectedIndex] && !showMyData && !showCart" x-cloak style="margin-top: 14px;">
         <pre x-text="JSON.stringify(rows[selectedIndex], null, 2)"></pre>
     </div>
 
@@ -426,8 +443,13 @@
             rows: [],
             selectedIndex: null,
             showMyData: false,
+            showCart: false,
+            cartItems: [],
+            dataPanelError: '',
             selectedMyDataIndex: null,
             currentCycleItems: [],
+            classifiedItems: {},
+            sourceProjectKey: '',
             _availableProjects: null,
             _targetContainer: null,
             currentProjectKey: null,
@@ -446,9 +468,42 @@
                 return this.cycleTypes[this.cycleIndex];
             },
 
+            get availableCycleTypes() {
+                return this.cycleTypes.filter(type => this.classifiedItems[type]?.length > 0);
+            },
+
+            toggleDataPanel(panel) {
+                const isOpen = panel === 'cart' ? this.showCart : this.showMyData;
+                this.showMyData = panel === 'project' && !isOpen;
+                this.showCart = panel === 'cart' && !isOpen;
+                this.selectedIndex = null;
+                this.selectedMyDataIndex = null;
+                this.dataPanelError = '';
+
+                if (this.showCart) {
+                    try {
+                        const option = JSON.parse(localStorage.getItem('option') || '{}');
+                        const items = option?.['나의데이터'];
+                        if (items != null && !Array.isArray(items)) {
+                            throw new Error('나의데이터가 배열이 아닙니다.');
+                        }
+                        this.cartItems = items || [];
+                    } catch (error) {
+                        console.error('장바구니를 불러오지 못했습니다.', error);
+                        this.cartItems = [];
+                        this.dataPanelError = '장바구니를 불러오지 못했습니다.';
+                    }
+                }
+                this.updateCurrentCycleItems();
+            },
+
             updateCurrentCycleItems() {
-                const classified = this.getProjectClassifiedItems();
-                this.currentCycleItems = classified[this.currentCycleTypeName] || [];
+                this.classifiedItems = this.getProjectClassifiedItems();
+                if (!this.classifiedItems[this.currentCycleTypeName]?.length && this.availableCycleTypes.length) {
+                    this.cycleIndex = this.cycleTypes.indexOf(this.availableCycleTypes[0]);
+                }
+                this.currentCycleItems = this.classifiedItems[this.currentCycleTypeName] || [];
+                this.selectedMyDataIndex = null;
             },
 
             changeCycleType(typeName) {
@@ -461,14 +516,16 @@
             },
 
             cycleBottomType() {
-                this.cycleIndex = (this.cycleIndex + 1) % this.cycleTypes.length;
-                this.selectedMyDataIndex = null;
-                this.updateCurrentCycleItems();
+                const types = this.availableCycleTypes;
+                if (!types.length) return;
+                const next = (types.indexOf(this.currentCycleTypeName) + 1) % types.length;
+                this.changeCycleType(types[next]);
             },
 
             addSelectedMyItem() {
                 if (this.selectedMyDataIndex === null || !this.currentCycleItems[this.selectedMyDataIndex]) return;
-                this.addItemToCurrent(this.currentCycleItems[this.selectedMyDataIndex]);
+                const entry = this.currentCycleItems[this.selectedMyDataIndex];
+                this.addItemToCurrent(entry.data, entry.type);
             },
 
             get canGoBack() {
@@ -560,6 +617,8 @@
             init() {
                 this.loadProjectsList();
                 this.loadDataFromOption();
+                this.sourceProjectKey = this.currentProjectKey || '';
+                this.updateCurrentCycleItems();
             },
 
             loadProjectsList() {
@@ -572,6 +631,8 @@
             },
 
             onProjectChange() {
+                this.sourceProjectKey = this.selectedProjectKey || '';
+                this.selectedMyDataIndex = null;
                 this.selectedCategoryKey = '';
                 this.subItemKey = '';
                 this.parentItem = null;
@@ -734,6 +795,7 @@
                 this.rows = this._targetContainer;
                 this.selectedIndex = this.rows.length - 1;
                 this.showMyData = false;
+                this.showCart = false;
                 this.saveCostData();
             },
 
@@ -776,18 +838,22 @@
                 } catch (e) { }
             },
 
-            addItemToCurrent(item) {
-                if (!this._targetContainer) return;
-                const newItem = {
-                    type: item.type || item.타입 || item.구분 || '자재',
+            createItemFields(item, type) {
+                return {
+                    type,
                     품목: item.품목 || item.품명 || '',
                     규격: item.규격 || '',
                     단위: item.단위 || '',
                     수량: 1,
-                    재료비단가: item.재료비단가 || 0,
-                    노무비단가: item.노무비단가 || 0,
-                    경비단가: item.경비단가 || 0
+                    재료비단가: item.재료비단가 ?? item.재료비 ?? 0,
+                    노무비단가: item.노무비단가 ?? item.노무비 ?? 0,
+                    경비단가: item.경비단가 ?? item.경비 ?? 0
                 };
+            },
+
+            addItemToCurrent(item, type) {
+                if (!this._targetContainer) return;
+                const newItem = { ...JSON.parse(JSON.stringify(item)), ...this.createItemFields(item, type) };
                 this.updateRowCosts(newItem);
                 this._targetContainer.push(newItem);
                 this.rows = this._targetContainer;
@@ -826,12 +892,23 @@
                 const classified = {};
                 this.cycleTypes.forEach(t => classified[t] = []);
 
-                if (!this._availableProjects || !this.currentProjectKey) return classified;
+                if (this.showCart) {
+                    for (const item of this.cartItems) {
+                        if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+                        const type = String(item.type || item.타입 || item.구분 || '자재').trim();
+                        if (!classified[type]) classified[type] = [];
+                        classified[type].push({ data: item, type });
+                    }
+                    return classified;
+                }
 
-                const proj = this._availableProjects[this.currentProjectKey];
-                if (!proj) return classified;
+                if (!this._availableProjects) return classified;
 
-                const traverseNet = (items) => {
+                const sourceKeys = this.sourceProjectKey
+                    ? [this.sourceProjectKey]
+                    : Object.keys(this._availableProjects);
+
+                const traverseNet = (items, sourceProjectKey) => {
                     if (!Array.isArray(items)) return;
                     for (let item of items) {
                         if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
@@ -842,50 +919,39 @@
                                 classified[t] = [];
                             }
 
-                            classified[t].push({
-                                type: t,
-                                품목: item.품목 || item.품명 || '',
-                                규격: item.규격 || '',
-                                단위: item.단위 || '',
-                                수량: 1,
-                                재료비단가: item.재료비단가 || 0,
-                                노무비단가: item.노무비단가 || 0,
-                                경비단가: item.경비단가 || 0
-                            });
+                            classified[t].push({ data: item, type: t, sourceProjectKey });
                         }
                         if (item && item.children) {
-                            traverseNet(item.children);
+                            traverseNet(item.children, sourceProjectKey);
                         }
                     }
                 };
 
-                if (proj.공종별내역서) {
-                    for (let group of proj.공종별내역서) {
-                        if (Array.isArray(group)) {
-                            for (let cat of group) {
-                                if (cat && cat.children) traverseNet(cat.children);
+                for (const sourceProjectKey of sourceKeys) {
+                    const proj = this._availableProjects[sourceProjectKey];
+                    if (!proj) continue;
+
+                    if (proj.공종별내역서) {
+                        for (let group of proj.공종별내역서) {
+                            if (Array.isArray(group)) {
+                                for (let cat of group) {
+                                    if (cat && cat.children) traverseNet(cat.children, sourceProjectKey);
+                                }
+                            } else if (group && group.children) {
+                                traverseNet(group.children, sourceProjectKey);
                             }
-                        } else if (group && group.children) {
-                            traverseNet(group.children);
+                        }
+                    }
+
+                    if (proj.일위대가 && Array.isArray(proj.일위대가)) {
+                        if (!classified['일위대가']) classified['일위대가'] = [];
+                        for (let item of proj.일위대가) {
+                            if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
+                                classified['일위대가'].push({ data: item, type: '일위대가', sourceProjectKey });
+                            }
                         }
                     }
                 }
-
-                if (proj.일위대가 && Array.isArray(proj.일위대가)) {
-                    if (!classified['일위대가']) classified['일위대가'] = [];
-                    for (let item of proj.일위대가) {
-                        if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
-                            classified['일위대가'].push({
-                                type: '일위대가',
-                                품목: item.품목 || item.품명 || '',
-                                규격: item.규격 || '',
-                                단위: item.단위 || '',
-                                수량: item.수량 !== undefined ? Number(item.수량) || 0 : (item.수량 !== undefined ? Number(item.수량) || 0 : 0)
-                            });
-                        }
-                    }
-                }
-
                 return classified;
             },
 

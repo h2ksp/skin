@@ -44,12 +44,7 @@
     }
 
     .cha {
-        font-family: Arial, sans-serif;
-        font-size: 16px;
-        font-style: italic;
-        color: #b66a61;
-        line-height: 1.2;
-        font-weight: 300;
+        font: inherit;
         text-align: right;
     }
 
@@ -59,11 +54,9 @@
         border: none;
         background: transparent;
         outline: none;
-        font-size: 16px;
-        font-weight: 300;
-        font-style: italic;
-        color: #b66a61;
-        line-height: 1.2;
+        /* font: inherit; */
+        font-size: 15px;
+        color: inherit;
         box-sizing: border-box;
         padding: 0;
         margin: 0;
@@ -78,6 +71,12 @@
         caret-color: transparent;
     }
 
+    .chasoeul input.number-input,
+    .tbl.tbl-work tbody td:not(:last-child) input {
+        text-align: right;
+        padding-right: 10px;
+    }
+
     .tbl-work {
         margin-bottom: 5px;
     }
@@ -85,20 +84,39 @@
     .tbl-work thead th {
         background: #f1f5f9;
         padding: 0;
-        font-size: 16px;
+        font-size: inherit;
         font-weight: 400;
     }
 
     .tbl-work {
-        width: 800px;
+        width: 100%;
         margin: 0;
         border-collapse: collapse;
+        font-size: 14px;
     }
 
     .tbl-work td {
         padding: 1px 2px;
     }
 </style>
+
+<div id="noticeBanner"
+    style="display: none; background: linear-gradient(135deg, #fffef7, #fffde7); border: 2px dashed #ef5350; border-radius: 8px; padding: 12px 20px; justify-content: space-between; align-items: flex-start; font-size: 14px; position: sticky; top: 10px; z-index: 9999; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div style="display: flex; align-items: flex-start; gap: 8px; color: #333333;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="3.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            style="transform: rotate(-8deg); flex-shrink: 0; margin-top: 2px;">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span style="line-height: 1.45;">
+            아래 재료비 클릭 후 ㅡ 규격 선택하면 끝!
+        </span>
+    </div>
+    <span onclick="document.getElementById('noticeBanner').style.display='none'"
+        style="cursor: pointer; color: #888; font-size: 13px; text-decoration: underline; white-space: nowrap; margin-left: 12px;"
+        onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color='#888'">닫기</span>
+</div>
+
 
 <div id="print-container" x-data="machineCalc()">
 
@@ -109,6 +127,7 @@
 
         <div style="margin-top: 5px; display: flex; gap: 5px;">
             <button @click="refreshPage()" type="button">다시쓰기</button>
+            <button @click="help_message()">&nbsp;도움말&nbsp;</button>
         </div>
     </div>
     <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0 10px 0;">
@@ -141,8 +160,8 @@
                         <td>수 량 : &nbsp;</td>
                         <td>
                             <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <input type="text" x-model="row.수량" @input="saveToLocal()" placeholder=""
-                                    style="width: calc(100% - 65px);">
+                                <input type="text" class="number-input" x-model="row.수량" @input="saveToLocal()"
+                                    placeholder="" style="width: calc(100% - 65px);">
                             </div>
                         </td>
                     </tr>
@@ -265,7 +284,7 @@
 
     <!-- 재료비(규격, 연료량, 잡재료) -->
     <div x-show="subActive === 'a'">
-        <div class="tbl-text">[00] 토공기계</div>
+        <div class="tbl-text">8-4-1 [00]토공기계</div>
         <table class="tbl open">
             <thead>
                 <tr>
@@ -282,15 +301,77 @@
                     <td style="text-align: right; padding-right: 15px;">0101-0007<br>0010<br>0012<br>0019<br>0032</td>
                     <td style="text-align: left; padding-left: 15px;">불 도 저 ( 무 한 궤 도 )<br><br><br><br><br></td>
                     <td>
-                        <a @click="selectItem('7ton')" style="cursor: pointer;">7ton</a><br>
-                        <a @click="selectItem('10ton')" style="cursor: pointer;">10ton</a><br>
-                        <a @click="selectItem('12ton')" style="cursor: pointer;">12ton</a><br>
-                        <a @click="selectItem('19ton')" style="cursor: pointer;">19ton</a><br>
-                        <a @click="selectItem('32ton')" style="cursor: pointer;">32ton</a>
+                        <a @click="selectItem('selete1')" style="cursor: pointer;">7ton</a><br>
+                        <a @click="selectItem('selete2')" style="cursor: pointer;">10ton</a><br>
+                        <a @click="selectItem('selete3')" style="cursor: pointer;">12ton</a><br>
+                        <a @click="selectItem('selete4')" style="cursor: pointer;">19ton</a><br>
+                        <a @click="selectItem('selete5')" style="cursor: pointer;">32ton</a>
                     </td>
                     <td>9.0<br>12.5<br>14.6<br>25.0<br>41.6</td>
                     <td>16%<br>16<br>16<br>16<br>16</td>
                     <td>1<br>1<br>1<br>1<br>1</td>
+                </tr>
+
+
+
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">
+                        0102-0015<br>
+                        0028<br>
+                        0033
+                    </td>
+                    <td style="text-align: left; padding-left: 15px;">
+                        불 도 저 ( 타 이 어 )<br>
+                        <br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="selectItem('selete6')" style="cursor: pointer;">15ton</a><br>
+                        <a @click="selectItem('selete7')" style="cursor: pointer;">28ton</a><br>
+                        <a @click="selectItem('selete8')" style="cursor: pointer;">33ton</a>
+                    </td>
+                    <td>
+                        19.2<br>
+                        36.0<br>
+                        42.4
+                    </td>
+                    <td>
+                        50<br>
+                        50<br>
+                        50
+                    </td>
+                    <td>
+                        1<br>
+                        1<br>
+                        1
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">
+                        0121-0004<br>
+                        0013
+                    </td>
+                    <td style="text-align: left; padding-left: 15px;">
+                        습 지 불 도 저<br>
+                        <br>
+                    </td>
+                    <td>
+                        <a @click="selectItem('selete9')" style="cursor: pointer;">4ton</a><br>
+                        <a @click="selectItem('selete10')" style="cursor: pointer;">13ton</a>
+                    </td>
+                    <td>
+                        5.4<br>
+                        14.6
+                    </td>
+                    <td>
+                        23<br>
+                        23
+                    </td>
+                    <td>
+                        1<br>
+                        1
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -526,6 +607,60 @@
                 <td>삽날(귀삽날 포함), 타이어는 운전경비에서 별도 계상한다.</td>
             </tr>
         </table>
+        <br>
+        <br>
+
+        <div class="tbl-text">　(0121) 습식 불도저</div>
+        <table class="tbl open">
+            <thead>
+                <tr>
+                    <th rowspan="2">분류<br>번호</th>
+                    <th rowspan="2">규격<br>(ton)</th>
+                    <th rowspan="2">내용<br>시간</th>
+                    <th rowspan="2">연간표준<br>가동시간</th>
+                    <th rowspan="2">상각<br>비율</th>
+                    <th rowspan="2">정비<br>비율</th>
+                    <th rowspan="2">연간<br>관리<br>비율</th>
+                    <th colspan="4">시 간 당(10<sup>&minus;7</sup>)</th>
+                </tr>
+                <tr>
+                    <th>상각비<br>계수</th>
+                    <th>정비비<br>계수</th>
+                    <th>관리비<br>계수</th>
+                    <th>계</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right; padding-right: 15px;">0121-0004<br>0013</td>
+                    <td>4<br>13</td>
+                    <td>12,000<br>12,000</td>
+                    <td>1,250<br>1,250</td>
+                    <td>0.9<br>0.9</td>
+                    <td>0.7<br>0.7</td>
+                    <td>0.1<br>0.1</td>
+                    <td>750<br>750</td>
+                    <td>583<br>583</td>
+                    <td>478<br>478</td>
+                    <td>1,811<br>1,811</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="tbl-note">
+            <tr>
+                <td style="vertical-align: top;">[주]&nbsp;</td>
+                <td style="vertical-align: top;">①&nbsp;</td>
+                <td>규격은 작업상태에서의 중량을 말한다.</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;">②&nbsp;</td>
+                <td>삽삽날(귀삽날 포함)은 운전경비에서 별도 계상한다.</td>
+            </tr>
+        </table>
+
+
     </div>
 
     <!-- 기계가격 -->
@@ -562,6 +697,23 @@
                         154,841<br>
                         286,114<br>
                         362,697
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding-left: 10px;">
+                        습 지 불 도 저<br>
+                        <br>
+
+                    </td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        0121-0004<br>
+                        0013
+
+                    </td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        43,260<br>
+                        162,028
+
                     </td>
                 </tr>
             </tbody>
@@ -602,11 +754,18 @@
             laborResult: '',
 
             ct: {
-                '7ton': { 기계명: '불도저 (무한궤도)', 규격: '7 ton', 연료량: 9.0, 잡재료: 16, 기계가격: 73892, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
-                '10ton': { 기계명: '불도저 (무한궤도)', 규격: '10 ton', 연료량: 12.5, 잡재료: 16, 기계가격: 161250, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
-                '12ton': { 기계명: '불도저 (무한궤도)', 규격: '12 ton', 연료량: 14.6, 잡재료: 16, 기계가격: 185580, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
-                '19ton': { 기계명: '불도저(무한궤도)', 규격: '19 ton', 연료량: 25.0, 잡재료: 16, 기계가격: 289332, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
-                '32ton': { 기계명: '불도저 (무한궤도)', 규격: '32 ton', 연료량: 41.6, 잡재료: 16, 기계가격: 256354, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete1': { 기계명: '불도저 (무한궤도)', 규격: '7 ton', 연료량: 9.0, 잡재료: 16, 기계가격: 73892, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete2': { 기계명: '불도저 (무한궤도)', 규격: '10 ton', 연료량: 12.5, 잡재료: 16, 기계가격: 161250, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete3': { 기계명: '불도저 (무한궤도)', 규격: '12 ton', 연료량: 14.6, 잡재료: 16, 기계가격: 185580, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete4': { 기계명: '불도저(무한궤도)', 규격: '19 ton', 연료량: 25.0, 잡재료: 16, 기계가격: 289332, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete5': { 기계명: '불도저 (무한궤도)', 규격: '32 ton', 연료량: 41.6, 잡재료: 16, 기계가격: 256354, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+
+                'selete6': { 기계명: '불도저 (타이어)', 규격: '15 ton', 연료량: 19.2, 잡재료: 50, 기계가격: 154841, 손료: 1728, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete7': { 기계명: '불도저 (타이어)', 규격: '28 ton', 연료량: 36.0, 잡재료: 50, 기계가격: 286114, 손료: 1728, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete8': { 기계명: '불도저 (타이어)', 규격: '33 ton', 연료량: 42.4, 잡재료: 50, 기계가격: 362697, 손료: 1728, 시간계수: 1 / 10000, 조종원: 1 },
+
+                'selete9': { 기계명: '습지불도저', 규격: '4 ton', 연료량: 5.4, 잡재료: 23, 기계가격: 43260, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 },
+                'selete10': { 기계명: '습지 불도저', 규격: '13 ton', 연료량: 14.6, 잡재료: 23, 기계가격: 162028, 손료: 1811, 시간계수: 1 / 10000, 조종원: 1 }
             },
 
             item: {
@@ -630,6 +789,14 @@
                     obj.children = [];
                 }
                 return obj;
+            },
+
+            help_message() {
+                const banner = document.getElementById('noticeBanner');
+                if (!banner) return;
+                banner.style.display = (banner.style.display === 'none' || banner.style.display === '')
+                    ? 'flex'
+                    : 'none';
             },
 
             ensureOptionShape() {
@@ -712,39 +879,39 @@
                 this.item.table[2].재료비단가 = this.item.table[1].재료비;
             },
 
-        selectItem(key) {
-    const data = this.ct[key];
-    if (!data) return;
+            selectItem(key) {
+                const data = this.ct[key];
+                if (!data) return;
 
-    const fuelUnitPrice = Number(this.oil?.price) || 0;
-    const laborUnitPrice = Number(this.labor?.price) || 0;
-    const machineQty = Number(data.손료) * Number(data.시간계수);
-    const fuelQty = Number(data.연료량);
-    const miscQty = Number(data.잡재료) / 100;
-    const miscUnitPrice = fuelQty * fuelUnitPrice;
+                const fuelUnitPrice = Number(this.oil?.price) || 0;
+                const laborUnitPrice = Number(this.labor?.price) || 0;
+                const machineQty = Number(data.손료) * Number(data.시간계수);
+                const fuelQty = Number(data.연료량);
+                const miscQty = Number(data.잡재료) / 100;
+                const miscUnitPrice = fuelQty * fuelUnitPrice;
 
-    this.item.table = [
-        Object.assign(this.calcTable(data.기계명, data.규격, '대'), {
-            수량: String(machineQty),
-            경비단가: String(data.기계가격),
-            비고: '천단위'
-        }),
-        Object.assign(this.calcTable(this.oil.name, this.oil.spec, 'ℓ'), {
-            수량: String(fuelQty),
-            재료비단가: String(fuelUnitPrice)
-        }),
-        Object.assign(this.calcTable('잡재료', '주연료의 ' + data.잡재료 + '%', '%'), {
-            수량: String(miscQty),
-            재료비단가: String(miscUnitPrice)
-        }),
-        Object.assign(this.calcTable(this.labor.name, this.labor.spec, '인'), {
-            수량: String(this.laborResult || ''),
-            노무비단가: String(laborUnitPrice)
-        })
-    ];
+                this.item.table = [
+                    Object.assign(this.calcTable(data.기계명, data.규격, '대'), {
+                        수량: String(machineQty),
+                        경비단가: String(data.기계가격),
+                        비고: '천단위'
+                    }),
+                    Object.assign(this.calcTable(this.oil.name, this.oil.spec, 'ℓ'), {
+                        수량: String(fuelQty),
+                        재료비단가: String(fuelUnitPrice)
+                    }),
+                    Object.assign(this.calcTable('잡재료', '주연료의 ' + data.잡재료 + '%', '%'), {
+                        수량: String(miscQty),
+                        재료비단가: String(miscUnitPrice)
+                    }),
+                    Object.assign(this.calcTable(this.labor.name, this.labor.spec, '인'), {
+                        수량: String(this.laborResult || ''),
+                        노무비단가: String(laborUnitPrice)
+                    })
+                ];
 
-    this.saveToLocal();
-},
+                this.saveToLocal();
+            },
 
             calculateRate() {
                 try {
@@ -821,6 +988,7 @@
                 const machineRow1 = this.item.table[1] || {};
 
                 slotObj.운전경비 = {
+                    type: '일위대가',
                     품명: [machineRow.품명, machineRow.규격].filter(Boolean).join(' '),
                     규격: [machineRow1.품명, machineRow1.규격].filter(Boolean).join(', '),
                     단위: machineRow.단위 || '대',

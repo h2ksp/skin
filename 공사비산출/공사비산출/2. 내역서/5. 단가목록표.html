@@ -18,6 +18,14 @@
         background-color: rgba(249, 249, 249, 0.9);
     }
 
+    .unit-price-list .cost-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 12px 0;
+        text-align: left;
+    }
+
     .unit-price-list select {
 
         min-width: 180px;
@@ -186,7 +194,7 @@
         text-align: left;
         white-space: pre-wrap;
         word-break: break-all;
-        
+
         font-size: inherit;
     }
 </style>
@@ -211,16 +219,13 @@
                 <option :value="String(index)" x-text="group"></option>
             </template>
         </select>
+    </div>
 
-        <label for="unitPriceCost">비용 구분:</label>
-        <select id="unitPriceCost" x-model="costFilter">
-            <option value="">전체</option>
-            <option value="자재">자재</option>
-            <option value="노무">노무</option>
-            <option value="경비">경비</option>
-            <option value="도급자관급">도급자관급</option>
-            <option value="손료">손료</option>
-        </select>
+    <div class="cost-buttons" x-show="availableCosts.length > 0">
+        <button type="button" @click="costFilter = ''">전체</button>
+        <template x-for="costName in availableCosts" :key="costName">
+            <button type="button" @click="costFilter = costName" x-text="costName"></button>
+        </template>
     </div>
 
     <div class="status-bar">
@@ -246,8 +251,7 @@
                                 'col-category': col.kind === 'category',
                                 'col-unit': col.key === '단위',
                                 'col-amount': col.key === '합계'
-                            }"
-                            x-text="col.label"></th>
+                            }" x-text="col.label"></th>
                     </template>
                 </tr>
             </thead>
@@ -290,6 +294,7 @@
             activeProject: '',
             activeGroup: '',
             costFilter: '',
+            costOrder: ['자재', '도급자관급', '관급자관급', '노무', '경비', '손료'],
             costData: {},
             viewMode: 'option1',
             jsonExcludeKeys: ['children', 'showCost', 'selected', '수량', '재료비', '노무비', '경비', '합계'],
@@ -319,12 +324,33 @@
                 return this.costData?.[this.activeProject]?.옵션?.그룹명 || [];
             },
 
+            get availableCosts() {
+                if (!this.activeProject) return [];
+                const data = this.costData?.[this.activeProject]?.공종별내역서;
+                if (!data || typeof data !== 'object') return [];
+
+                const presentTypes = new Set();
+                this.extractAllItems(data).forEach(({ item, path }) => {
+                    const groupIndex = Number(path[0]);
+                    if (this.activeGroup !== '' && this.activeGroup !== String(groupIndex)) return;
+
+                    const type = String(item?.type ?? '').trim();
+                    if (!type || type === '일위대가') return;
+                    if (!type && Array.isArray(item?.children)) return;
+
+                    presentTypes.add(type);
+                });
+
+                return this.costOrder.filter(name => presentTypes.has(name));
+            },
+
             saveActiveProject() {
                 this.selectedRowKey = '';
                 const option = JSON.parse(localStorage.getItem('option') || '{}');
                 option.activeProject = this.activeProject;
                 localStorage.setItem('option', JSON.stringify(option));
                 this.activeGroup = '';
+                this.costFilter = '';
             },
 
             saveData() {
@@ -339,7 +365,6 @@
                 this.selectedRowKey = this.isSelected(row) ? '' : row.key;
             },
 
-            // 아이템의 특정 필드 값을 가져오는 함수
             itemValue(item, key) {
                 return item?.[key] ?? '';
             },
@@ -367,7 +392,6 @@
                 if (column.kind === 'category') return row.category;
                 return '';
             },
-
 
             updateItemField(item, column, event) {
                 const value = event.target.value;
@@ -448,7 +472,6 @@
                     }))
                 ];
             },
-
             get rows() {
                 if (!this.activeProject) return [];
 
@@ -467,6 +490,7 @@
                     if (!type && Array.isArray(item?.children)) return;
 
                     const category = type || '미분류';
+                    if (!this.costOrder.includes(category)) return;
                     if (this.costFilter && type !== this.costFilter) return;
                     if (item?.type === '일위대가') return;
 
@@ -496,7 +520,13 @@
 
                 this.extractAllItems(data).forEach(addItem);
 
-                return [...grouped.values()];
+                const list = [...grouped.values()];
+                const orderIndex = type => {
+                    const idx = this.costOrder.indexOf(type);
+                    return idx === -1 ? this.costOrder.length : idx;
+                };
+
+                return list.sort((a, b) => orderIndex(a.category) - orderIndex(b.category));
             },
 
             get selectedJson() {

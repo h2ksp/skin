@@ -471,6 +471,23 @@
             const AUTH_STATUS_URL = "https://h2ksp3.cafe24.com/accounts/auth-status/";
             const LOGOUT_URL = "https://h2ksp3.cafe24.com/accounts/auth-logout/";
 
+            function readLoginOption() {
+              const option = JSON.parse(localStorage.getItem("option") || "{}");
+              if (!option || typeof option !== "object" || Array.isArray(option)) {
+                throw new Error("로컬 저장소의 option 형식이 올바르지 않습니다.");
+              }
+              return option;
+            }
+
+            function clearLoginReturnState() {
+              const option = readLoginOption();
+              if (Object.prototype.hasOwnProperty.call(option, LOGIN_STORAGE_KEY)) {
+                delete option[LOGIN_STORAGE_KEY];
+                localStorage.setItem("option", JSON.stringify(option));
+              }
+              localStorage.removeItem(LOGIN_STORAGE_KEY);
+            }
+
             function buildLoginPageUrl(group, sub) {
               const target = new URL(LOGIN_PAGE_URL);
               if (group) target.searchParams.set("group", group);
@@ -489,7 +506,7 @@
 
                 async toggleLogin() {
                   if (this.loggedIn) {
-                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    clearLoginReturnState();
                     try {
                       const res = await fetch(LOGOUT_URL, {
                         method: "GET",
@@ -512,6 +529,7 @@
 
                   const payload = {
                     options: {
+                      key: LOGIN_STORAGE_KEY,
                       redirect: {
                         url: url.toString(),
                         group,
@@ -522,24 +540,30 @@
                     },
                   };
 
-                  localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(payload));
+                  const option = readLoginOption();
+                  option[LOGIN_STORAGE_KEY] = payload;
+                  localStorage.setItem("option", JSON.stringify(option));
+                  localStorage.removeItem(LOGIN_STORAGE_KEY);
                   window.location.href = buildLoginPageUrl(group, sub);
                 },
 
                 restoreAfterLogin() {
-                  const raw = localStorage.getItem(LOGIN_STORAGE_KEY);
-                  if (!raw) return false;
-
-                  let redirect = null;
-                  try {
-                    redirect = JSON.parse(raw)?.options?.redirect || null;
-                  } catch (_) {
-                    localStorage.removeItem(LOGIN_STORAGE_KEY);
-                    return false;
+                  const option = readLoginOption();
+                  let payload = option[LOGIN_STORAGE_KEY];
+                  if (!payload) {
+                    const raw = localStorage.getItem(LOGIN_STORAGE_KEY);
+                    if (!raw) return false;
+                    try {
+                      payload = JSON.parse(raw);
+                    } catch (_) {
+                      localStorage.removeItem(LOGIN_STORAGE_KEY);
+                      return false;
+                    }
                   }
 
+                  const redirect = payload?.options?.redirect;
                   if (!redirect || !redirect.url) {
-                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    clearLoginReturnState();
                     return false;
                   }
 
@@ -549,7 +573,7 @@
                   }
 
                   window.scrollTo(redirect.scrollX || 0, redirect.scrollY || 0);
-                  localStorage.removeItem(LOGIN_STORAGE_KEY);
+                  clearLoginReturnState();
                   return false;
                 },
 
@@ -599,7 +623,7 @@
               <!-- Main Page Content -->
               <MainPage>
 
-                
+
                 <style type="text/css">
                   body.is-main #sidebar-left,
                   body.is-main #sidebar {
@@ -680,10 +704,11 @@
 
                       <div style="text-align: center; font-size: 12px; color: #71717a;">Standard Cost Engineering
                         Reference</div>
-                      <h1 style="text-align: center; margin: 12px 0 16px;">설계부터 공무까지,<br /><br />가장 직관적인 표준 내역 기준</h1>
-                      <p style="text-align: center; margin: 0 0 20px;">방대한 토목·건축 표준품셈과 표준시장단가를 낭비 없이 검색하고 확인하세요.</p>
+                      <h1 style="text-align: center; margin: 12px 0 16px;">예정가격 산정기준<br /><br />가장 직관적인 표준 내역서</h1>
+                      <p style="text-align: center; margin: 0 0 20px;">프로젝트의 시공예정가격을 산정할 수 있어요.</p>
                       <div style="text-align: center; margin: 24px 0;">
-                        <a href="https://study-with-words.blogspot.com/2026/10/blog-post_95.html?group=group3&sub=sub1">공사비 산출하기
+                        <a href="https://study-with-words.blogspot.com/2026/10/blog-post_95.html?group=group3&sub=sub1">공사비
+                          산출하기
                         </a>
                         </a>
                       </div>
@@ -790,7 +815,6 @@
       }
 
       const searchEnabled = groupKey === "group1" || groupKey === "group2";
-      const searchStorageKey = `toc-search:${groupKey}:${subKey}`;
 
       for (const sKey in data.subTabs) {
         const btn = document.createElement("button");
@@ -822,9 +846,7 @@
         searchInput.placeholder = "목차 검색";
         searchInput.setAttribute("aria-label", "목차 검색");
 
-        const savedOption = JSON.parse(localStorage.getItem("option") || "{}");
-        searchInput.value =
-          savedOption["toc-search"]?.[searchStorageKey] || "";
+        searchInput.value = new URLSearchParams(window.location.search).get("search") || "";
 
         searchInput.style.display = "block";
         searchInput.style.boxSizing = "border-box";
@@ -932,11 +954,6 @@
         const applySearch = () => {
           const query = searchInput.value.trim().toLowerCase();
           const isCodeQuery = /^\d+(?:-\d+)*$/.test(query);
-
-          const savedOption = JSON.parse(localStorage.getItem("option") || "{}");
-          savedOption["toc-search"] ??= {};
-          savedOption["toc-search"][searchStorageKey] = searchInput.value;
-          localStorage.setItem("option", JSON.stringify(savedOption));
 
           if (!query) {
             categoryEntries.forEach(category => {

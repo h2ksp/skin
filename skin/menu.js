@@ -3357,9 +3357,10 @@ const menuData = {
                 items:
                   [
                     { text: "원가계산서", url: "https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&sub=sub4" },
-                    { text: "공종별 내역서 *", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
-                    { text: "일위대가", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
-                    { text: "중기단가산출", url: "#4-1" },
+                    { text: "공종별 내역서", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
+                    { text: "항목추가 *", url: "https://study-with-words.blogspot.com/2026/11/blog-post_12.html?group=group3&sub=sub1" },
+                    { text: "일위대가 리스트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
+                    { text: "중기단가 산출리스트", url: "https://study-with-words.blogspot.com/2026/11/blog-post_607.html?group=group3&sub=sub1" },
                     { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
                   ]
               },
@@ -3406,7 +3407,7 @@ const menuData = {
               {
                 secTitle: "WORK",
                 items: [
-                  { text: "단가산출", url: "https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3" },
+                  { text: "단가산출 작성노트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3" },
                   { text: "등록리스트", url: "https://study-with-words.blogspot.com/2026/11/blog-post_21.html?group=group3&sub=sub3" },
 
                 ]

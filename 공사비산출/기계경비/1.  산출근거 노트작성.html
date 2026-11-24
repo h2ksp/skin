@@ -18,8 +18,12 @@
         width: 330px;
     }
 
-    .machine-note-register-btn {
+    .machine-note-reset-btn {
         margin-left: auto;
+        cursor: pointer;
+    }
+
+    .machine-note-register-btn {
         cursor: pointer;
     }
 
@@ -97,7 +101,8 @@
     .machine-note-table input,
     .machine-note-table input:focus {
         width: 100%;
-        border-bottom: none;
+        border-bottom: 0 !important;
+        border-bottom-width: 0 !important;
     }
 
     .machine-note-table .money {
@@ -161,37 +166,90 @@
     .machine-note-detail-editor {
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
         width: 100%;
-        min-height: 216px;
-        margin: 0;
+        min-height: 516px;
+        margin-top: 20px;
         box-sizing: border-box;
         resize: vertical;
         border: 1px solid #cbd5e1;
         border-radius: 3px;
-        padding: 11px 11px;
+        padding: 21px 21px;
         text-align: left;
         background: #fff;
         font-size: 13px;
-        line-height: 1.6;
+        line-height: 1.8;
     }
 
     .machine-note-detail-preview {
+        /* font-family: 'Consolas', 'Monaco', 'Courier New', monospace; */
+        line-height: 1.8;
         margin: 0;
         padding-left: 15px;
         white-space: pre-wrap;
         font: inherit;
         font-size: 15px;
     }
+
+    .machine-note-variable-list {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 4px 8px;
+        margin-top: 4px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .machine-note-variable-list span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @media print {
+
+        .machine-note-actions,
+        .machine-note-toolbar {
+            display: none;
+
+        }
+    }
 </style>
 
-<script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/master-items.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/h2ksp/skin@main/skin/machine_list.js"></script>
+
+
+<div id="noticeBanner"
+    style="display: none; background: linear-gradient(135deg, #fffef7, #fffde7); border: 2px dashed #ef5350; border-radius: 8px; padding: 12px 20px; justify-content: space-between; align-items: flex-start; font-size: 14px; position: sticky; top: 10px; z-index: 9999; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div style="display: flex; align-items: flex-start; gap: 8px; color: #333333;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="3.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            style="transform: rotate(-8deg); flex-shrink: 0; margin-top: 2px;">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span style="line-height: 1.45;">
+            항목을 추가한 후 운전경비와 시간당작업량를 각각 클릭해서 값 입력<br>
+            추가한 항목은 더블클릭하면 수정 할 수 있음.<br>
+            모양 하단의 변수로도 편집 가능.
+        </span>
+    </div>
+    <span onclick="document.getElementById('noticeBanner').style.display='none'"
+        style="cursor: pointer; color: #888; font-size: 13px; text-decoration: underline; white-space: nowrap; margin-left: 12px;"
+        onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color='#888'">닫기</span>
+</div>
+
 
 <div id="print-container" class="machine-note" x-data="sketchNoteApp()"
     x-init="$watch('myData', () => saveMyDataToLocalStorage()); $watch('editForm', () => saveActiveObjectToLocalStorage(), { deep: true }); $watch('workItems', () => saveActiveObjectToLocalStorage(), { deep: true })">
     <div class="machine-note-toolbar">
         <input type="text" x-model="inputQuery" x-on:keyup="handleKeyup($event)"
             x-on:keydown.enter.prevent="handleEnterKey()" placeholder="이곳에 숫자 입력 후 스페이스 2번 또는 엔터">
-        <button type="button" class="machine-note-register-btn" x-on:click="registerItem()">등록하기</button>
+
+        <button type="button" class="machine-note-reset-btn" x-on:click="resetNote()">다시쓰기</button>
+        <button type="button" class="machine-note-register-btn" x-on:click="registerItem()"
+            x-text="activeMode === 'work' ? '등록하기' : '편집저장'"></button>
+        <button @click="help_message()">&nbsp;도움말&nbsp;</button>
     </div>
+
+
 
     <table class="machine-note-table">
         <thead>
@@ -260,13 +318,9 @@
                     <div class="machine-note-detail-edit-wrap" x-show="editingDetailIndex === index">
                         <textarea class="machine-note-detail-editor" x-model="item.detail"
                             placeholder="내용을 자유롭게 입력하세요. 예: 품명: {{품명}}"></textarea>
-                        <div style="font-size: 14px; color: #666; margin-top: 4px;">
-
-                            <template x-for="(key, kIdx) in getObjectKeys(item?.시간당작업량)" :key="key">
-                                <span>
-                                    <span x-text="'{{작업량.' + key + '}}'"></span>
-                                    <span x-if="kIdx < getObjectKeys(item?.시간당작업량).length - 1">, &nbsp;</span>
-                                </span>
+                        <div class="machine-note-variable-list">
+                            <template x-for="key in getObjectKeys(item?.시간당작업량)" :key="'work-' + key">
+                                <span x-text="'{{시간당작업량.' + key + '}}'"></span>
                             </template>
                         </div>
                     </div>
@@ -275,6 +329,7 @@
             </div>
         </template>
     </div>
+
 </div>
 
 <script>
@@ -282,8 +337,7 @@
         return {
             inputQuery: '',
             currentSiteMode: 'site',
-            activeSource: 'work',     // 'edit' 또는 'work' (option.machineData.activeSource)
-            editOriginPath: '',       // 편집 데이터가 온 위치값 (option.machineData.editOriginPath)
+            activeMode: 'work',
             editForm: {
                 id: '',
                 품명: '',
@@ -297,22 +351,30 @@
             workItems: [],
             myData: [],
             editingDetailIndex: null,
-            validMasterItems: [
-              
-                {
-                    id: '2',
-                    품명: '리퍼(유압식)',
-                    규격: '',
-                    buttons: [
-                        { name: '운전경비', link: '#' },
-                        { name: '시간당작업량', link: '#' }
-                    ],
-                    detail: `분류: 토공기계
+            validMasterItems: (() => {
+                const localItems = [
+                    {
+                        id: '2',
+                        품명: '리퍼(유압식)',
+                        규격: '',
+                        buttons: [
+                            { name: '운전경비', link: '#' },
+                            { name: '시간당작업량', link: '#' }
+                        ],
+                        detail: `분류: 토공기계
 품명: {{품명}}
 규격: {{규격}}
 비고: `,
-                },
-            ],
+                    }
+                ];
+                const cdnItems = typeof validMasterItems !== 'undefined'
+                    ? validMasterItems
+                    : [];
+                const mergedItems = new Map(
+                    [...cdnItems, ...localItems].map(item => [String(item.id), item])
+                );
+                return [...mergedItems.values()];
+            })(),
 
             createEmptyForm() {
                 return {
@@ -341,7 +403,13 @@
                     합계: 0
                 };
             },
-
+            help_message() {
+                const banner = document.getElementById('noticeBanner');
+                if (!banner) return;
+                banner.style.display = (banner.style.display === 'none' || banner.style.display === '')
+                    ? 'flex'
+                    : 'none';
+            },
             sanitizeChildItem(item) {
                 if (!item || typeof item !== 'object') {
                     return {
@@ -510,20 +578,6 @@
                 );
             },
 
-            hasObjectValue(obj) {
-                if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
-                const hasTop = Boolean(
-                    (obj.품명 && String(obj.품명).trim()) ||
-                    (obj.규격 && String(obj.규격).trim()) ||
-                    (obj.단위 && String(obj.단위).trim()) ||
-                    (Number(obj.재료비) || 0) > 0 ||
-                    (Number(obj.노무비) || 0) > 0 ||
-                    (Number(obj.경비) || 0) > 0
-                );
-                const hasChildren = Array.isArray(obj.children) && obj.children.length > 0;
-                return hasTop || hasChildren;
-            },
-
             normalizeSourceObject(obj) {
                 const base = this.createEmptyForm();
                 if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
@@ -544,11 +598,15 @@
                 const mat = this.sumChildren('재료비');
                 const lab = this.sumChildren('노무비');
                 const exp = this.sumChildren('경비');
-                this.editForm.재료비 = mat;
-                this.editForm.노무비 = lab;
-                this.editForm.경비 = exp;
-                this.editForm.합계 = mat + lab + exp;
+                const roundCost = value => Number.isFinite(value)
+                    ? Number(value.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }))
+                    : value;
+                this.editForm.재료비 = roundCost(mat);
+                this.editForm.노무비 = roundCost(lab);
+                this.editForm.경비 = roundCost(exp);
+                this.editForm.합계 = roundCost(mat + lab + exp);
             },
+
 
             init() {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -586,11 +644,21 @@
                 parsedOption.machineData.work = this.normalizeSourceObject(parsedOption.machineData.work);
                 parsedOption.machineData.edit = this.normalizeSourceObject(parsedOption.machineData.edit);
 
-                if (parsedOption.machineData.activeSource !== 'edit' && parsedOption.machineData.activeSource !== 'work') {
-                    parsedOption.machineData.activeSource = 'work';
+                delete parsedOption.machineData.activeSource;
+                delete parsedOption.machineData.editOriginPath;
+                if (parsedOption.machineData.activeMode == null) {
+                    parsedOption.machineData.activeMode = 'work';
                 }
-                if (typeof parsedOption.machineData.editOriginPath !== 'string') {
-                    parsedOption.machineData.editOriginPath = '';
+                if (parsedOption.machineData.activeMode === 'edit') {
+                    const editParam = new URLSearchParams(window.location.search).get('edit');
+                    if (editParam !== null && /^\d+$/.test(editParam) && Number.isSafeInteger(Number(editParam))) {
+                        parsedOption.machineData.activeMode = `edit-${editParam}`;
+                    }
+                }
+                const mode = parsedOption.machineData.activeMode;
+                const editMatch = typeof mode === 'string' ? /^edit-(\d+)$/.exec(mode) : null;
+                if (mode !== 'work' && (!editMatch || !Number.isSafeInteger(Number(editMatch[1])))) {
+                    throw new Error('기계 데이터의 작업 모드가 올바르지 않습니다.');
                 }
                 if (!Array.isArray(parsedOption['나의데이터'])) {
                     parsedOption['나의데이터'] = [];
@@ -600,27 +668,18 @@
 
             loadMachineDataFromLocalStorage() {
                 const parsedOption = this.ensureOptionShape();
-                const editObj = parsedOption.machineData.edit;
-                const workObj = parsedOption.machineData.work;
-                const editHasValue = this.hasObjectValue(editObj);
-
-                if (editHasValue) {
-                    this.activeSource = 'edit';
-                    this.editOriginPath = parsedOption.machineData.editOriginPath || 'option.나의데이터';
-                    const { children, ...topFields } = editObj;
-                    this.editForm = { ...this.createEmptyForm(), ...topFields };
-                    this.workItems = children.map(ch => this.sanitizeChildItem(ch));
-                } else {
-                    this.activeSource = 'work';
-                    this.editOriginPath = '';
-                    parsedOption.machineData.editOriginPath = '';
-                    const { children, ...topFields } = workObj;
-                    this.editForm = { ...this.createEmptyForm(), ...topFields };
-                    this.workItems = children.map(ch => this.sanitizeChildItem(ch));
+                this.activeMode = parsedOption.machineData.activeMode;
+                if (this.activeMode !== 'work') {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('edit', this.activeMode.slice(5));
+                    window.history.replaceState(window.history.state, '', url.href);
                 }
+                const source = this.activeMode === 'work' ? parsedOption.machineData.work : parsedOption.machineData.edit;
+                const { children, ...topFields } = source;
+                this.editForm = { ...this.createEmptyForm(), ...topFields };
+                this.workItems = children.map(ch => this.sanitizeChildItem(ch));
 
                 this.syncFormTotals();
-                parsedOption.machineData.activeSource = this.activeSource;
                 localStorage.setItem('option', JSON.stringify(parsedOption));
             },
 
@@ -646,10 +705,7 @@
                     children: cleanedChildren
                 };
 
-                parsedOption.machineData.activeSource = this.activeSource;
-                parsedOption.machineData.editOriginPath = this.editOriginPath;
-
-                if (this.activeSource === 'edit') {
+                if (this.activeMode !== 'work') {
                     parsedOption.machineData.edit = sourceObj;
                 } else {
                     parsedOption.machineData.work = sourceObj;
@@ -658,34 +714,14 @@
                 localStorage.setItem('option', JSON.stringify(parsedOption));
             },
 
-            writeByOriginPath(originPath, payload) {
-                const parsedOption = this.ensureOptionShape();
-                const normalized = (originPath || '').replace(/^option\.?/, '');
-                if (!normalized || normalized === '나의데이터') {
-                    this.myData.push(payload);
-                    return;
-                }
+            resetNote() {
+                if (!confirm('현재 작성 내용을 모두 초기화하시겠습니까?')) return;
 
-                const match = normalized.match(/^([^\[\]]+)\[(\d+)\]$/);
-                if (match) {
-                    const key = match[1];
-                    const idx = Number(match[2]);
-                    if (!Array.isArray(parsedOption[key])) {
-                        parsedOption[key] = [];
-                    }
-                    parsedOption[key][idx] = payload;
-                    localStorage.setItem('option', JSON.stringify(parsedOption));
-                    if (key === '나의데이터') {
-                        this.myData = parsedOption['나의데이터'];
-                    }
-                    return;
-                }
-
-                if (!Array.isArray(parsedOption[normalized])) {
-                    parsedOption[normalized] = [];
-                }
-                parsedOption[normalized].push(payload);
-                localStorage.setItem('option', JSON.stringify(parsedOption));
+                this.inputQuery = '';
+                this.editForm = this.createEmptyForm();
+                this.workItems = [];
+                this.editingDetailIndex = null;
+                this.saveActiveObjectToLocalStorage();
             },
 
             registerItem() {
@@ -705,12 +741,13 @@
                     return;
                 }
 
-                if (!confirm('현재 내용을 등록하시겠습니까?')) {
+                if (!confirm(this.activeMode === 'work' ? '현재 내용을 등록하시겠습니까?' : '현재 편집 내용을 저장하시겠습니까?')) {
                     return;
                 }
 
                 const payload = {
                     id: this.editForm.id || '',
+                    type: '건설기계',
                     품명,
                     규격,
                     단위,
@@ -718,21 +755,30 @@
                     노무비,
                     경비,
                     합계,
-                    activeSource: this.activeSource,
                     children: childrenList
                 };
 
-                if (this.activeSource === 'edit') {
-                    this.writeByOriginPath(this.editOriginPath, payload);
-
+                if (this.activeMode !== 'work') {
                     const parsedOption = this.ensureOptionShape();
-                    parsedOption.machineData.edit = { ...this.createEmptyForm(), children: [] };
-                    parsedOption.machineData.editOriginPath = '';
-                    parsedOption.machineData.activeSource = 'work';
-                    localStorage.setItem('option', JSON.stringify(parsedOption));
+                    const editMatch = /^edit-(\d+)$/.exec(this.activeMode);
+                    const editIndex = editMatch ? Number(editMatch[1]) : -1;
+                    if (parsedOption.machineData.activeMode !== this.activeMode ||
+                        editIndex < 0 || !Number.isSafeInteger(editIndex) ||
+                        editIndex >= parsedOption['나의데이터'].length) {
+                        alert('수정할 데이터의 인덱스가 올바르지 않습니다.');
+                        return;
+                    }
 
-                    this.activeSource = 'work';
-                    this.editOriginPath = '';
+                    parsedOption['나의데이터'][editIndex] = payload;
+                    parsedOption.machineData.edit = { ...this.createEmptyForm(), children: [] };
+                    parsedOption.machineData.activeMode = 'work';
+                    localStorage.setItem('option', JSON.stringify(parsedOption));
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('edit');
+                    window.history.replaceState(window.history.state, '', url.href);
+                    this.myData = parsedOption['나의데이터'];
+
+                    this.activeMode = 'work';
                     const { children, ...topFields } = parsedOption.machineData.work;
                     this.editForm = { ...this.createEmptyForm(), ...topFields };
                     this.workItems = children.map(ch => this.sanitizeChildItem(ch));
@@ -799,7 +845,7 @@
                     params.push('site=cost');
                 }
                 if (typeof index === 'number') {
-                    const sourceKey = this.activeSource === 'edit' ? 'edit' : 'work';
+                    const sourceKey = this.activeMode === 'work' ? 'work' : 'edit';
                     params.push(`${sourceKey}=${index}`);
                 }
 

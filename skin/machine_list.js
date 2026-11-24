@@ -8,6 +8,20 @@ const validMasterItems = [
             { name: '시간당작업량', link: 'https://study-with-words.blogspot.com/2026/10/blog-post_408.html?group=group3&sub=sub3' }
         ],
         detail: `
+            q˚:　{{시간당작업량.q0}}
+            e :　{{시간당작업량.e}}
+            q :　q˚×e = {{시간당작업량.q}}
+            f :　{{시간당작업량.valF}}
+            E :　{{시간당작업량.valE}}
+            cm:　{{시간당작업량.cm}}
+            L:　{{시간당작업량.valL}}
+            V1:　{{시간당작업량.v1}}
+            V2:　{{시간당작업량.v2}}
+            t:　{{시간당작업량.valT}}
+            
+            시간당 작업량 (M3/hr)
+            Q :　( 60 × q × f × E ) / cm =  {{시간당작업량.Q}}
+            
             재료비:  {{운전경비.재료비}}원/hr  ÷  {{시간당작업량.Q}}m3/hr  =  {{재료비}}원/m3
             노무비:  {{운전경비.노무비}}원/hr  ÷  {{시간당작업량.Q}}m3/hr  =  {{노무비}}원/m3
             경　비:  {{운전경비.경비}}원/hr  ÷  {{시간당작업량.Q}}m3/hr  =  {{경비}}원/m3
