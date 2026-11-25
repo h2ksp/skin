@@ -24,6 +24,14 @@
         margin-bottom: 8px;
     }
 
+    .sticky-search-controls {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: #fff;
+        padding-bottom: 4px;
+    }
+
     .table-container {
         overflow-x: auto;
     }
@@ -85,121 +93,54 @@
         /* 연한 파란색 계열 (원하는 색으로 변경 가능) */
     }
 
-    /* 웹 주소창 형태의 경로 선택 바 컨테이너 */
-    .native-path-bar {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.85rem;
-    }
-
-    /* 브라우저 기본 셀렉트 스타일 다듬기 */
-    .path-select {
-        font-size: 0.85rem;
-        cursor: pointer;
-        font-family: inherit;
-        border: none;
-    }
-
-    .path-select:hover {
-        border-color: #94a3b8;
-    }
-
-    /* 슬래시(/) 구분자 */
-    .path-slash {
-        color: #94a3b8;
-        font-weight: bold;
-        user-select: none;
-    }
 </style>
-
-
-<div id="noticeBanner"
-    style="background: linear-gradient(135deg, #fffef7, #fffde7); border: 2px dashed #ef5350; border-radius: 8px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; position: sticky; top: 10px; z-index: 9999; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-    <div style="display: flex; align-items: center; gap: 8px; color: #333333;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="3.5"
-            stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-8deg);">
-            <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>조달청에서 제공하는 가격정보 입니다. </span>
-    </div>
-    <span onclick="document.getElementById('noticeBanner').style.display='none'"
-        style="cursor: pointer; color: #888; font-size: 13px; text-decoration: underline; white-space: nowrap;"
-        onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color='#888'">닫기</span>
-</div>
-
 
 
 <div x-data="materialSearch">
 
-    <!-- 🔗 주소창 스타일 3단 경로 선택 바 (기본 select 버전) -->
-    <div class="native-path-bar">
-        <label>　*저장위치: </label>
+    <div class="sticky-search-controls">
+        <div id="noticeBanner"
+            style="background: linear-gradient(135deg, #fffef7, #fffde7); border: 2px dashed #ef5350; border-radius: 8px; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="display: flex; align-items: center; gap: 8px; color: #333333;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="3.5"
+                    stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-8deg);">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>조달청에서 제공하는 가격정보 입니다. </span>
+            </div>
+            <span onclick="document.getElementById('noticeBanner').style.display='none'"
+                style="cursor: pointer; color: #888; font-size: 13px; text-decoration: underline; white-space: nowrap;"
+                onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color='#888'">닫기</span>
+        </div>
 
-        <!-- 1단계: 프로젝트명 -->
-        <select class="path-select" x-model="selectedProjectKey"
-            @change="selectedCategoryKey = ''; selectedSubItemKey = ''; saveSelectionState()">
-            <option value="">프로젝트 선택</option>
-            <template x-for="(proj, pKey) in availableProjects" :key="pKey">
-                <option :value="pKey" x-text="proj.name || pKey"></option>
+        <!-- 1) 상단 검색 툴바 영역 (조달청 가격정보 분류 선택 + 품명 검색) -->
+        <div x-show="showSearchBar" class="search-toolbar">
+            <label for="apiSelect">분류:&nbsp;</label>
+            <select id="apiSelect" x-model="selectedApiId" @change="loadData()">
+                <template x-for="api in apiList" :key="api.id">
+                    <option :value="api.id" x-text="api.name"></option>
+                </template>
+            </select>
+
+            <label for="searchNm"> 품명:&nbsp;</label>
+            <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm" @keyup.enter="filterItems()">
+            &nbsp;
+            <button type="button" @click="filterItems()" :disabled="loading">검색하기</button>
+            &nbsp;
+            <button type="button" @click="registerFinalItem(selectedItem)"
+                :disabled="loading || !selectedItem">등록하기</button>
+        </div>
+
+        <!-- 2) 응답결과 모드 선택 바 (라디오 버튼) -->
+        <div x-show="shouldShowRadioBar()" style="margin-bottom: 10px;">
+            <span id="status" x-text="statusMessage"></span>&nbsp;　　&nbsp;
+            <template x-for="mode in currentApi.resultModes" :key="mode.id">
+                <label style="margin-right: 12px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="radio" name="result_mode_group" :value="mode.id" x-model="selectedRegType">
+                    <span x-text="mode.label"></span>
+                </label>
             </template>
-        </select>
-
-        <!-- 구분자 -->
-        <span class="path-slash" x-show="selectedProjectKey">/</span>
-
-        <!-- 2단계: 공종명 -->
-        <select class="path-select" x-model="selectedCategoryKey"
-            @change="selectedSubItemKey = ''; saveSelectionState()">
-            <option value="">공종 선택</option>
-            <template x-for="cat in availableCategories" :key="cat.id">
-                <option :value="cat.id" x-text="cat.name"></option>
-            </template>
-        </select>
-
-        <!-- 구분자 -->
-        <span class="path-slash" x-show="selectedCategoryKey && availableSubItems.length > 0">/</span>
-
-        <!-- 3단계: 일위대가 -->
-        <select class="path-select" x-model="selectedSubItemKey" @change="saveSelectionState()">
-            <option value="">-- 해당 없음 --</option>
-            <template x-for="sub in availableSubItems" :key="sub.id">
-                <option :value="sub.id" x-text="sub.name"></option>
-            </template>
-        </select>
-
-    </div>
-
-
-
-    <!-- 1) 상단 검색 툴바 영역 (조달청 가격정보 분류 선택 + 품명 검색) -->
-    <div x-show="showSearchBar" class="search-toolbar">
-        <label for="apiSelect">분류:&nbsp;</label>
-        <select id="apiSelect" x-model="selectedApiId" @change="loadData()">
-            <template x-for="api in apiList" :key="api.id">
-                <option :value="api.id" x-text="api.name"></option>
-            </template>
-        </select>
-
-        <label for="searchNm"> 품명:&nbsp;</label>
-        <input type="text" id="searchNm" placeholder="검색어 입력" x-model="searchNm" @keyup.enter="filterItems()">
-        &nbsp;
-        <button type="button" @click="filterItems()" :disabled="loading">검색하기</button>
-        &nbsp;
-        <button type="button" @click="registerFinalItem(selectedItem)"
-            :disabled="loading || !selectedItem">등록하기</button>
-    </div>
-
-    <!-- 2) 응답결과 모드 선택 바 (라디오 버튼) -->
-    <div x-show="shouldShowRadioBar()" style="margin-bottom: 10px;">
-        <!-- 3) 상태 메시지 -->
-        <span id="status" x-text="statusMessage"></span>&nbsp;　　&nbsp;
-        <template x-for="mode in currentApi.resultModes" :key="mode.id">
-            <label style="margin-right: 12px; cursor: pointer; font-size: 0.85rem;">
-                <input type="radio" name="result_mode_group" :value="mode.id" x-model="selectedRegType">
-                <span x-text="mode.label"></span>
-            </label>
-        </template>
+        </div>
     </div>
 
     <!-- 4) 메인 결과 목록 테이블 -->
@@ -305,45 +246,8 @@
                 }
             ],
 
-            // 상태 변수
-            availableProjects: {},
-
-            // 프로젝트명
-            selectedProjectKey: "",
-
-            selectedCategoryKey: "",
-            selectedSubItemKey: "",
-            openDropdown: null,
-
-
             init() {
-                this.loadCostData();
                 this.loadData();
-                // 💡 로컬스토리지 'option'에서 comboboxsave 불러와서 복구
-                try {
-                    const savedOpt = JSON.parse(localStorage.getItem("option"));
-                    if (savedOpt && savedOpt.comboboxsave) {
-                        this.selectedProjectKey = savedOpt.comboboxsave.projectKey || "";
-                        this.selectedCategoryKey = savedOpt.comboboxsave.categoryKey || "";
-                        this.selectedSubItemKey = savedOpt.comboboxsave.subItemKey || "";
-                    }
-                } catch (e) {
-                    console.error("옵션 로드 실패:", e);
-                }
-            },
-
-            loadCostData() {
-                try {
-                    const saved = localStorage.getItem("cost");
-                    this.availableProjects = saved ? JSON.parse(saved) : {};
-                } catch (e) {
-                    console.error("로컬스토리지 로드 실패:", e);
-                    this.availableProjects = {};
-                }
-            },
-            // 강제 토글 함수 (이미 열려있으면 닫고, 아니면 염)
-            toggleDropdown(menuName) {
-                this.openDropdown = this.openDropdown === menuName ? null : menuName;
             },
 
             get selectedItem() {
@@ -351,95 +255,6 @@
                     ? null
                     : this.filteredItems[this.selectedRowIndex] ?? null;
             },
-            selectProject(pKey) {
-                this.selectedProjectKey = pKey;
-                this.selectedCategoryKey = "";
-                this.selectedSubItemKey = "";
-                this.openDropdown = null;
-            },
-
-            selectCategory(cId) {
-                this.selectedCategoryKey = cId;
-                this.selectedSubItemKey = "";
-                this.openDropdown = null;
-            },
-
-            selectSubItem(sId) {
-                this.selectedSubItemKey = sId;
-                this.openDropdown = null;
-            },
-
-            // 선택된 공종의 이름을 반환
-            // 1. 공종 목록 (그룹명 + 카테고리명 조합해서 1차원 배열로 쫙 펼치기)
-            get availableCategories() {
-                if (!this.selectedProjectKey) return [];
-                const proj = this.availableProjects[this.selectedProjectKey];
-
-                const costList = proj.공종별내역서 || [];
-                const groups = proj.옵션?.그룹명 || [];
-                let categories = [];
-
-                // 2차원 배열을 순회하면서 하나씩 깔끔하게 꺼내기
-                costList.forEach((groupArray, gIdx) => {
-                    if (!Array.isArray(groupArray)) return;
-
-                    // 해당 그룹의 이름 가져오기 (문자열 또는 객체 대응)
-                    let groupName = groups[gIdx] || '';
-                    if (typeof groupName === 'object') groupName = groupName.name || groupName.title || '';
-
-                    groupArray.forEach((item, cIdx) => {
-                        const itemName = item.name || item.title || '이름없음';
-                        // 그룹명이 있으면 "그룹명     카테고리명", 없으면 그냥 카테고리명
-                        const displayName = groupName ? `${groupName}     ${itemName}` : itemName;
-
-                        categories.push({
-                            id: `${gIdx}-${cIdx}`, // 고유 ID
-                            name: displayName,      // 화면에 보일 이름
-                            original: item          // 3단계(일위대가) 찾기용 원본 객체
-                        });
-                    });
-                });
-
-                return categories;
-            },
-
-            // 2. 일위대가(하위 항목) 목록
-            get availableSubItems() {
-                if (!this.selectedCategoryKey) return [];
-
-                // 방금 고른 공종 찾기
-                const selected = this.availableCategories.find(c => String(c.id) === String(this.selectedCategoryKey));
-                if (!selected || !selected.original) return [];
-
-                // 원본 객체에서 children 꺼내기
-                const subList = selected.original.children || [];
-
-                // 💡 원본 객체는 절대 건드리지 않고, 
-                // 원본 배열에서의 진짜 인덱스(realIdx)를 id로 박아주기!
-                const filteredList = [];
-                subList.forEach((sub, realIdx) => {
-                    if (sub.type === '일위대가') {
-                        filteredList.push({
-                            id: realIdx, // 원본 subList에서의 진짜 위치
-                            name: sub.품목 || sub.명칭 || '이름 없음'
-                        });
-                    }
-                });
-
-                return filteredList;
-            },
-
-            // 3. 이름 찾아주는 도우미 함수들
-            getCategoryName(cId) {
-                const cat = this.availableCategories.find(c => String(c.id) === String(cId));
-                return cat ? cat.name : '공종 선택 ▾';
-            },
-
-            getSubItemName(sId) {
-                const sub = this.availableSubItems.find(s => String(s.id) === String(sId));
-                return sub ? sub.name : '일위대가 선택 ▾';
-            },
-
 
             // 현재 선택된 API 객체 반환
             get currentApi() {
@@ -506,7 +321,9 @@
 
                 try {
                     const response = await fetch(targetUrl);
-                    if (!response.ok) throw new Error(`HTTP 에러! 상태 코드: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${targetUrl}`);
+                    }
 
                     const jsonObj = await response.json();
                     let rawItems = jsonObj?.response?.body?.items || jsonObj || [];
@@ -531,27 +348,6 @@
                     this.loading = false;
                 }
             },
-            // 현재 선택된 상태를 로컬스토리지의 'option' 최상위 키에 저장
-            saveSelectionState() {
-                // 기존 option 데이터를 불러오거나 없으면 빈 객체 생성
-                let savedOpt = {};
-                try {
-                    savedOpt = JSON.parse(localStorage.getItem("option")) || {};
-                } catch (e) {
-                    savedOpt = {};
-                }
-
-                // comboboxsave 객체에 현재 선택값 담기
-                savedOpt.comboboxsave = {
-                    projectKey: this.selectedProjectKey,
-                    categoryKey: this.selectedCategoryKey,
-                    subItemKey: this.selectedSubItemKey
-                };
-
-                // 로컬스토리지 최상위 'option'에 저장
-                localStorage.setItem("option", JSON.stringify(savedOpt));
-            },
-
             filterItems() {
                 if (this.allItems.length === 0) return;
                 const query = this.searchNm.trim().toLowerCase();
@@ -578,72 +374,46 @@
             },
 
             registerFinalItem(item) {
-                // 1. 프로젝트랑 공종이 선택되어 있는지 체크
-                if (!this.selectedProjectKey) {
-                    alert("프로젝트를 선택해주세요!");
-                    return;
-                }
-                if (!this.selectedCategoryKey) {
-                    alert("공종을 선택해주세요!");
-                    return;
-                }
-
-                const proj = this.availableProjects[this.selectedProjectKey];
-                if (!proj) return;
-
-                // 2. 선택된 공종(2번째)의 원본 객체 찾기
-                const selectedCat = this.availableCategories.find(c => String(c.id) === String(this.selectedCategoryKey));
-                if (!selectedCat || !selectedCat.original) {
-                    alert("선택한 공종 정보를 찾을 수 없습니다.");
+                if (!item) {
                     return;
                 }
 
                 const title = item.prdctClsfcNoNm || item.품명 || item.명칭 || '해당 자재';
                 const spec = (item.krnPrdctNm || item.규격) ? ` (${item.krnPrdctNm || item.규격})` : '';
 
-                if (!confirm(`'${title}${spec}' 자재를 현재 선택된 경로에 등록하시겠습니까?`)) {
+                if (!confirm(`'${title}${spec}' 자재를 나의데이터에 등록하시겠습니까?`)) {
                     return;
                 }
 
-                let targetContainer = null;
-                let targetName = "";
-
-                // 3. 3번째(일위대가)가 선택되었는지 확인
-                if (this.selectedSubItemKey) {
-                    // 하위 항목(일위대가) 목록에서 선택된 것 찾기
-                    const subList = selectedCat.original.children || selectedCat.original.subItems || selectedCat.original.items || [];
-                    const selectedSub = subList.find((sub, idx) => String(sub.id || sub.name || idx) === String(this.selectedSubItemKey));
-
-                    if (selectedSub) {
-                        // 일위대가 밑에 자재를 담을 배열(children 등)이 없으면 생성
-                        if (!selectedSub.children) selectedSub.children = [];
-                        targetContainer = selectedSub.children;
-                        targetName = selectedSub.name || selectedSub.title || '일위대가';
-                    }
-                }
-
-                // 4. 만약 3번째가 "해당 없음"이라 비어있다면 -> 2번째(공종)에 직접 등록!
-                if (!targetContainer) {
-                    if (!selectedCat.original.children) selectedCat.original.children = [];
-                    targetContainer = selectedCat.original.children;
-                    targetName = selectedCat.name || '공종';
-                }
-
+                const price = Number(String(item.prce ?? '').replace(/,/g, ''));
                 const customItem = {
                     고시일시: item.nticeDt ? item.nticeDt.split(' ')[0] : '',
                     분류번호: item.prdctClsfcNo,
                     식별번호: item.prdctIdntNo,
                     type: '자재',
-                    품목: item.prdctClsfcNoNm,
-                    규격: item.krnPrdctNm,
-                    단위: item.unit,
-                    재료비단가: item.prce ? Number(item.prce).toLocaleString() : "0",
+                    품목: title,
+                    규격: item.krnPrdctNm || item.규격 || '',
+                    단위: item.unit || item.단위 || '',
+                    수량: 1,
+                    재료비단가: Number.isFinite(price) ? price : 0,
                 };
 
-                targetContainer.push(customItem);
-                // console.log("🟢 [등록된 자재 객체]:", customItem);
-                // console.log("📂 [자재가 쏙 들어간 위치(배열)]:", targetContainer);
-                localStorage.setItem("cost", JSON.stringify(this.availableProjects));
+                try {
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option)) {
+                        throw new Error('option 데이터 형식이 올바르지 않습니다.');
+                    }
+                    const myData = option['나의데이터'] ?? [];
+                    if (!Array.isArray(myData)) {
+                        throw new Error('나의데이터가 배열이 아닙니다.');
+                    }
+                    option['나의데이터'] = [...myData, customItem];
+                    localStorage.setItem('option', JSON.stringify(option));
+                    this.statusMessage = `'${title}' 자재를 나의데이터에 등록했습니다.`;
+                } catch (error) {
+                    console.error('나의데이터 등록 실패:', error);
+                    alert('나의데이터 등록에 실패했습니다.');
+                }
             },
         }));
     });
