@@ -3321,8 +3321,8 @@ const menuData = {
                 secTitle: "품셈, 시장단가",
                 items:
                   [
-                    { text: "표준품셈", url: "https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&sub=sub1" },
-                    { text: "표준시장단가", url: "#1-1" },
+                    { text: "1. 표준품셈", url: "https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&sub=sub1" },
+                    { text: "2. 표준시장단가", url: "#1-1" },
                   ]
               },
 
@@ -3330,9 +3330,9 @@ const menuData = {
                 secTitle: "조달청",
                 items:
                   [
-                    { text: "시설공통자재", url: "https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&sub=sub1" },
-                    { text: "시장시공가격", url: "#1-1" },
-                    { text: "공종분류 및 세부공종", url: "#1-1" },
+                    { text: "3. 시설공통자재", url: "https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&sub=sub1" },
+                    { text: "4. 시장시공가격", url: "https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&sub=sub1" },
+                    { text: "5. 시장단가 및 시공가격", url: "https://study-with-words.blogspot.com/2026/11/blog-post_26.html?group=group3&sub=sub1" },
                   ]
               },
 
@@ -3348,7 +3348,7 @@ const menuData = {
                 secTitle: "Helper",
                 items:
                   [
-                    { text: "나의 데이터", url: "https://study-with-words.blogspot.com/2026/10/blog-post_15.html?group=group3&sub=sub1" },
+                    { text: "장바구니", url: "https://study-with-words.blogspot.com/2026/10/blog-post_15.html?group=group3&sub=sub1" },
                     { text: "작성자연결", url: "#4-1" },
                   ]
               },
@@ -3358,25 +3358,26 @@ const menuData = {
           {
             catTitle: "WORK",
             sections: [
+
               {
-                secTitle: "프로젝트매니저",
+                secTitle: "내역서 작성하기",
                 items:
                   [
-                    { text: "새 프로젝트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_296.html" },
-                    { text: "적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_09.html" },
+                    { text: "1. 새 프로젝트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_296.html" },
+                    { text: "2. 적용기준", url: "https://study-with-words.blogspot.com/2026/10/blog-post_09.html" },
+                    { text: "3. 공종별 내역서", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
+                    { text: "4. 항목추가 *", url: "https://study-with-words.blogspot.com/2026/11/blog-post_12.html?group=group3&sub=sub1" },
+                    { text: "5. 원가계산서", url: "https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&sub=sub4" },
                   ]
               },
 
               {
-                secTitle: "내역서",
+                secTitle: "항목조회",
                 items:
                   [
-                    { text: "원가계산서", url: "https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&sub=sub4" },
-                    { text: "공종별 내역서", url: "https://study-with-words.blogspot.com/2026/10/login-page-position-relative-overflow.html?group=group3&sub=sub4" },
-                    { text: "항목추가 *", url: "https://study-with-words.blogspot.com/2026/11/blog-post_12.html?group=group3&sub=sub1" },
-                    { text: "일위대가 리스트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
-                    { text: "중기단가 산출리스트", url: "https://study-with-words.blogspot.com/2026/11/blog-post_607.html?group=group3&sub=sub1" },
-                    { text: "단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
+                    { text: "ㄱ. 일위대가 리스트", url: "https://study-with-words.blogspot.com/2026/10/blog-post_792.html?group=group3&sub=sub4" },
+                    { text: "ㄴ. 중기단가 산출리스트", url: "https://study-with-words.blogspot.com/2026/11/blog-post_607.html?group=group3&sub=sub1" },
+                    { text: "ㄷ. 단가목록표", url: "https://study-with-words.blogspot.com/2026/10/blog-post_22.html?group=group3&sub=sub4" },
                   ]
               },
 

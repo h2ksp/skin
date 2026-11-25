@@ -18,12 +18,8 @@
         width: 330px;
     }
 
-    .machine-note-reset-btn {
-        margin-left: auto;
-        cursor: pointer;
-    }
-
     .machine-note-register-btn {
+        margin-left: auto;
         cursor: pointer;
     }
 
@@ -243,7 +239,6 @@
         <input type="text" x-model="inputQuery" x-on:keyup="handleKeyup($event)"
             x-on:keydown.enter.prevent="handleEnterKey()" placeholder="이곳에 숫자 입력 후 스페이스 2번 또는 엔터">
 
-        <button type="button" class="machine-note-reset-btn" x-on:click="resetNote()">다시쓰기</button>
         <button type="button" class="machine-note-register-btn" x-on:click="registerItem()"
             x-text="activeMode === 'work' ? '등록하기' : '편집저장'"></button>
         <button @click="help_message()">&nbsp;도움말&nbsp;</button>
@@ -714,16 +709,6 @@
                 localStorage.setItem('option', JSON.stringify(parsedOption));
             },
 
-            resetNote() {
-                if (!confirm('현재 작성 내용을 모두 초기화하시겠습니까?')) return;
-
-                this.inputQuery = '';
-                this.editForm = this.createEmptyForm();
-                this.workItems = [];
-                this.editingDetailIndex = null;
-                this.saveActiveObjectToLocalStorage();
-            },
-
             registerItem() {
                 this.syncFormTotals();
 
@@ -769,6 +754,26 @@
                         return;
                     }
 
+                    let redirectUrl = null;
+                    let redirectError = false;
+                    if (parsedOption.redirect != null) {
+                        try {
+                            if (typeof parsedOption.redirect !== 'string' || !parsedOption.redirect.trim()) {
+                                throw new Error('복귀 주소가 비어 있거나 문자열이 아닙니다.');
+                            }
+                            redirectUrl = new URL(parsedOption.redirect);
+                            if (!['http:', 'https:'].includes(redirectUrl.protocol) ||
+                                redirectUrl.origin !== window.location.origin) {
+                                throw new Error('복귀 주소가 현재 사이트의 주소가 아닙니다.');
+                            }
+                            delete parsedOption.redirect;
+                        } catch (error) {
+                            console.error('복귀 주소 확인 실패:', error);
+                            redirectUrl = null;
+                            redirectError = true;
+                        }
+                    }
+
                     parsedOption['나의데이터'][editIndex] = payload;
                     parsedOption.machineData.edit = { ...this.createEmptyForm(), children: [] };
                     parsedOption.machineData.activeMode = 'work';
@@ -782,6 +787,13 @@
                     const { children, ...topFields } = parsedOption.machineData.work;
                     this.editForm = { ...this.createEmptyForm(), ...topFields };
                     this.workItems = children.map(ch => this.sanitizeChildItem(ch));
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl.href;
+                        return;
+                    }
+                    if (redirectError) {
+                        alert('편집 내용은 저장했지만 복귀 주소가 올바르지 않아 이동하지 못했습니다.');
+                    }
                 } else {
                     this.myData.push(payload);
                     this.editForm = this.createEmptyForm();

@@ -94,6 +94,7 @@
 
                 delete opt.machineData.activeSource;
                 delete opt.machineData.editOriginPath;
+                opt.redirect = window.location.href;
                 localStorage.setItem('option', JSON.stringify(opt));
                 const editUrl = new URL(this.editPageUrl);
                 editUrl.searchParams.set('edit', row._idx);

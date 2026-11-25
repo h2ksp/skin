@@ -1,0 +1,401 @@
+<style>
+    .my-data-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .my-data-filters button.is-active {
+        font-weight: bold;
+    }
+
+    .my-data-table-container {
+        overflow-x: auto;
+    }
+
+    .my-data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .my-data-table th,
+    .my-data-table td {
+        border: 1px solid #e2e8f0;
+        padding: 1px;
+        font-size: 14px;
+    }
+
+    .my-data-table th {
+        background: #f8fafc;
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .my-data-table td.my-data-price {
+        text-align: right;
+    }
+
+    .my-data-table td.my-data-unit {
+        text-align: center;
+    }
+
+    .my-data-table .my-data-item-row {
+        cursor: pointer;
+    }
+
+    .my-data-table tbody tr.is-selected {
+        background: #dbeafe;
+    }
+
+    .my-data-editor {
+        position: relative;
+        margin: 8px 0 24px;
+    }
+
+    .my-data-editor-actions {
+        position: absolute;
+        top: 0;
+        right: 20px;
+        display: flex;
+        gap: 6px;
+    }
+
+    .my-data-editor textarea,
+    .my-data-editor pre {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 190px;
+        margin: 0;
+        padding: 12px 50px 332px 12px;
+        border: 0;
+        outline: none;
+        font-size: 14px;
+        font-family: monospace;
+    }
+
+    .my-data-editor pre {
+        overflow: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        line-height: 1.5;
+    }
+
+    .my-data-editor textarea {
+        overflow-y: hidden;
+        resize: none;
+    }
+
+    .my-data-editor textarea:focus-visible {
+        background: #f1f5f9;
+    }
+
+    @media (max-width: 480px) {
+        .my-data-editor-actions {
+            position: static;
+            justify-content: flex-end;
+        }
+
+        .my-data-editor textarea,
+        .my-data-editor pre {
+            padding-right: 2px;
+        }
+    }
+
+    .my-data-message {
+        color: #64748b;
+        padding: 12px 0;
+    }
+
+    .my-data-error {
+        color: #b91c1c;
+    }
+</style>
+
+<div x-data="optionMyData">
+    <div id="title" style="margin-bottom: 22px;">나의 데이터</div>
+
+    <div class="my-data-filters">
+        <template x-for="filter in visibleFilters" :key="filter">
+            <button type="button" @click="selectFilter(filter)" :class="{ 'is-active': selectedType === filter }"
+                :aria-pressed="selectedType === filter" x-text="filter"></button>
+        </template>
+    </div>
+
+    <div class="my-data-message my-data-error" x-show="errorMessage" x-text="errorMessage"></div>
+    <div class="my-data-message" x-show="!errorMessage && filteredItems.length === 0">표시할 데이터가 없습니다.</div>
+
+    <div class="my-data-table-container" x-show="!errorMessage && filteredItems.length > 0">
+        <table class="my-data-table">
+            <thead>
+                <tr>
+                    <th>타입</th>
+                    <th>품목</th>
+                    <th>규격</th>
+                    <th>단위</th>
+                    <th class="my-data-price">단가</th>
+                </tr>
+            </thead>
+            <template x-for="row in filteredItems" :key="row.index">
+                <tbody>
+                    <tr class="my-data-item-row" tabindex="0" @click="selectItem(row)"
+                        @keydown.enter.prevent="selectItem(row)" @keydown.space.prevent="selectItem(row)"
+                        :class="{ 'is-selected': selectedIndex === row.index }">
+                        <td x-text="row.item.type ?? ''"></td>
+                        <td x-text="row.item.품목 ?? row.item.품명 ?? ''"></td>
+                        <td x-text="row.item.규격 ?? ''"></td>
+                        <td class="my-data-unit" x-text="row.item.단위 ?? ''"></td>
+                        <td class="my-data-price" x-text="formatPrice(row.item.재료비단가 ?? row.item.합계)"></td>
+                    </tr>
+                    <template x-if="selectedIndex === row.index">
+                        <tr>
+                            <td colspan="5">
+                                <div class="my-data-editor" @resize.window="editing && resizeEditor($refs.jsonEditor)">
+                                    <div class="my-data-editor-actions">
+                                        <button type="button"
+                                            x-show="!editing && showEditButtonByType[row.item.type] !== false"
+                                            @click="startEditing(row)">수정하기</button>
+                                        <button type="button" x-show="editing" @click="saveItem()">저장하기</button>
+                                        <button type="button" x-show="editing" @click="cancelEdit()">취소</button>
+                                    </div>
+                                    <pre x-show="!editing" x-text="formattedJson"></pre>
+                                    <textarea x-ref="jsonEditor" aria-label="JSON 편집" x-show="editing"
+                                        x-model="jsonDraft" @input="resizeEditor($el)" spellcheck="false"></textarea>
+                                    <div class="my-data-message my-data-error" x-show="editError" x-text="editError">
+                                    </div>
+                                    <div class="my-data-message" x-show="saveMessage" x-text="saveMessage"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </template>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('optionMyData', () => ({
+            filterTypes: ['전체', '자재', '건설기계', '일위대가'],
+            hideEmptyTypes: true,
+            collapsedPreviewKeys: ['children'],
+            showEditButtonByType: {
+                '자재': true,
+                '건설기계': true,
+                '일위대가': true,
+            },
+            selectedType: '전체',
+            items: [],
+            errorMessage: '',
+            selectedIndex: null,
+            selectedOriginal: '',
+            jsonDraft: '',
+            editing: false,
+            editError: '',
+            saveMessage: '',
+
+            init() {
+                try {
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option)) {
+                        throw new Error('option 데이터 형식이 올바르지 않습니다.');
+                    }
+                    const items = option['나의데이터'] ?? [];
+                    if (!Array.isArray(items)) {
+                        throw new Error('나의데이터가 배열이 아닙니다.');
+                    }
+                    this.items = items;
+                } catch (error) {
+                    console.error('나의데이터 로드 실패:', error);
+                    this.errorMessage = '나의데이터를 불러오지 못했습니다.';
+                }
+            },
+
+            get visibleFilters() {
+                return this.filterTypes.filter(type =>
+                    type === '전체' || !this.hideEmptyTypes ||
+                    this.items.some(item => item && typeof item === 'object' && !Array.isArray(item) && item.type === type)
+                );
+            },
+
+            get filteredItems() {
+                return this.items
+                    .map((item, index) => ({ item, index }))
+                    .filter(row => row.item && typeof row.item === 'object' && !Array.isArray(row.item) &&
+                        (this.selectedType === '전체' || row.item.type === this.selectedType));
+            },
+
+            formatPrice(value) {
+                if (value === null || value === undefined || value === '') return '';
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    return value.toLocaleString('ko-KR', { maximumFractionDigits: 20 });
+                }
+                const text = String(value).trim();
+                const normalized = text.replace(/,/g, '');
+                if (!/^[+-]?\d+(?:\.\d+)?$/.test(normalized)) return text;
+                const parts = normalized.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return parts.join('.');
+            },
+
+            get formattedJson() {
+                if (!this.selectedOriginal) return '';
+                let marker = '__collapsed_array__';
+                while (this.selectedOriginal.includes(marker)) marker += '_';
+                const json = JSON.stringify(JSON.parse(this.selectedOriginal), (key, value) =>
+                    this.collapsedPreviewKeys.includes(key) && Array.isArray(value)
+                        ? marker
+                        : value, 2);
+                return json.replace(/"(?:\\.|[^"\\])*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g, token => {
+                    if (token === JSON.stringify(marker)) return '[...]';
+                    if (token.startsWith('"')) return token;
+                    return token.replace(/^-?\d+/, integer =>
+                        integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    );
+                });
+            },
+
+            clearSelection() {
+                this.selectedIndex = null;
+                this.selectedOriginal = '';
+                this.jsonDraft = '';
+                this.editing = false;
+                this.editError = '';
+                this.saveMessage = '';
+            },
+
+            selectFilter(type) {
+                if (this.selectedType !== type) {
+                    this.selectedType = type;
+                    this.clearSelection();
+                }
+            },
+
+            selectItem(row) {
+                if (this.selectedIndex === row.index) {
+                    this.clearSelection();
+                    return;
+                }
+                this.selectedIndex = row.index;
+                this.selectedOriginal = JSON.stringify(row.item);
+                this.jsonDraft = JSON.stringify(row.item, null, 2);
+                this.editing = false;
+                this.editError = '';
+                this.saveMessage = '';
+            },
+
+            resizeEditor(element) {
+                if (!element) return;
+                element.style.height = 'auto';
+                element.style.height = `${element.scrollHeight}px`;
+            },
+
+            startEditing(row) {
+                if (row.item.type !== '건설기계' && row.item.type !== '일위대가') {
+                    this.editing = true;
+                    this.$nextTick(() => this.resizeEditor(this.$refs.jsonEditor));
+                    return;
+                }
+
+                this.editError = '';
+                try {
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option) ||
+                        !Array.isArray(option['나의데이터'])) {
+                        this.editError = '저장된 나의데이터 형식이 올바르지 않습니다.';
+                        return;
+                    }
+                    const target = option['나의데이터'][row.index];
+                    if (JSON.stringify(target) !== this.selectedOriginal) {
+                        this.editError = '선택한 항목이 변경되었습니다. 새로고침 후 다시 수정해 주세요.';
+                        return;
+                    }
+
+                    if (row.item.type === '일위대가') {
+                        option.redirect = window.location.href;
+                        localStorage.setItem('option', JSON.stringify(option));
+                        this.editing = true;
+                        this.$nextTick(() => this.resizeEditor(this.$refs.jsonEditor));
+                        return;
+                    }
+
+                    const machineData = option.machineData ?? {};
+                    if (typeof machineData !== 'object' || Array.isArray(machineData)) {
+                        this.editError = '저장된 기계 데이터 형식이 올바르지 않습니다.';
+                        return;
+                    }
+                    option.machineData = {
+                        ...machineData,
+                        activeMode: `edit-${row.index}`,
+                        edit: target
+                    };
+                    delete option.machineData.activeSource;
+                    delete option.machineData.editOriginPath;
+                    const editUrl = new URL('https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3');
+                    editUrl.searchParams.set('edit', row.index);
+                    option.redirect = window.location.href;
+                    localStorage.setItem('option', JSON.stringify(option));
+                    location.href = editUrl.href;
+                } catch (error) {
+                    console.error('수정 준비 실패:', error);
+                    this.editError = '수정 화면을 열지 못했습니다. 저장된 데이터를 확인해 주세요.';
+                }
+            },
+
+            cancelEdit() {
+                this.jsonDraft = JSON.stringify(JSON.parse(this.selectedOriginal), null, 2);
+                this.editing = false;
+                this.editError = '';
+                this.saveMessage = '';
+            },
+
+            saveItem() {
+                this.editError = '';
+                this.saveMessage = '';
+                if (this.selectedIndex === null) return;
+
+                let edited;
+                try {
+                    edited = JSON.parse(this.jsonDraft);
+                } catch (error) {
+                    console.error('JSON 문법 오류:', error);
+                    this.editError = 'JSON 문법이 올바르지 않습니다. 따옴표, 쉼표, 콜론과 괄호를 확인해 주세요.';
+                    return;
+                }
+                if (!edited || typeof edited !== 'object' || Array.isArray(edited)) {
+                    this.editError = '항목은 JSON 객체여야 합니다.';
+                    return;
+                }
+
+                try {
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option) ||
+                        !Array.isArray(option['나의데이터'])) {
+                        this.editError = '저장된 나의데이터 형식이 올바르지 않습니다.';
+                        return;
+                    }
+                    const items = option['나의데이터'];
+                    if (JSON.stringify(items[this.selectedIndex]) !== this.selectedOriginal) {
+                        this.editError = '선택한 항목이 변경되었습니다. 새로고침 후 다시 수정해 주세요.';
+                        return;
+                    }
+                    items[this.selectedIndex] = edited;
+                    localStorage.setItem('option', JSON.stringify(option));
+                    this.items = items;
+                    this.selectedOriginal = JSON.stringify(edited);
+                    this.jsonDraft = JSON.stringify(edited, null, 2);
+                    if (this.selectedType !== '전체' && edited.type !== this.selectedType) {
+                        this.selectedType = '전체';
+                    }
+                    this.editing = false;
+                    this.saveMessage = '저장했습니다.';
+                } catch (error) {
+                    console.error('나의데이터 저장 실패:', error);
+                    this.editError = '나의데이터를 저장하지 못했습니다. 저장된 데이터와 브라우저 저장 공간을 확인해 주세요.';
+                }
+            },
+        }));
+    });
+</script>

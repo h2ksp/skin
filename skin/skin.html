@@ -466,7 +466,8 @@
           </div>
 
           <script>
-            const LOGIN_STORAGE_KEY = "spot_login_return_state";
+            const LOGIN_STORAGE_KEY = "login";
+            const LEGACY_LOGIN_STORAGE_KEY = "spot_login_return_state";
             const LOGIN_PAGE_URL = "https://study-with-words.blogspot.com/2026/11/blog-post_20.html";
             const AUTH_STATUS_URL = "https://h2ksp3.cafe24.com/accounts/auth-status/";
             const LOGOUT_URL = "https://h2ksp3.cafe24.com/accounts/auth-logout/";
@@ -481,11 +482,33 @@
 
             function clearLoginReturnState() {
               const option = readLoginOption();
-              if (Object.prototype.hasOwnProperty.call(option, LOGIN_STORAGE_KEY)) {
+              if (Object.prototype.hasOwnProperty.call(option, LOGIN_STORAGE_KEY) ||
+                Object.prototype.hasOwnProperty.call(option, LEGACY_LOGIN_STORAGE_KEY)) {
                 delete option[LOGIN_STORAGE_KEY];
+                delete option[LEGACY_LOGIN_STORAGE_KEY];
                 localStorage.setItem("option", JSON.stringify(option));
               }
-              localStorage.removeItem(LOGIN_STORAGE_KEY);
+              localStorage.removeItem(LEGACY_LOGIN_STORAGE_KEY);
+            }
+
+            function migrateLoginReturnState() {
+              const option = readLoginOption();
+              let legacy = option[LEGACY_LOGIN_STORAGE_KEY];
+              if (!legacy) {
+                const raw = localStorage.getItem(LEGACY_LOGIN_STORAGE_KEY);
+                if (!raw) return;
+                legacy = JSON.parse(raw);
+              }
+              const redirect = legacy?.options?.redirect;
+              if (!redirect || !redirect.url) {
+                throw new Error("이전 로그인 복귀 정보 형식이 올바르지 않습니다.");
+              }
+              if (!option[LOGIN_STORAGE_KEY]) {
+                option[LOGIN_STORAGE_KEY] = redirect;
+              }
+              delete option[LEGACY_LOGIN_STORAGE_KEY];
+              localStorage.setItem("option", JSON.stringify(option));
+              localStorage.removeItem(LEGACY_LOGIN_STORAGE_KEY);
             }
 
             function buildLoginPageUrl(group, sub) {
@@ -501,6 +524,11 @@
                 statusMessage: "",
 
                 async init() {
+                  try {
+                    migrateLoginReturnState();
+                  } catch (error) {
+                    console.error("로그인 복귀 정보 변환 실패:", error);
+                  }
                   await this.checkAuth();
                 },
 
@@ -527,41 +555,39 @@
                   const group = url.searchParams.get("group") || "";
                   const sub = url.searchParams.get("sub") || "";
 
-                  const payload = {
-                    options: {
-                      key: LOGIN_STORAGE_KEY,
-                      redirect: {
-                        url: url.toString(),
-                        group,
-                        sub,
-                        scrollX: window.scrollX,
-                        scrollY: window.scrollY,
-                      },
-                    },
-                  };
-
                   const option = readLoginOption();
-                  option[LOGIN_STORAGE_KEY] = payload;
+                  option[LOGIN_STORAGE_KEY] = {
+                    url: url.toString(),
+                    group,
+                    sub,
+                    scrollX: window.scrollX,
+                    scrollY: window.scrollY,
+                  };
+                  delete option[LEGACY_LOGIN_STORAGE_KEY];
                   localStorage.setItem("option", JSON.stringify(option));
-                  localStorage.removeItem(LOGIN_STORAGE_KEY);
+                  localStorage.removeItem(LEGACY_LOGIN_STORAGE_KEY);
                   window.location.href = buildLoginPageUrl(group, sub);
                 },
 
                 restoreAfterLogin() {
                   const option = readLoginOption();
-                  let payload = option[LOGIN_STORAGE_KEY];
-                  if (!payload) {
-                    const raw = localStorage.getItem(LOGIN_STORAGE_KEY);
-                    if (!raw) return false;
-                    try {
-                      payload = JSON.parse(raw);
-                    } catch (_) {
-                      localStorage.removeItem(LOGIN_STORAGE_KEY);
-                      return false;
+                  let redirect = option[LOGIN_STORAGE_KEY];
+                  if (!redirect) {
+                    let payload = option[LEGACY_LOGIN_STORAGE_KEY];
+                    const raw = payload ? null : localStorage.getItem(LEGACY_LOGIN_STORAGE_KEY);
+                    if (raw) {
+                      try {
+                        payload = JSON.parse(raw);
+                      } catch (error) {
+                        console.error("이전 로그인 복귀 정보 로드 실패:", error);
+                        localStorage.removeItem(LEGACY_LOGIN_STORAGE_KEY);
+                        return false;
+                      }
                     }
+                    if (!payload) return false;
+                    redirect = payload?.options?.redirect;
                   }
 
-                  const redirect = payload?.options?.redirect;
                   if (!redirect || !redirect.url) {
                     clearLoginReturnState();
                     return false;
