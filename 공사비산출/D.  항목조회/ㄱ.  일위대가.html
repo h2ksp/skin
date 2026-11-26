@@ -428,7 +428,7 @@
 
             get columns() {
                 const option1 = [
-                    { label: '품명', key: '품목', type: 'text', readonly: false, inputClass: 'field-input field-wide text-left' },
+                    { label: '품명', key: '품명', type: 'text', readonly: false, inputClass: 'field-input field-wide text-left' },
                     { label: '규격', key: '규격', type: 'text', readonly: false, inputClass: 'field-input field-wide text-left' },
                     { label: '단위', key: '단위', type: 'text', readonly: false, inputClass: 'field-input field-unit text-center' },
                     { label: '금액', key: '단가합계', type: 'number', readonly: true, inputClass: 'field-input field-money text-right' },
@@ -462,7 +462,7 @@
                 this.getItemsByType(data, this.filterTypes).forEach(({ item, path }) => {
                     const key = JSON.stringify([
                         item.type,
-                        normalizeText(item.품목),
+                        normalizeText(item.품명),
                         normalizeText(item.규격),
                         normalizeText(item.단위),
                         this.numberValue(item.재료비단가),

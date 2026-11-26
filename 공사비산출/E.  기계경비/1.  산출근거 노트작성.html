@@ -249,7 +249,7 @@
     <table class="machine-note-table">
         <thead>
             <tr>
-                <th class="col-item">품목</th>
+                <th class="col-item">품명</th>
                 <th class="col-spec">규격</th>
                 <th class="col-unit">단위</th>
                 <th class="col-mat">재료비</th>
@@ -652,7 +652,8 @@
                 }
                 const mode = parsedOption.machineData.activeMode;
                 const editMatch = typeof mode === 'string' ? /^edit-(\d+)$/.exec(mode) : null;
-                if (mode !== 'work' && (!editMatch || !Number.isSafeInteger(Number(editMatch[1])))) {
+                if (mode !== 'work' && mode !== 'edit-estimate' &&
+                    (!editMatch || !Number.isSafeInteger(Number(editMatch[1])))) {
                     throw new Error('기계 데이터의 작업 모드가 올바르지 않습니다.');
                 }
                 if (!Array.isArray(parsedOption['나의데이터'])) {
@@ -709,6 +710,63 @@
                 localStorage.setItem('option', JSON.stringify(parsedOption));
             },
 
+            prepareEstimateMachineUpdate(origin, payload) {
+                if (!origin || typeof origin.projectKey !== 'string' ||
+                    !/^\d+-\d+$/.test(origin.categoryKey) ||
+                    (origin.subItemKey !== '' && !/^\d+(?:-\d+)*$/.test(origin.subItemKey)) ||
+                    !Number.isSafeInteger(origin.rowIndex) || origin.rowIndex < 0 ||
+                    typeof origin.original !== 'string') {
+                    throw new Error('내역서 항목 위치가 올바르지 않습니다.');
+                }
+                const previousCost = localStorage.getItem('cost');
+                const projects = JSON.parse(previousCost || '{}');
+                const [groupIndex, categoryIndex] = origin.categoryKey.split('-').map(Number);
+                let target = projects[origin.projectKey]?.공종별내역서?.[groupIndex]?.[categoryIndex]?.children;
+                if (!Array.isArray(target)) throw new Error('수정할 공종을 찾을 수 없습니다.');
+                const parents = [];
+                if (origin.subItemKey) {
+                    for (const index of origin.subItemKey.split('-').map(Number)) {
+                        const parent = target[index];
+                        if (!parent || !Array.isArray(parent.children)) {
+                            throw new Error('수정할 세부항목을 찾을 수 없습니다.');
+                        }
+                        parents.push(parent);
+                        target = parent.children;
+                    }
+                }
+                const original = target[origin.rowIndex];
+                if (JSON.stringify(original) !== origin.original) {
+                    throw new Error('수정할 내역 항목이 변경되었습니다. 항목추가 화면에서 다시 선택해 주세요.');
+                }
+                const number = value => Number(String(value ?? '').replace(/,/g, '')) || 0;
+                const format = value => value.toLocaleString('ko-KR', { maximumFractionDigits: 20 });
+                const updateAmounts = row => {
+                    for (const key of ['재료비', '노무비', '경비']) {
+                        row[key] = format(number(row.수량) * number(row[key + '단가']));
+                    }
+                    row.단가합계 = format(number(row.재료비단가) + number(row.노무비단가) + number(row.경비단가));
+                    row.합계 = format(number(row.재료비) + number(row.노무비) + number(row.경비));
+                };
+                const updated = {
+                    ...original,
+                    ...payload,
+                    재료비단가: payload.재료비,
+                    노무비단가: payload.노무비,
+                    경비단가: payload.경비
+                };
+                updateAmounts(updated);
+                target[origin.rowIndex] = updated;
+                for (let i = parents.length - 1; i >= 0; i--) {
+                    const parent = parents[i];
+                    for (const key of ['재료비단가', '노무비단가', '경비단가']) {
+                        parent[key] = parent.children.reduce((sum, child) =>
+                            sum + number(child.수량) * number(child[key]), 0);
+                    }
+                    updateAmounts(parent);
+                }
+                return { previousCost, updatedCost: JSON.stringify(projects) };
+            },
+
             registerItem() {
                 this.syncFormTotals();
 
@@ -745,11 +803,12 @@
 
                 if (this.activeMode !== 'work') {
                     const parsedOption = this.ensureOptionShape();
+                    const isEstimateEdit = this.activeMode === 'edit-estimate';
                     const editMatch = /^edit-(\d+)$/.exec(this.activeMode);
                     const editIndex = editMatch ? Number(editMatch[1]) : -1;
                     if (parsedOption.machineData.activeMode !== this.activeMode ||
-                        editIndex < 0 || !Number.isSafeInteger(editIndex) ||
-                        editIndex >= parsedOption['나의데이터'].length) {
+                        (!isEstimateEdit && (editIndex < 0 || !Number.isSafeInteger(editIndex) ||
+                        editIndex >= parsedOption['나의데이터'].length))) {
                         alert('수정할 데이터의 인덱스가 올바르지 않습니다.');
                         return;
                     }
@@ -774,10 +833,42 @@
                         }
                     }
 
-                    parsedOption['나의데이터'][editIndex] = payload;
+                    let costUpdate = null;
+                    if (isEstimateEdit) {
+                        try {
+                            costUpdate = this.prepareEstimateMachineUpdate(parsedOption.machineData.estimateEdit, payload);
+                        } catch (error) {
+                            console.error('건설기계 내역 저장 준비 실패:', error);
+                            alert(`내역서를 저장하지 못했습니다: ${error.message}`);
+                            return;
+                        }
+                        delete parsedOption.machineData.estimateEdit;
+                    } else {
+                        parsedOption['나의데이터'][editIndex] = payload;
+                    }
                     parsedOption.machineData.edit = { ...this.createEmptyForm(), children: [] };
                     parsedOption.machineData.activeMode = 'work';
-                    localStorage.setItem('option', JSON.stringify(parsedOption));
+                    try {
+                        if (costUpdate) {
+                            if (localStorage.getItem('cost') !== costUpdate.previousCost) {
+                                throw new Error('다른 화면에서 내역서가 변경되었습니다.');
+                            }
+                            localStorage.setItem('cost', costUpdate.updatedCost);
+                        }
+                        try {
+                            localStorage.setItem('option', JSON.stringify(parsedOption));
+                        } catch (error) {
+                            if (costUpdate && localStorage.getItem('cost') === costUpdate.updatedCost) {
+                                if (costUpdate.previousCost === null) localStorage.removeItem('cost');
+                                else localStorage.setItem('cost', costUpdate.previousCost);
+                            }
+                            throw error;
+                        }
+                    } catch (error) {
+                        console.error('건설기계 편집 저장 실패:', error);
+                        alert(`편집 내용을 저장하지 못했습니다: ${error.message}\n내역이 일부 반영되었는지 확인해 주세요.`);
+                        return;
+                    }
                     const url = new URL(window.location.href);
                     url.searchParams.delete('edit');
                     window.history.replaceState(window.history.state, '', url.href);

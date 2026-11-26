@@ -337,7 +337,7 @@
                 </tr>
                 <template x-for="(item, index) in getItemsByType('추가경비')" :key="index">
                     <tr x-show="showAdd">
-                        <td x-text="`—　${item.품목 || '추가경비'}`"></td>
+                        <td x-text="`—　${item.품명 || '추가경비'}`"></td>
                         <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
                         <td></td>
                         <td></td>

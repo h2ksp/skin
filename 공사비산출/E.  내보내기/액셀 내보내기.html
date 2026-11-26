@@ -244,13 +244,13 @@
                     const number = value => Number(text(value).replace(/,/g, '')) || 0;
                     this.getUnitPriceItems().forEach(item => {
                         const key = JSON.stringify([
-                            item.type, text(item.품목), text(item.규격), text(item.단위),
+                            item.type, text(item.품명), text(item.규격), text(item.단위),
                             number(item.재료비단가), number(item.노무비단가), number(item.경비단가)
                         ]);
                         if (!grouped.has(key)) grouped.set(key, item);
                     });
                     const rows = [...grouped.values()].map((item, index) => [
-                        item.품목, item.규격, item.단위,
+                        item.품명, item.규격, item.단위,
                         item.재료비단가, item.노무비단가, item.경비단가,
                         '', `호표${index + 1}`, item.비고
                     ]);
@@ -300,8 +300,8 @@
                         ? item.children
                         : [{}];
                     return children.map(child => [
-                        item.품목, item.규격, item.단위,
-                        child.type, child.품목, child.규격, child.단위, child.수량,
+                        item.품명, item.규격, item.단위,
+                        child.type, child.품명, child.규격, child.단위, child.수량,
                         child.재료비단가, child.노무비단가, child.경비단가,
                         child.재료비, child.노무비, child.경비, child.합계, child.비고
                     ]);
@@ -364,7 +364,7 @@
                     const category = type || '미분류';
                     const key = JSON.stringify([
                         category,
-                        normalizeText(item.품목),
+                        normalizeText(item.품명),
                         normalizeText(item.규격),
                         normalizeText(item.단위),
                         this.numberValue(item.재료비단가),
@@ -522,7 +522,7 @@
                         return Number.isFinite(number) ? number : '';
                     };
                     const mappedPrice = categoryPriceColumns[category];
-                    row.getCell(1).value = item.품목 ?? '';
+                    row.getCell(1).value = item.품명 ?? '';
                     row.getCell(2).value = item.규격 ?? '';
                     row.getCell(3).value = item.단위 ?? '';
                     if (mappedPrice) {

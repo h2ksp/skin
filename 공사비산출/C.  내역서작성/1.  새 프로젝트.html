@@ -256,6 +256,7 @@
                     }
 
                     const project = data[name];
+                    window.migrateProjectItemNames(project);
                     const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
                     const isValidItems = items => {
                         const pending = [...items];

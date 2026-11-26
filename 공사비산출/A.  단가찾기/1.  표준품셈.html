@@ -1,0 +1,694 @@
+<script>
+    if (new URLSearchParams(window.location.search).get('estimatePopup') === '1') {
+        document.documentElement.classList.add('estimate-search-popup');
+    }
+</script>
+
+<style>
+    html.estimate-search-popup #sidebar-left,
+    html.estimate-search-popup #sidebar,
+    html.estimate-search-popup #header,
+    html.estimate-search-popup .login-btn-area,
+    html.estimate-search-popup .bottom-love-bar,
+    html.estimate-search-popup .blogger-labels,
+    html.estimate-search-popup .open-popup-button {
+        display: none !important;
+    }
+
+    html.estimate-search-popup #content {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+    }
+
+    html.estimate-search-popup #main {
+        float: none;
+        width: 100%;
+        margin: 0;
+    }
+
+    html.estimate-search-popup .post {
+        margin: 0;
+        padding: 0;
+    }
+
+    html:not(.estimate-search-popup) .estimate-search .add-to-estimate-button,
+    html:not(.estimate-search-popup) .estimate-search .search-page-links {
+        display: none;
+    }
+
+    .estimate-search .search-controls {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #fff;
+        padding-bottom: 4px;
+    }
+
+    .estimate-search .search-page-links {
+        display: flex;
+        gap: 12px;
+        padding: 4px 0;
+        font-size: 0.85rem;
+    }
+
+    .estimate-search .search-toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #f9f9f9e7;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 5px 16px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+
+    .estimate-search .toolbar-fields,
+    .estimate-search .toolbar-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .estimate-search .toolbar-actions {
+        margin-left: auto;
+    }
+
+    .estimate-search select,
+    .estimate-search input {
+        padding: 5px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .estimate-search .status {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+
+    .estimate-search .open-popup-button {
+        margin-left: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .estimate-search .open-popup-button:hover {
+        background: transparent;
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    .estimate-search .pagination {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2px 12px;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+    }
+
+    .estimate-search .pagination button {
+        flex: 0 0 auto;
+        padding: 2px 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: #475569;
+        font: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+    .estimate-search .pagination button:hover,
+    .estimate-search .pagination button.is-current {
+        color: #1d4ed8;
+    }
+
+    .estimate-search .pagination button.is-current {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .estimate-search .table-container {
+        overflow-x: auto;
+        margin-bottom: 216px;
+    }
+
+    .estimate-search table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+
+    .estimate-search th,
+    .estimate-search td {
+        border: 1px solid #cbd5e1;
+        padding: 0 8px;
+    }
+
+    .estimate-search .main-table>thead>tr>th,
+    .estimate-search .main-table>tbody>tr>td {
+        border-color: transparent;
+    }
+
+    .estimate-search th {
+        background: #f8fafc;
+        font-weight: normal;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .estimate-search .estimate-row,
+    .estimate-search .detail-row {
+        cursor: pointer;
+    }
+
+    .estimate-search .estimate-row:hover,
+    .estimate-search .detail-row:hover {
+        background: #f1f5f9;
+    }
+
+    .estimate-search .estimate-row.is-selected,
+    .estimate-search .detail-row.is-selected {
+        background: #dbeafe;
+    }
+
+    .estimate-search .toggle-button {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .estimate-search .toggle-button:hover {
+        background: transparent;
+        color: inherit;
+    }
+
+    .estimate-search .detail-cell {
+        padding: 10px 0 100px 0;
+    }
+
+    .estimate-search .detail-table {
+        background: #fff;
+    }
+
+    .estimate-search .detail-json {
+        margin: 0;
+        padding: 12px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .estimate-search .center {
+        text-align: center;
+    }
+
+    .estimate-search .number {
+        text-align: right;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="estimate-search" x-data="standardEstimateSearch">
+
+    <div class="search-controls">
+        <nav class="search-page-links" aria-label="단가 검색 페이지">
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('estimate-search-popup') ? '&amp;estimatePopup=1' : '')"
+                aria-current="page">표준품셈</a>
+            <span aria-hidden="true">|</span>
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('estimate-search-popup') ? '&amp;materialPopup=1' : '')">시설공통자재</a>
+            <span aria-hidden="true">|</span>
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('estimate-search-popup') ? '&amp;marketPopup=1' : '')">시장시공가격</a>
+        </nav>
+        <div class="search-toolbar">
+            <div class="toolbar-fields">
+                <label for="estimateCategory">분류:</label>
+                <select id="estimateCategory" x-model="selectedCategory" @change="loadData()">
+                    <option value="전체">전체</option>
+                    <template x-for="category in categories" :key="category">
+                        <option :value="category" x-text="`${category}공사 표준품셈`"></option>
+                    </template>
+                </select>
+                <label for="estimateQuery">품명/규격:</label>
+                <input id="estimateQuery" type="text" placeholder="품명 또는 규격 입력" x-model="query"
+                    @keyup.enter="filterItems()">
+                <button type="button" @click="filterItems()" :disabled="loading">검색하기</button>
+                <button type="button" @click="showAllItems()" :disabled="loading">전체보기</button>
+            </div>
+            <div class="toolbar-actions">
+                <button type="button" @click="registerItem()" :disabled="loading || !selectedItem">등록하기</button>
+                <button type="button" class="add-to-estimate-button" @click="addToEstimate()" :disabled="loading || !selectedItem || sendingToEstimate">내역서에 추가</button>
+                <button type="button" @click="showHelp = !showHelp">&nbsp;도움말&nbsp;</button>
+            </div>
+        </div>
+        <div class="status">
+            <span role="status" x-text="statusMessage"></span>
+            <template x-for="mode in resultModes" :key="mode.id">
+                <label style="margin-right: 12px; cursor: pointer;">
+                    <input type="radio" name="estimate_result_mode" :value="mode.id" x-model="resultMode">
+                    <span x-text="mode.label"></span>
+                </label>
+            </template>
+            <button type="button" class="open-popup-button" @click="openPopup()">팝업으로 열기</button>
+        </div>
+    </div>
+
+    <nav class="pagination" aria-label="검색 결과 페이지" x-show="totalPages > 1">
+        <template x-for="page in totalPages" :key="page">
+            <button type="button" @click="selectPage(page)" :class="{ 'is-current': currentPage === page }"
+                :aria-current="currentPage === page ? 'page' : null" x-text="page"></button>
+        </template>
+    </nav>
+
+    <div class="table-container" x-show="filteredItems.length > 0">
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <template x-for="column in currentColumns" :key="column.key">
+                        <th scope="col" x-text="column.label"></th>
+                    </template>
+                </tr>
+            </thead>
+            <template x-for="(item, index) in paginatedItems" :key="pageStartIndex + index">
+                <tbody>
+                    <tr class="estimate-row" :class="{ 'is-selected': selectedIndex === pageStartIndex + index }"
+                        @click="toggleItem(pageStartIndex + index)">
+                        <template x-for="(column, columnIndex) in currentColumns" :key="column.key">
+                            <td :class="column.class || ''">
+                                <template x-if="columnIndex === 0">
+                                    <button type="button" class="toggle-button"
+                                        @click.stop="toggleItem(pageStartIndex + index)"
+                                        :aria-expanded="openIndex === pageStartIndex + index"
+                                        :aria-controls="'estimate-detail-' + (pageStartIndex + index)">
+                                        <span x-text="columnValue(item, column)"></span>
+                                    </button>
+                                </template>
+                                <template x-if="columnIndex !== 0">
+                                    <span x-text="columnValue(item, column)"></span>
+                                </template>
+                            </td>
+                        </template>
+                    </tr>
+                    <template x-if="openIndex === pageStartIndex + index">
+                        <tr :id="'estimate-detail-' + (pageStartIndex + index)">
+                            <td :colspan="currentColumns.length" class="detail-cell">
+                                <div x-show="details(item).length === 0">구성 항목이 없습니다.</div>
+                                <table class="detail-table" x-show="details(item).length > 0">
+                                    <caption>일위대가 구성 항목</caption>
+                                    <thead>
+                                        <tr>
+                                            <template x-for="column in detailColumns" :key="column.key">
+                                                <th scope="col" x-text="column.label"></th>
+                                            </template>
+                                        </tr>
+                                    </thead>
+                                    <template x-for="(detail, detailIndex) in details(item)" :key="detailIndex">
+                                        <tbody>
+                                            <tr class="detail-row"
+                                                :class="{ 'is-selected': openDetailIndex === detailIndex }"
+                                                @click="toggleDetail(detailIndex)">
+                                                <template x-for="(column, columnIndex) in detailColumns"
+                                                    :key="column.key">
+                                                    <td :class="column.class || ''">
+                                                        <template x-if="columnIndex === 0">
+                                                            <button type="button" class="toggle-button"
+                                                                @click.stop="toggleDetail(detailIndex)"
+                                                                :aria-expanded="openDetailIndex === detailIndex"
+                                                                :aria-controls="'estimate-json-' + (pageStartIndex + index) + '-' + detailIndex">
+                                                                <span x-text="columnValue(detail, column)"></span>
+                                                            </button>
+                                                        </template>
+                                                        <template x-if="columnIndex !== 0">
+                                                            <span x-text="columnValue(detail, column)"></span>
+                                                        </template>
+                                                    </td>
+                                                </template>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </table>
+                                <template x-if="openDetailIndex !== null">
+                                    <pre class="detail-json"
+                                        :id="'estimate-json-' + (pageStartIndex + index) + '-' + openDetailIndex"
+                                        x-text="formatDetailJson(details(item)[openDetailIndex])"></pre>
+                                </template>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </template>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        async function sendItemToEstimate(item) {
+            if (typeof BroadcastChannel === 'undefined' || !globalThis.crypto?.randomUUID) {
+                throw new Error('이 브라우저에서는 화면 간 항목 추가를 지원하지 않습니다.');
+            }
+            const channel = new BroadcastChannel('cost-estimate-add');
+            try {
+                const requestId = crypto.randomUUID();
+                const targets = new Set();
+                channel.onmessage = event => {
+                    if (event.data?.type === 'available' && event.data.requestId === requestId) {
+                        targets.add(event.data.targetId);
+                    }
+                };
+                channel.postMessage({ type: 'discover', requestId });
+                await new Promise(resolve => setTimeout(resolve, 500));
+                if (!targets.size) throw new Error('항목추가 화면을 열고 프로젝트와 공종그룹을 선택해 주세요.');
+                if (targets.size > 1) throw new Error('항목추가 화면이 여러 개 열려 있습니다. 추가할 화면 하나만 남겨 주세요.');
+                const targetId = [...targets][0];
+                const response = await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error('추가 결과를 확인하지 못했습니다. 다시 시도하기 전에 내역서를 확인해 주세요.')), 5000);
+                    channel.onmessage = event => {
+                        if (event.data?.type !== 'result' || event.data.requestId !== requestId || event.data.targetId !== targetId) return;
+                        clearTimeout(timeout);
+                        resolve(event.data);
+                    };
+                    try {
+                        channel.postMessage({ type: 'add', requestId, targetId, item: JSON.parse(JSON.stringify(item)) });
+                    } catch (error) {
+                        clearTimeout(timeout);
+                        reject(error);
+                    }
+                });
+                if (!response.success) throw new Error(response.error);
+            } finally {
+                channel.close();
+            }
+        }
+
+        const categories = ['토목', '건축', '기계', '전기', '통신'];
+        const resultModes = [
+            {
+                id: 'basic', label: '기본',
+                columns: [
+                    { key: '품명', label: '품명' },
+                    { key: '규격', label: '규격' },
+                    { key: '단위', label: '단위', class: 'center' },
+                    { key: '합계', label: '금액', class: 'number', number: true },
+
+
+                ]
+            },
+            {
+                id: 'extra', label: '추가정보',
+                columns: [
+                    { key: '일위대가코드', label: '일위대가코드' },
+                    { key: '재료비', label: '재료비 단가', class: 'number', number: true },
+                    { key: '노무비', label: '노무비 단가', class: 'number', number: true },
+                    { key: '경비', label: '경비 단가', class: 'number', number: true },
+                    { key: '비고', label: '비고' }
+                ]
+            }
+        ];
+
+        const detailColumns = [
+            { key: '자원구분', label: '구분', class: 'center' },
+            { key: '품명', label: '품명' },
+            { key: '규격', label: '규격' },
+            { key: '단위', label: '단위', class: 'center' },
+            { key: '재료비', label: '재료비 단가', class: 'number', number: true },
+            { key: '노무비', label: '노무비 단가', class: 'number', number: true },
+            { key: '경비', label: '경비 단가', class: 'number', number: true },
+        ];
+
+        const detailJsonExcludedKeys = [
+            '계산제외', '손료코드군', '손료계산비목구분',
+            '손료결과비목구분', '손료적용요율', '비고', '기타'
+        ];
+
+        Alpine.data('standardEstimateSearch', () => ({
+            resultModes,
+            detailColumns,
+            categories,
+            selectedCategory: '전체',
+            query: '',
+            showHelp: false,
+            resultMode: 'basic',
+            statusMessage: '데이터 로딩 중...',
+            loading: false,
+            allItems: [],
+            filteredItems: [],
+            pageSize: 50,
+            currentPage: 1,
+            openIndex: null,
+            openDetailIndex: null,
+            selectedIndex: null,
+            requestId: 0,
+            sendingToEstimate: false,
+
+            init() {
+                this.loadData();
+            },
+
+            openPopup() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('estimatePopup', '1');
+                const popup = window.open(url.href, '_blank', 'popup=yes,width=1200,height=800');
+                if (!popup) {
+                    alert('팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.');
+                    return;
+                }
+                popup.opener = null;
+            },
+
+            get totalPages() {
+                return Math.ceil(this.filteredItems.length / this.pageSize);
+            },
+
+            get currentColumns() {
+                const columns = this.resultModes.find(mode => mode.id === this.resultMode).columns;
+                return this.selectedCategory === '전체'
+                    ? [{ key: '_estimateCategory', label: '분류', class: 'center' }, ...columns]
+                    : columns;
+            },
+
+            get selectedItem() {
+                return this.selectedIndex === null ? null : this.filteredItems[this.selectedIndex] ?? null;
+            },
+
+            get pageStartIndex() {
+                return (this.currentPage - 1) * this.pageSize;
+            },
+
+            get paginatedItems() {
+                return this.filteredItems.slice(this.pageStartIndex, this.pageStartIndex + this.pageSize);
+            },
+
+            async loadData() {
+                const requestId = ++this.requestId;
+                const selectedCategories = this.selectedCategory === '전체'
+                    ? this.categories
+                    : [this.selectedCategory];
+                this.loading = true;
+                this.statusMessage = '데이터 요청 중...';
+                this.allItems = [];
+                this.filteredItems = [];
+                this.currentPage = 1;
+                this.openIndex = null;
+                this.selectedIndex = null;
+                this.resultMode = 'basic';
+
+                try {
+                    const results = await Promise.all(selectedCategories.map(async category => {
+                        const fileName = `2026년 ${category}공사 표준일위대가(업데이트_26년상).json`;
+                        const url = `https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/${encodeURIComponent('표준품셈')}/${encodeURIComponent(fileName)}`;
+                        try {
+                            const response = await fetch(url);
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                            const data = await response.json();
+                            const items = data?.공사원가호환규정?.공사내역서?.단일공사내역서?.일위대가;
+                            if (!Array.isArray(items)) throw new Error('일위대가 데이터 형식이 올바르지 않습니다.');
+                            return items.map(item => ({ ...item, _estimateCategory: category }));
+                        } catch (error) {
+                            throw new Error(`${category}공사: ${error.message}`);
+                        }
+                    }));
+                    if (requestId !== this.requestId) return;
+                    this.allItems = results.flat();
+                    if (this.query.trim()) {
+                        this.filterItems();
+                    } else {
+                        this.statusMessage = `표준품셈 / 데이터 준비 완료`;
+                    }
+                } catch (error) {
+                    if (requestId !== this.requestId) return;
+                    console.error('표준일위대가 로드 실패:', error);
+                    this.statusMessage = `데이터 로드 실패: ${error.message}`;
+                } finally {
+                    if (requestId === this.requestId) this.loading = false;
+                }
+            },
+
+            filterItems() {
+                const text = this.query.trim();
+                this.currentPage = 1;
+                this.openIndex = null;
+                this.selectedIndex = null;
+                if (Array.from(text).length < 2) {
+                    this.filteredItems = [];
+                    this.statusMessage = '검색어를 2글자 이상 입력해 주세요.';
+                    return;
+                }
+                const search = text.toLowerCase();
+                this.filteredItems = this.allItems.filter(item =>
+                    [item.품명, item.규격].some(value =>
+                        value != null && String(value).toLowerCase().includes(search))
+                );
+                this.statusMessage = `총 ${this.filteredItems.length.toLocaleString('ko-KR')}건 검색 완료 (전체 ${this.allItems.length.toLocaleString('ko-KR')}건 중)`;
+            },
+
+            showAllItems() {
+                this.query = '';
+                this.filteredItems = this.allItems;
+                this.currentPage = 1;
+                this.openIndex = null;
+                this.selectedIndex = null;
+                this.statusMessage = `전체 ${this.allItems.length.toLocaleString('ko-KR')}건 표시`;
+            },
+
+            selectPage(page) {
+                if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+                this.currentPage = page;
+                this.openIndex = null;
+                this.selectedIndex = null;
+            },
+
+            toggleItem(index) {
+                this.selectedIndex = index;
+                this.openIndex = this.openIndex === index ? null : index;
+                this.openDetailIndex = null;
+            },
+
+            toggleDetail(index) {
+                this.openDetailIndex = this.openDetailIndex === index ? null : index;
+            },
+
+            makeEstimateItem(item) {
+                const byCode = new Map(this.allItems
+                    .filter(entry => entry._estimateCategory === item._estimateCategory)
+                    .map(entry => [entry.일위대가코드, entry]));
+                const makeChildren = (estimate, ancestors) => this.details(estimate).map(detail => {
+                    const child = {
+                        ...detail,
+                        type: detail.자원구분 === '기계경비' ? '건설기계' : detail.자원구분
+                    };
+                    if (detail.자원구분 === '일위대가') {
+                        const referenced = byCode.get(detail.자원코드);
+                        if (!referenced) throw new Error(`일위대가 ${detail.자원코드}를 찾을 수 없습니다.`);
+                        if (ancestors.has(detail.자원코드)) throw new Error(`일위대가 ${detail.자원코드}가 순환 참조됩니다.`);
+                        child.children = makeChildren(referenced, new Set([...ancestors, detail.자원코드]));
+                    }
+                    return child;
+                });
+                return {
+                    type: '일위대가',
+                    일위대가코드: item.일위대가코드,
+                    품명: item.품명,
+                    규격: item.규격 ?? '',
+                    단위: item.단위 ?? '',
+                    수량: 1,
+                    재료비단가: item.재료비,
+                    노무비단가: item.노무비,
+                    경비단가: item.경비,
+                    비고: item.비고 ?? '',
+                    children: makeChildren(item, new Set([item.일위대가코드]))
+                };
+            },
+
+            registerItem() {
+                const item = this.selectedItem;
+                if (!item || !confirm(`'${item.품명}${item.규격 ? ` (${item.규격})` : ''}' 일위대가를 나의데이터에 등록하시겠습니까?`)) return;
+
+                try {
+                    const customItem = this.makeEstimateItem(item);
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option)) {
+                        throw new Error('option 데이터 형식이 올바르지 않습니다.');
+                    }
+                    const myData = option['나의데이터'] ?? [];
+                    if (!Array.isArray(myData)) throw new Error('나의데이터가 배열이 아닙니다.');
+                    option['나의데이터'] = [...myData, customItem];
+                    localStorage.setItem('option', JSON.stringify(option));
+                    this.statusMessage = `'${item.품명}' 일위대가를 나의데이터에 등록했습니다.`;
+                } catch (error) {
+                    console.error('나의데이터 등록 실패:', error);
+                    alert(`나의데이터 등록에 실패했습니다: ${error.message}`);
+                }
+            },
+
+            async addToEstimate() {
+                const item = this.selectedItem;
+                if (!item || this.sendingToEstimate) return;
+                this.sendingToEstimate = true;
+                try {
+                    await sendItemToEstimate(this.makeEstimateItem(item));
+                    this.statusMessage = `'${item.품명}' 일위대가를 내역서에 추가했습니다.`;
+                } catch (error) {
+                    console.error('내역서 항목 추가 실패:', error);
+                    alert(`내역서 항목 추가에 실패했습니다: ${error.message}`);
+                } finally {
+                    this.sendingToEstimate = false;
+                }
+            },
+
+            details(item) {
+                const value = item.일위대가상세;
+                if (Array.isArray(value)) return value;
+                return value ? [value] : [];
+            },
+
+            formatDetailJson(detail) {
+                return JSON.stringify(detail, (key, value) =>
+                    key && detailJsonExcludedKeys.includes(key) ? undefined : value, 2);
+            },
+
+            columnValue(item, column) {
+                if (column.key === '합계') {
+                    const costs = ['재료비', '노무비', '경비']
+                        .map(key => item[key])
+                        .filter(value => value !== null && value !== undefined && value !== '')
+                        .map(value => Number(String(value).replace(/,/g, '')))
+                        .filter(Number.isFinite);
+                    return costs.length ? this.formatNumber(costs.reduce((sum, value) => sum + value, 0)) : '';
+                }
+                const value = item[column.key];
+                return column.number ? this.formatNumber(value) : value ?? '';
+            },
+
+            formatNumber(value) {
+                if (value === null || value === undefined || value === '') return '';
+                const text = String(value);
+                if (!/^[+-]?\d+(?:\.\d+)?$/.test(text)) return text;
+                const parts = text.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return parts.join('.');
+            }
+        }));
+    });
+</script>

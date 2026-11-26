@@ -131,7 +131,7 @@
             <thead>
                 <tr>
                     <th>타입</th>
-                    <th>품목</th>
+                    <th>품명</th>
                     <th>규격</th>
                     <th>단위</th>
                     <th class="my-data-price">단가</th>
@@ -143,7 +143,7 @@
                         @keydown.enter.prevent="selectItem(row)" @keydown.space.prevent="selectItem(row)"
                         :class="{ 'is-selected': selectedIndex === row.index }">
                         <td x-text="row.item.type ?? ''"></td>
-                        <td x-text="row.item.품목 ?? row.item.품명 ?? ''"></td>
+                        <td x-text="row.item.품명 ?? ''"></td>
                         <td x-text="row.item.규격 ?? ''"></td>
                         <td class="my-data-unit" x-text="row.item.단위 ?? ''"></td>
                         <td class="my-data-price" x-text="formatPrice(row.item.재료비단가 ?? row.item.합계)"></td>
@@ -156,6 +156,7 @@
                                         <button type="button"
                                             x-show="!editing && showEditButtonByType[row.item.type] !== false"
                                             @click="startEditing(row)">수정하기</button>
+                                        <button type="button" x-show="!editing" @click="deleteItem()">삭제하기</button>
                                         <button type="button" x-show="editing" @click="saveItem()">저장하기</button>
                                         <button type="button" x-show="editing" @click="cancelEdit()">취소</button>
                                     </div>
@@ -351,6 +352,38 @@
                 this.saveMessage = '';
             },
 
+            deleteItem() {
+                if (this.selectedIndex === null) return;
+                const item = this.items[this.selectedIndex];
+                const name = item?.품명 || '선택한 항목';
+                if (!confirm(`'${name}'을(를) 나의데이터에서 삭제하시겠습니까?`)) return;
+
+                this.editError = '';
+                try {
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option) ||
+                        !Array.isArray(option['나의데이터'])) {
+                        this.editError = '저장된 나의데이터 형식이 올바르지 않습니다.';
+                        return;
+                    }
+                    const items = option['나의데이터'];
+                    if (JSON.stringify(items[this.selectedIndex]) !== this.selectedOriginal) {
+                        this.editError = '선택한 항목이 변경되었습니다. 새로고침 후 다시 삭제해 주세요.';
+                        return;
+                    }
+                    items.splice(this.selectedIndex, 1);
+                    localStorage.setItem('option', JSON.stringify(option));
+                    this.items = items;
+                    if (this.selectedType !== '전체' && !items.some(entry => entry?.type === this.selectedType)) {
+                        this.selectedType = '전체';
+                    }
+                    this.clearSelection();
+                } catch (error) {
+                    console.error('나의데이터 삭제 실패:', error);
+                    this.editError = '나의데이터를 삭제하지 못했습니다. 저장된 데이터와 브라우저 저장 공간을 확인해 주세요.';
+                }
+            },
+
             saveItem() {
                 this.editError = '';
                 this.saveMessage = '';
@@ -368,6 +401,7 @@
                     this.editError = '항목은 JSON 객체여야 합니다.';
                     return;
                 }
+                window.migrateItemNames(edited);
 
                 try {
                     const option = JSON.parse(localStorage.getItem('option') || '{}');

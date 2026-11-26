@@ -1,4 +1,42 @@
+<script>
+    if (new URLSearchParams(window.location.search).get('materialPopup') === '1') {
+        document.documentElement.classList.add('material-search-popup');
+    }
+</script>
+
 <style>
+    html.material-search-popup #sidebar-left,
+    html.material-search-popup #sidebar,
+    html.material-search-popup #header,
+    html.material-search-popup .login-btn-area,
+    html.material-search-popup .bottom-love-bar,
+    html.material-search-popup .blogger-labels,
+    html.material-search-popup .open-popup-button {
+        display: none !important;
+    }
+
+    html.material-search-popup #content {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+    }
+
+    html.material-search-popup #main {
+        float: none;
+        width: 100%;
+        margin: 0;
+    }
+
+    html.material-search-popup .post {
+        margin: 0;
+        padding: 0;
+    }
+
+    html:not(.material-search-popup) .add-to-estimate-button,
+    html:not(.material-search-popup) .search-page-links {
+        display: none;
+    }
+
     .bottom-love-bar {
         visibility: visible;
         opacity: 1;
@@ -28,6 +66,13 @@
         margin-bottom: 8px;
     }
 
+    .sticky-search-controls .search-page-links {
+        display: flex;
+        gap: 12px;
+        padding: 4px 0;
+        font-size: 0.85rem;
+    }
+
     .search-toolbar-fields {
         display: flex;
         align-items: center;
@@ -40,6 +85,32 @@
         align-items: center;
         gap: 6px;
         margin-left: auto;
+    }
+
+    .result-mode-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .result-mode-bar .open-popup-button {
+        margin-left: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: #475569;
+        font: inherit;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .result-mode-bar .open-popup-button:hover {
+        background: transparent;
+        color: #475569;
+        text-decoration: underline;
     }
 
     .sticky-search-controls {
@@ -70,6 +141,7 @@
         box-shadow: none;
         color: #475569;
         font: inherit;
+        font-size: 0.85rem;
         cursor: pointer;
     }
 
@@ -152,7 +224,8 @@
         </svg>
         <span style="line-height: 1.45;">
             조달청 가격정보입니다.<br>
-            품명 또는 규격을 검색하고 결과를 선택한 뒤 등록하면 나의데이터에 저장됩니다.
+            품명 또는 규격을 검색하고 결과를 선택한 뒤 등록하면 나의데이터에 저장됩니다.<br>
+            팝업에서는 선택한 자재를 열린 항목추가 화면에 바로 추가할 수 있습니다.
         </span>
     </div>
     <span onclick="document.getElementById('noticeBanner').style.display='none'"
@@ -163,6 +236,18 @@
 
 <div x-data="materialSearch">
     <div class="sticky-search-controls">
+
+        <nav class="search-page-links" aria-label="단가 검색 페이지">
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('material-search-popup') ? '&amp;estimatePopup=1' : '')">표준품셈</a>
+            <span aria-hidden="true">|</span>
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('material-search-popup') ? '&amp;materialPopup=1' : '')"
+                aria-current="page">시설공통자재</a>
+            <span aria-hidden="true">|</span>
+            <a href="https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1"
+                :href="'https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('material-search-popup') ? '&amp;marketPopup=1' : '')">시장시공가격</a>
+        </nav>
 
         <!-- 1) 상단 검색 툴바 영역 (조달청 가격정보 분류 선택 + 품명/규격 검색) -->
         <div x-show="showSearchBar" class="search-toolbar">
@@ -175,35 +260,40 @@
                 </select>
 
                 <label for="searchNm">품명/규격:</label>
-                <input type="text" id="searchNm" placeholder="품명 또는 규격 입력" x-model="searchNm" @keyup.enter="filterItems()">
+                <input type="text" id="searchNm" placeholder="품명 또는 규격 입력" x-model="searchNm"
+                    @keyup.enter="filterItems()">
                 <button type="button" @click="filterItems()" :disabled="loading">검색하기</button>
                 <button type="button" @click="showAllItems()" :disabled="loading">전체보기</button>
             </div>
             <div class="search-toolbar-actions">
                 <button type="button" @click="registerFinalItem(selectedItem)"
                     :disabled="loading || !selectedItem">등록하기</button>
+                <button type="button" class="add-to-estimate-button" @click="addToEstimate()"
+                    :disabled="loading || !selectedItem || sendingToEstimate">내역서에 추가</button>
                 <button type="button" @click="help_message()">&nbsp;도움말&nbsp;</button>
             </div>
         </div>
 
         <!-- 2) 응답결과 모드 선택 바 (라디오 버튼) -->
-        <div x-show="shouldShowRadioBar()" style="margin-bottom: 10px;">
-            <span id="status" x-text="statusMessage"></span>&nbsp;　　&nbsp;
+        <div class="result-mode-bar" x-show="shouldShowRadioBar()">
+            <span id="status" x-text="statusMessage"></span>
             <template x-for="mode in currentApi.resultModes" :key="mode.id">
                 <label style="margin-right: 12px; cursor: pointer; font-size: 0.85rem;">
                     <input type="radio" name="result_mode_group" :value="mode.id" x-model="selectedRegType">
                     <span x-text="mode.label"></span>
                 </label>
             </template>
+            <button type="button" class="open-popup-button" @click="openPopup()">팝업으로 열기</button>
         </div>
 
-        <nav class="result-pagination" aria-label="검색 결과 페이지" x-show="totalPages > 1">
-            <template x-for="page in totalPages" :key="page">
-                <button type="button" @click="selectPage(page)" :class="{ 'is-current': currentPage === page }"
-                    :aria-current="currentPage === page ? 'page' : null" x-text="page"></button>
-            </template>
-        </nav>
     </div>
+
+    <nav class="result-pagination" aria-label="검색 결과 페이지" x-show="totalPages > 1">
+        <template x-for="page in totalPages" :key="page">
+            <button type="button" @click="selectPage(page)" :class="{ 'is-current': currentPage === page }"
+                :aria-current="currentPage === page ? 'page' : null" x-text="page"></button>
+        </template>
+    </nav>
 
     <!-- 4) 메인 결과 목록 테이블 -->
     <div class="table-container" x-show="filteredItems.length > 0">
@@ -218,8 +308,7 @@
             <tbody>
                 <template x-for="(item, idx) in paginatedItems" :key="pageStartIndex + idx">
                     <tr @click="selectedRowIndex = pageStartIndex + idx"
-                        :class="{ 'selected-row': selectedRowIndex === pageStartIndex + idx }"
-                        style="cursor: pointer;">
+                        :class="{ 'selected-row': selectedRowIndex === pageStartIndex + idx }" style="cursor: pointer;">
                         <template x-for="(cell, cIdx) in getMaterialRow(item)" :key="cIdx">
                             <td :class="cell.class" x-text="cell.val"></td>
                         </template>
@@ -235,6 +324,44 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
+        async function sendItemToEstimate(item) {
+            if (typeof BroadcastChannel === 'undefined' || !globalThis.crypto?.randomUUID) {
+                throw new Error('이 브라우저에서는 화면 간 항목 추가를 지원하지 않습니다.');
+            }
+            const channel = new BroadcastChannel('cost-estimate-add');
+            try {
+                const requestId = crypto.randomUUID();
+                const targets = new Set();
+                channel.onmessage = event => {
+                    if (event.data?.type === 'available' && event.data.requestId === requestId) {
+                        targets.add(event.data.targetId);
+                    }
+                };
+                channel.postMessage({ type: 'discover', requestId });
+                await new Promise(resolve => setTimeout(resolve, 500));
+                if (!targets.size) throw new Error('항목추가 화면을 열고 프로젝트와 공종그룹을 선택해 주세요.');
+                if (targets.size > 1) throw new Error('항목추가 화면이 여러 개 열려 있습니다. 추가할 화면 하나만 남겨 주세요.');
+                const targetId = [...targets][0];
+                const response = await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error('추가 결과를 확인하지 못했습니다. 다시 시도하기 전에 내역서를 확인해 주세요.')), 5000);
+                    channel.onmessage = event => {
+                        if (event.data?.type !== 'result' || event.data.requestId !== requestId || event.data.targetId !== targetId) return;
+                        clearTimeout(timeout);
+                        resolve(event.data);
+                    };
+                    try {
+                        channel.postMessage({ type: 'add', requestId, targetId, item: JSON.parse(JSON.stringify(item)) });
+                    } catch (error) {
+                        clearTimeout(timeout);
+                        reject(error);
+                    }
+                });
+                if (!response.success) throw new Error(response.error);
+            } finally {
+                channel.close();
+            }
+        }
+
         const commonResultModes = [
             {
                 id: "No1", label: "기본",
@@ -261,9 +388,36 @@
             }
         ];
 
+        const categories = [
+            { label: '토목', file: '토목' },
+            { label: '건축', file: '건축' },
+            { label: '기계설비', file: '기계설비' },
+            { label: '전기, 정보통신', file: '전기정보통신' }
+        ];
+        const dataUrl = 'https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/';
+        const commonApi = {
+            searchKey: 'prdctClsfcNoNm',
+            defaultResultMode: 'No1',
+            resultModes: commonResultModes
+        };
+        const apiList = [
+            { id: 'all', name: '전체', ...commonApi },
+            ...categories.map((category, index) => {
+                const number = index + 1;
+                const fileName = `${number}.시설공통자재(${category.file})가격정보.json`;
+                return {
+                    id: `civil${number}`,
+                    name: `${category.label} `,
+                    url: `${dataUrl}${encodeURIComponent('조달청 가격정보현황')}/${encodeURIComponent(fileName)}`,
+                    hasSub: false,
+                    ...commonApi
+                };
+            })
+        ];
+
         Alpine.data('materialSearch', () => ({
             showSearchBar: true,
-            selectedApiId: "civil1",
+            selectedApiId: "all",
             selectedRegType: "No1",
 
             searchNm: "",
@@ -272,41 +426,14 @@
             selectedRegTypes: {},
             statusMessage: "데이터 로딩 중...",
             loading: false,
+            sendingToEstimate: false,
             allItems: [],
             filteredItems: [],
             pageSize: 50,
             currentPage: 1,
+            requestId: 0,
 
-            apiList: [
-                {
-                    id: "civil1", name: "1. 토목 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/1.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%ED%86%A0%EB%AA%A9)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
-                    hasSub: false,
-                    searchKey: "prdctClsfcNoNm", defaultResultMode: "No1",
-                    resultModes: commonResultModes
-                },
-
-                {
-                    id: "civil2", name: "2. 건축 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/2.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B1%B4%EC%B6%95)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
-                    hasSub: false,
-                    searchKey: "prdctClsfcNoNm", defaultResultMode: "No1",
-                    resultModes: commonResultModes
-                },
-                {
-                    id: "civil3", name: "3. 기계설비 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/3.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EA%B8%B0%EA%B3%84%EC%84%A4%EB%B9%84)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
-                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "No1",
-                    resultModes: commonResultModes
-                },
-                {
-                    id: "civil4", name: "4. 전기, 정보통신 시설공통자재",
-                    url: "https://raw.githubusercontent.com/h2ksp/skin/refs/heads/main/data/%EC%A1%B0%EB%8B%AC%EC%B2%AD%20%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4%ED%98%84%ED%99%A9/4.%EC%8B%9C%EC%84%A4%EA%B3%B5%ED%86%B5%EC%9E%90%EC%9E%AC(%EC%A0%84%EA%B8%B0%EC%A0%95%EB%B3%B4%ED%86%B5%EC%8B%A0)%EA%B0%80%EA%B2%A9%EC%A0%95%EB%B3%B4.json",
-
-                    hasSub: false, searchKey: "prdctClsfcNoNm", defaultResultMode: "No1",
-                    resultModes: commonResultModes
-                }
-            ],
+            apiList,
 
             init() {
                 this.loadData();
@@ -360,6 +487,17 @@
                 return this.showSearchBar && this.currentApi.resultModes.length > 0;
             },
 
+            openPopup() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('materialPopup', '1');
+                const popup = window.open(url.href, '_blank', 'popup=yes,width=1200,height=800');
+                if (!popup) {
+                    alert('팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.');
+                    return;
+                }
+                popup.opener = null;
+            },
+
             help_message() {
                 const banner = document.getElementById('noticeBanner');
                 if (!banner) return;
@@ -369,14 +507,17 @@
             },
 
             getHeaders() {
-                return this.currentResultMode?.columns || [];
+                const columns = this.currentResultMode?.columns || [];
+                return this.selectedApiId === 'all' && this.selectedRegType === 'No1'
+                    ? [{ key: '_sourceCategory', label: '분류', class: 'cell-center' }, ...columns]
+                    : columns;
             },
 
             // 각 항목의 행 데이터를 생성하는 함수
             getMaterialRow(item) {
-                const mode = this.currentResultMode;
-                if (mode && mode.columns) {
-                    return mode.columns.map(column => {
+                const columns = this.getHeaders();
+                if (columns.length) {
+                    return columns.map(column => {
                         let val = column.getValue ? column.getValue(item) : item[column.key];
                         if (column.key === 'nticeDt') {
                             val = val ? String(val).split(' ')[0] : '';
@@ -394,7 +535,10 @@
 
             async loadData() {
                 const api = this.currentApi;
-                if (!api || !api.url) return;
+                const requestId = ++this.requestId;
+                const sources = api.id === 'all'
+                    ? this.apiList.filter(source => source.id !== 'all')
+                    : [api];
                 if (api && api.resultModes && api.resultModes.length > 0) {
                     this.selectedRegType = api.resultModes[0].id; // 👈 API 바뀔 때 첫 번째 모드로 자동 선택
                 }
@@ -406,36 +550,38 @@
                 this.currentPage = 1;
                 this.selectedRowIndex = null; // 데이터 새로 불러올 때 선택 초기화
 
-                const cleanUrl = encodeURI(decodeURI(api.url));
-                const targetUrl = `${cleanUrl}?v=${new Date().getTime()}`;
-
                 try {
-                    const response = await fetch(targetUrl);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${targetUrl}`);
-                    }
-
-                    const jsonObj = await response.json();
-                    let rawItems = jsonObj?.response?.body?.items || jsonObj || [];
-
-                    if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
-                        this.statusMessage = "데이터가 비어있거나 불러올 수 없어.";
-                        this.loading = false;
-                        return;
-                    }
-
-                    this.allItems = Array.isArray(rawItems) ? rawItems : [rawItems];
+                    const results = await Promise.all(sources.map(async source => {
+                        const cleanUrl = encodeURI(decodeURI(source.url));
+                        const targetUrl = `${cleanUrl}?v=${new Date().getTime()}`;
+                        try {
+                            const response = await fetch(targetUrl);
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                            const jsonObj = await response.json();
+                            const rawItems = jsonObj?.response?.body?.items || jsonObj || [];
+                            if (!rawItems || (Array.isArray(rawItems) && rawItems.length === 0)) {
+                                throw new Error('데이터가 비어 있습니다.');
+                            }
+                            const items = Array.isArray(rawItems) ? rawItems : [rawItems];
+                            return items.map(item => ({ ...item, _sourceCategory: source.name }));
+                        } catch (error) {
+                            throw new Error(`${source.name}: ${error.message}`);
+                        }
+                    }));
+                    if (requestId !== this.requestId) return;
+                    this.allItems = results.flat();
 
                     if (this.searchNm.trim() !== "") {
                         this.filterItems();
                     } else {
-                        this.statusMessage = "데이터 준비 완료";
+                        this.statusMessage = "조달청 시설공통자재 / 데이터 준비 완료";
                     }
                 } catch (error) {
+                    if (requestId !== this.requestId) return;
                     console.error("오류 발생:", error);
                     this.statusMessage = "데이터 로드 실패: " + error.message;
                 } finally {
-                    this.loading = false;
+                    if (requestId === this.requestId) this.loading = false;
                 }
             },
             showAllItems() {
@@ -480,30 +626,31 @@
                 this.statusMessage = `총 ${this.filteredItems.length.toLocaleString('ko-KR')}건 검색 완료 (전체 ${this.allItems.length.toLocaleString('ko-KR')}건 중)`;
             },
 
-            registerFinalItem(item) {
-                if (!item) {
-                    return;
-                }
-
+            makeMaterialItem(item) {
                 const title = item.prdctClsfcNoNm || item.품명 || item.명칭 || '해당 자재';
-                const spec = (item.krnPrdctNm || item.규격) ? ` (${item.krnPrdctNm || item.규격})` : '';
-
-                if (!confirm(`'${title}${spec}' 자재를 나의데이터에 등록하시겠습니까?`)) {
-                    return;
-                }
-
                 const price = Number(String(item.prce ?? '').replace(/,/g, ''));
-                const customItem = {
+                return {
                     고시일시: item.nticeDt ? item.nticeDt.split(' ')[0] : '',
                     분류번호: item.prdctClsfcNo,
                     식별번호: item.prdctIdntNo,
                     type: '자재',
-                    품목: title,
+                    품명: title,
                     규격: item.krnPrdctNm || item.규격 || '',
                     단위: item.unit || item.단위 || '',
                     수량: 1,
                     재료비단가: Number.isFinite(price) ? price : 0,
                 };
+            },
+
+            registerFinalItem(item) {
+                if (!item) return;
+                const customItem = this.makeMaterialItem(item);
+                const title = customItem.품명;
+                const spec = customItem.규격 ? ` (${customItem.규격})` : '';
+
+                if (!confirm(`'${title}${spec}' 자재를 나의데이터에 등록하시겠습니까?`)) {
+                    return;
+                }
 
                 try {
                     const option = JSON.parse(localStorage.getItem('option') || '{}');
@@ -520,6 +667,22 @@
                 } catch (error) {
                     console.error('나의데이터 등록 실패:', error);
                     alert('나의데이터 등록에 실패했습니다.');
+                }
+            },
+
+            async addToEstimate() {
+                const item = this.selectedItem;
+                if (!item || this.sendingToEstimate) return;
+                this.sendingToEstimate = true;
+                try {
+                    const customItem = this.makeMaterialItem(item);
+                    await sendItemToEstimate(customItem);
+                    this.statusMessage = `'${customItem.품명}' 자재를 내역서에 추가했습니다.`;
+                } catch (error) {
+                    console.error('내역서 항목 추가 실패:', error);
+                    alert(`내역서 항목 추가에 실패했습니다: ${error.message}`);
+                } finally {
+                    this.sendingToEstimate = false;
                 }
             },
         }));

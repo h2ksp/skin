@@ -1,8 +1,33 @@
 <style>
     .unit-price-list {
-        color: #333;
-        font-size: 13px;
-        text-align: right;
+        color: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 0.85rem;
+        text-align: left;
+    }
+
+    .unit-price-list .estimate-toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #f9f9f9e7;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 5px 16px;
+        margin: 16px 0;
+    }
+
+    .unit-price-list .estimate-item-row:hover {
+        background: #f1f5f9;
+    }
+
+    .unit-price-list .estimate-item-row.is-selected {
+        background: #dbeafe;
+    }
+
+    .unit-price-list .move-arrow {
+        font-size: 11px;
     }
 
     /* 표 스타일 (.table-container 내부만 적용) */
@@ -57,13 +82,13 @@
 
     .mText2 {
         border-collapse: collapse;
-        font-style: italic;
-        font-size: 15px;
+        font-size: 0.85rem;
     }
 
     .mText2 td {
-        padding: 1px 4px;
-        line-height: 1.2;
+        border: 1px solid #cbd5e1;
+        padding: 4px 8px;
+        line-height: 1.4;
     }
 
     .mText2 .align-right {
@@ -73,37 +98,28 @@
 
     /* 마지막 합계 줄 위쪽 테두리랑 볼드 처리 */
     .mText2 .sum-row td {
-        border-top: 1px solid #000;
-        padding-top: 3px;
+        background: #f8fafc;
     }
 
     button {
         cursor: pointer;
     }
 
-    /* 1. 모든 인풋 박스 기본 스타일 (밑줄 형태 + 폰트 설정) */
     #print-container input[type="text"],
     #print-container input[type="number"] {
-        /* 글자 색상 */
-        font-style: italic;
-        /* 기울임꼴 */
-        padding-left: 9px;
-        /* 왼쪽 여백 33px */
+        padding: 5px 8px;
         text-align: left;
-
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid #aaa;
-        outline: none;
-        border-radius: 0;
-        /* 기본 모서리 둥글기 제거 */
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 0.9rem;
         box-sizing: border-box;
     }
 
-    /* 포커스(클릭) 시 밑줄 색상 강조 */
     #print-container input[type="text"]:focus,
     #print-container input[type="number"]:focus {
-        border-bottom: 1px solid #6c0a0a;
+        outline: 2px solid #93c5fd;
+        outline-offset: 1px;
     }
 
     /* 단위/수량 등 중앙 정렬이 필요한 인풋 처리 */
@@ -121,11 +137,9 @@
 
     /* 2. placeholder 힌트 글자 스타일 */
     #print-container input::placeholder {
-        color: #d1d5db;
-        /* 연한 회색 */
+        color: #94a3b8;
         font-size: 13px;
         font-weight: 400;
-        font-style: italic;
     }
 
     /* 3. 비활성화 링크 스타일 */
@@ -136,12 +150,12 @@
         pointer-events: none;
     }
 
-    /* 4. 콤보박스(select) 투명 스타일 */
     #print-container select {
-        border: 1px solid transparent;
-        background: transparent;
-        outline: none;
-        font-size: 12px;
+        padding: 5px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 0.9rem;
     }
 
     /* 1. 기본 span 텍스트 스타일 */
@@ -197,17 +211,7 @@
     <div class="unit-price-list" style="width: 100%; margin-bottom: 800px;">
         <h1>공종별 내역서</h1>
         <!-- 최상단 컨트롤 영역 -->
-        <div style="
-                background-color: #f9f9f9e7;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 8px;
-                border: 1px solid #e2e8f0;
-                border-radius: 12px;
-                padding: 5px 16px;
-                margin: 16px 0;
-        ">
+        <div class="estimate-toolbar">
 
             <select x-model="activeProject" @change="saveActiveProject()" style="width: 300px;">
                 <option value="">프로젝트 선택</option>
@@ -223,13 +227,15 @@
             </select>
             <div style="display: flex; gap: 8px; margin-left: auto;">
                 <button type="button" @click="editGroups()">그룹편집</button>
+                <button type="button" @click="showMoveButtons = !showMoveButtons"
+                    :aria-pressed="showMoveButtons">이동</button>
                 <button type="button" @click="moneyView()">합계보기</button>
             </div>
 
         </div>
 
 
-        <ul id="group-list" style="margin-left: -25px;">
+        <ul id="group-list" style="margin-left: 0; padding-left: 0; list-style: none;">
             <template x-for="(groupName, gIndex) in groupList" :key="gIndex">
                 <li x-show="activeGroup === '' || Number(activeGroup) === gIndex">
 
@@ -238,51 +244,53 @@
 
                         <!-- 우측 정렬 컨트롤 -->
                         <div style="margin-left: auto; display: flex; align-items: center; gap: 11px; font-size: 13px;">
-                            <a href="#" @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
+                            <a href="#" class="move-arrow" x-show="showMoveButtons" aria-label="그룹 위로 이동"
+                                @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
                                 :class="{ 'disabled': gIndex === 0 }">▲</a>
-                            <a href="#" @click.prevent="if (gIndex < groupList.length - 1) moveDownGroup(gIndex)"
+                            <a href="#" class="move-arrow" x-show="showMoveButtons" aria-label="그룹 아래로 이동"
+                                @click.prevent="if (gIndex < groupList.length - 1) moveDownGroup(gIndex)"
                                 :class="{ 'disabled': gIndex === (groupList.length - 1) }">▼</a>
                             <a href="#" @click.prevent="addLevel1(gIndex)" style="font-weight: 500;">+ 공종 추가</a>
                         </div>
                     </div>
                     <hr style="margin-bottom: 8px;">
 
-                    <ul style="margin-bottom: 120px;">
+                    <ul style="margin-bottom: 120px; padding-left: 0; list-style: none;">
                         <template x-for="(lvl1, l1Index) in (subGroupList[gIndex] || [])" :key="l1Index">
-                            <li style="margin-left: -25px;">
+                            <li>
                                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
                                     <input type="text" x-model="lvl1.name" @input="saveToStore()"
                                         placeholder="1차 하위 항목 입력" style="width: 350px;">
-                                    <a href="#" @click.prevent="if (l1Index > 0) moveUpLevel1(gIndex, l1Index)"
+                                    <a href="#" class="move-arrow" x-show="showMoveButtons" aria-label="공종 위로 이동"
+                                        @click.prevent="if (l1Index > 0) moveUpLevel1(gIndex, l1Index)"
                                         :class="{ 'disabled': l1Index === 0 }">▲</a>
-                                    <a href="#"
+                                    <a href="#" class="move-arrow" x-show="showMoveButtons" aria-label="공종 아래로 이동"
                                         @click.prevent="if (l1Index < subGroupList[gIndex].length - 1) moveDownLevel1(gIndex, l1Index)"
                                         :class="{ 'disabled': l1Index === (subGroupList[gIndex].length - 1) }">▼</a>
-                                    <a href="#" @click.prevent="addLevel2(gIndex, l1Index)"> + 항목추가 </a>
+                                    <a href="#" @click.prevent="addLevel2(gIndex, l1Index)"> + 추가 </a>
                                     <a href="#" @click.prevent="deleteLevel1(gIndex, l1Index)"
                                         style="color: #dc2626; font-weight: 500; margin-left: 4px; text-decoration: none;">x</a>
                                 </div>
 
-                                <ul style="margin-left: -60px; margin-bottom: 50px;">
+                                <ul style="margin-left: 0; margin-bottom: 50px;"
+                                    :style="{ paddingLeft: showMoveButtons ? '16px' : '0' }">
 
                                     <template x-for="(lvl2, l2Index) in (lvl1.children || [])" :key="l2Index">
-                                        <div style="margin-left: -25px;"
-                                            :style="lvl2.selected ? 'background-color: #eff6fe;' : ''">
+                                        <div class="estimate-item-row"
+                                            :class="{ 'is-selected': lvl2.selected }">
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <div
+                                                <div x-show="showMoveButtons"
                                                     style="display: flex; align-items: center; gap: 6px; font-size: 11px; flex-shrink: 0;">
-                                                    <span @click.stop="toggleLevel2Selection(gIndex, l1Index, l2Index)"
-                                                        style="flex-shrink: 0; cursor: pointer;">┕ &nbsp;</span>
-                                                    <a href="#"
+                                                    <a href="#" class="move-arrow" aria-label="항목 위로 이동"
                                                         @click.prevent="if (l2Index > 0) moveUpLevel2(gIndex, l1Index, l2Index)"
                                                         :class="{ 'disabled': l2Index === 0 }">▲</a>
-                                                    <a href="#"
+                                                    <a href="#" class="move-arrow" aria-label="항목 아래로 이동"
                                                         @click.prevent="if (l2Index < lvl1.children.length - 1) moveDownLevel2(gIndex, l1Index, l2Index)"
                                                         :class="{ 'disabled': l2Index === (lvl1.children.length - 1) }">▼</a>
                                                 </div>
 
                                                 <!-- 밑줄 스타일 일괄 적용 영역 -->
-                                                <input type="text" x-model="lvl2.품목" @input="saveToStore()"
+                                                <input type="text" x-model="lvl2.품명" @input="saveToStore()"
                                                     style="width: 320px;" placeholder="품명">
                                                 <input type="text" x-model="lvl2.규격" @input="saveToStore()"
                                                     style="width: 330px;" placeholder="규격">
@@ -290,7 +298,7 @@
                                                     @input="saveToStore()" style="width: 50px;" placeholder="단위">
 
                                                 <input type="text" class="text-center" x-model="lvl2.수량"
-                                                    @input="calcItems(lvl2, '수량', $event)" style="width: 60px;"
+                                                    @input="calcItems(lvl2, '수량', $event)" style="width: 65px;"
                                                     placeholder="수량">
 
                                                 <div
@@ -497,6 +505,7 @@
             activeProject: activeProject,
             projectList: option?.projectList || [],
             store: store,
+            showMoveButtons: false,
             showMoney: false, // 처음에는 숨겨져 있게 시작
 
             // 현재 프로젝트의 그룹 목록 가져오기
@@ -680,7 +689,7 @@
                 this.subGroupList[gIndex][l1Index].children.push({
                     showCost: false,
                     type: '자재',
-                    품목: '',
+                    품명: '',
                     규격: '',
                     단위: '',
                     수량: 0,

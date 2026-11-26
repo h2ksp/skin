@@ -1,120 +1,164 @@
 <style>
-    /* 테이블 전체 테두리 및 선 제거 */
-    table {
+    .cost-calculator {
+        color: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 0.85rem;
+        text-align: left;
+    }
+
+    .cost-calculator table {
         border-collapse: collapse;
         width: 100%;
         padding: 0;
+        font-family: inherit;
     }
 
-
-    th {
+    .cost-calculator th {
         font-weight: normal;
         text-align: center;
-        background-color: #f8f9fa;
-        
+        background-color: #f8fafc;
         border-bottom: none;
-        font-size: 13px;        
+        font-size: 13px;
     }
 
-    td {
+    .cost-calculator td {
         border: none;
-        font-style: italic;
-        padding: 0;
-        font-size: 13px;
+        font-size: 0.9rem;
         font-weight: normal;
-        padding-right: 2px;
+        font-style: normal;
         white-space: nowrap;
         padding: 0 2px 0 0;
     }
 
-    .text-left {
+    .cost-calculator .text-left {
         text-align: left;
     }
 
-    .text-center {
+    .cost-calculator .text-center {
         text-align: center;
     }
 
-    .text-right {
+    .cost-calculator .text-right {
         text-align: right;
     }
 
-    input {
+    .cost-calculator input[type="text"],
+    .cost-calculator select {
         font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: normal;
+        font-style: normal;
+        color: inherit;
+        width: 100%;
+        padding: 5px 8px;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #fff;
+    }
+
+    .cost-calculator input[type="text"] {
+        padding: 3px 8px;
+    }
+
+    .cost-calculator input[type="text"]:focus,
+    .cost-calculator select:focus {
+        outline: 2px solid #93c5fd;
+        outline-offset: 1px;
+    }
+
+    .cost-calculator input::placeholder {
+        color: #94a3b8;
         font-size: 13px;
-        color: inherit;
-        width: 100%;
-        height: 18px;
-        padding: 0 10px 0 2px;
-        box-sizing: border-box;
-        font-style: italic;
-        border: none;
-        border-bottom: 1px solid #ddd;
-        background: transparent;
-        outline: none;
+        font-weight: 400;
     }
 
-    select {
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        width: 100%;
-        /* height: 20px; */
-        padding: 0 10px 0 2px;
-        box-sizing: border-box;
-        font-style: italic;
-        border: none;
-
-        background: transparent;
-        outline: none;
-    }
-
-    input:focus,
-    select:focus {
-        border-bottom: 1px solid #333;
-    }
-
-    input.text-left,
-    select.text-left {
+    .cost-calculator input.text-left,
+    .cost-calculator select.text-left {
         text-align: left;
     }
 
-    input.text-center,
-    select.text-center {
+    .cost-calculator input.text-center,
+    .cost-calculator select.text-center {
         text-align: center;
     }
 
-    input.text-right,
-    select.text-right {
+    .cost-calculator input.text-right,
+    .cost-calculator select.text-right {
         text-align: right;
     }
 
+    .cost-calculator button {
+        cursor: pointer;
+    }
 
     .select-cell {
         cursor: pointer;
-        width: 20px;
+        width: 5px;
         text-align: center;
         background-color: transparent;
     }
 
-    tr.selected-row>td {
-        background-color: #eff6fe !important;
+    .cost-calculator .table-container tbody tr:hover {
+        background: #f1f5f9;
+    }
+
+    .cost-calculator tr.selected-row>td {
+        background-color: #dbeafe;
+    }
+
+    .cost-calculator .table-container th,
+    .cost-calculator .table-container td {
+        border: 1px solid #cbd5e1;
+    }
+
+    .cost-calculator .table-container th {
+        padding: 0 8px;
+        font-size: 0.85rem;
+    }
+
+    .cost-calculator .table-container th.select-header,
+    .cost-calculator .table-container th.action-header {
+        padding: 0;
+    }
+
+    .cost-calculator .table-container th.select-header {
+        width: 5px;
+    }
+
+    .cost-calculator .table-container td {
+        padding: 0;
+    }
+
+    .cost-calculator .table-container tbody input[type="text"],
+    .cost-calculator .table-container tbody select {
+        padding: 3px 8px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .cost-calculator .table-container tbody input[type="text"]:focus,
+    .cost-calculator .table-container tbody select:focus {
+        outline-offset: -2px;
+    }
+
+    .cost-calculator .table-container tbody td > div,
+    .cost-calculator .table-container tfoot td {
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
     .explorer-bar {
         display: flex;
-        gap: 7px;
-        margin-bottom: 12px;
-        background: #f8f9fa;
-        padding: 8px;
-        border: 1px solid #e1e4e8;
-        border-radius: 6px;
-    }
-
-    .explorer-field select {
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-style: normal;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 16px 0;
+        background: #f9f9f9e7;
+        padding: 5px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
     }
 
     /* 중첩 상태일 때 보여지는 부모 품목 정보 바 스타일 */
@@ -136,8 +180,6 @@
 
     .nested-parent-field {
         background: #fff;
-        border-bottom: 1px solid #ccc;
-        padding: 2px 6px;
     }
 
     .nested-parent-unit,
@@ -165,8 +207,15 @@
     }
 
     .my-data-item.is-selected {
-        background-color: #eff6fe;
+        background-color: #dbeafe;
+    }
 
+    .my-data-item:hover {
+        background-color: #f1f5f9;
+    }
+
+    .my-data-item.is-selected:hover {
+        background-color: #dbeafe;
     }
 
     .top-bar {
@@ -193,16 +242,69 @@
 
     .table-container {
         width: 100%;
+        overflow-x: auto;
     }
 
-    .table-container tbody td {
-        line-height: 18px;
+    .cost-calculator .json-editor {
+        position: relative;
+        margin: 14px 0 24px;
     }
 
-    .table-container tbody input,
-    .table-container tbody select {
-        height: 18px;
-        line-height: 18px;
+    .cost-calculator .json-editor-actions {
+        position: absolute;
+        top: 0;
+        right: 20px;
+        display: flex;
+        gap: 6px;
+    }
+
+    .cost-calculator .json-editor textarea,
+    .cost-calculator .json-editor pre {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 190px;
+        margin: 0;
+        padding: 12px 50px 332px 12px;
+        border: 0;
+        font: 14px monospace;
+    }
+
+    .cost-calculator .json-editor pre {
+        overflow: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        line-height: 1.5;
+    }
+
+    .cost-calculator .json-editor textarea {
+        overflow-y: hidden;
+        resize: none;
+    }
+
+    .cost-calculator .json-editor textarea:focus-visible {
+        background: #f1f5f9;
+    }
+
+    .cost-calculator .json-editor-message {
+        color: #64748b;
+        padding: 12px 0;
+    }
+
+    .cost-calculator .json-editor-error {
+        color: #b91c1c;
+    }
+
+    @media (max-width: 480px) {
+        .cost-calculator .json-editor-actions {
+            position: static;
+            justify-content: flex-end;
+        }
+
+        .cost-calculator .json-editor textarea,
+        .cost-calculator .json-editor pre {
+            padding-right: 2px;
+        }
     }
 
     pre {
@@ -215,7 +317,7 @@
 
 <br>
 
-<div x-data="costCalculator()" style="margin-left: -40px;width: calc(100% + 140px); font-size: 0.9rem;">
+<div class="cost-calculator" x-data="costCalculator()" style="margin-left: -40px;width: calc(100% + 140px);">
 
     <!-- 젤 상단 탐색기 스타일 콤보박스 2개 -->
     <div class="explorer-bar">
@@ -241,8 +343,8 @@
         <button type="button" @click="editSelected()" :disabled="!canEnterSelected">세부항목</button>
         <span x-text="nestingDepthNumber"></span>
         <div style="margin-left: auto; display: flex; gap: 7px; flex-shrink: 0;">
-            <button type="button" @click="toggleDataPanel('project')">나의데이터</button>
-            <button type="button" @click="toggleDataPanel('cart')">장바구니</button>
+            <button type="button" @click="toggleDataPanel('project')">프로젝트 데이터</button>
+            <button type="button" @click="toggleDataPanel('cart')">나의데이터</button>
         </div>
     </div>
 
@@ -271,7 +373,7 @@
     <!-- 최상위가 아닐 때 부모 항목의 정보가 실시간으로 바인딩되어 표시되는 영역 -->
     <div class="nested-info-bar" x-show="canGoBack && parentItem">
         <div class="nested-parent-fields" x-if="parentItem">
-            <input type="text" placeholder="품목" x-model="parentItem.품목" @input="saveCostData()"
+            <input type="text" placeholder="품명" x-model="parentItem.품명" @input="saveCostData()"
                 class="nested-parent-field">
             <input type="text" placeholder="규격" x-model="parentItem.규격" @input="saveCostData()"
                 class="nested-parent-field">
@@ -284,9 +386,9 @@
         <table x-ref="costTable">
             <thead>
                 <tr>
-                    <th style="width: 15px;"></th>
+                    <th class="select-header"></th>
                     <template x-for="col in currentColumns">
-                        <th :style="'width: ' + col.width" x-text="col.title"></th>
+                        <th :style="'width: ' + col.width" :class="{ 'action-header': col.type === 'action' }" x-text="col.title"></th>
                     </template>
                 </tr>
             </thead>
@@ -296,7 +398,7 @@
 
                         <!-- 행 선택 시 나의데이터 창이 켜져있다면 자동으로 닫힘(!showMyData) -->
                         <td class="select-cell"
-                            @click.stop="selectedIndex = selectedIndex === index ? null : index; showMyData = false; showCart = false;">
+                            @click.stop="selectRow(index)">
                         </td>
 
                         <template x-for="col in currentColumns">
@@ -324,13 +426,14 @@
 
                                 <!-- 4. 계산식 타입 -->
                                 <template x-if="col.type === 'calc'">
-                                    <div x-text="formatNum(col.calcFn(row))" :class="col.alignClass"></div>
+                                    <div x-text="formatNum(col.calcFn(row), col.key === '합계' || col.key === '단가합계')"
+                                        :class="col.alignClass"></div>
                                 </template>
 
                                 <!-- 5. 삭제 액션 타입 -->
                                 <template x-if="col.type === 'action'">
                                     <a type="button" @click.stop="removeRow(index)"
-                                        style="cursor: pointer; color: #999;">X</a>
+                                        style="cursor: pointer; color: #999; font-size: 11px;">X</a>
                                 </template>
                             </td>
                         </template>
@@ -346,7 +449,7 @@
                         <td :class="col.alignClass" style="padding-top: 8px;">
                             <template x-if="col.type === 'calc'">
                                 <!-- calc 열은 해당 열의 totalFn()으로 계산한 합계를 표시합니다. -->
-                                <div x-text="formatNum(rows.reduce((sum, row) => sum + (Number(col.calcFn(row)) || 0), 0))"
+                                <div x-text="formatNum(rows.reduce((sum, row) => sum + (Number(col.calcFn(row)) || 0), 0), true)"
                                     :class="col.alignClass"></div>
                             </template>
                             <template x-if="col.type !== 'calc'">
@@ -407,7 +510,7 @@
             <div class="my-data-item" :class="{ 'is-selected': selectedMyDataIndex === index }"
                 @click.stop="selectedMyDataIndex = selectedMyDataIndex === index ? null : index">
                 <span
-                    x-text="(showMyData && !sourceProjectKey ? '[' + item.sourceProjectKey + '] ' : '') + '- ' + (item.data.품목 || item.data.품명 || '품목없음') + ' / 규격: ' + (item.data.규격 || '-') + ' / 단위: ' + (item.data.단위 || '-')"></span>
+                    x-text="(showMyData && !sourceProjectKey ? '[' + item.sourceProjectKey + '] ' : '') + '- ' + (item.data.품명 || '품명없음') + ' / 규격: ' + (item.data.규격 || '-') + ' / 단위: ' + (item.data.단위 || '-')"></span>
             </div>
         </template>
         <template x-if="currentCycleItems.length === 0 && !dataPanelError">
@@ -420,8 +523,18 @@
     </div>
 
     <!-- 하단 JSON 상세 보기 영역 -->
-    <div x-show="selectedIndex !== null && rows[selectedIndex] && !showMyData && !showCart" x-cloak style="margin-top: 14px;">
-        <pre x-text="JSON.stringify(rows[selectedIndex], null, 2)"></pre>
+    <div class="json-editor" x-show="selectedIndex !== null && rows[selectedIndex] && !showMyData && !showCart"
+        x-cloak @resize.window="jsonEditing && resizeJsonEditor($refs.jsonEditor)">
+        <div class="json-editor-actions">
+            <button type="button" x-show="!jsonEditing" @click="startJsonEdit()">수정하기</button>
+            <button type="button" x-show="jsonEditing" @click="saveJsonEdit()">저장하기</button>
+            <button type="button" x-show="jsonEditing" @click="resetJsonEditor()">취소</button>
+        </div>
+        <pre x-show="!jsonEditing" x-text="jsonPreview"></pre>
+        <textarea x-ref="jsonEditor" aria-label="JSON 편집" x-show="jsonEditing" x-model="jsonDraft"
+            @input="resizeJsonEditor($el)" spellcheck="false"></textarea>
+        <div class="json-editor-message json-editor-error" x-show="jsonEditError" x-text="jsonEditError" role="alert"></div>
+        <div class="json-editor-message" x-show="jsonSaveMessage" x-text="jsonSaveMessage" role="status"></div>
     </div>
 
 </div>
@@ -442,6 +555,11 @@
             currentView: 'view1',
             rows: [],
             selectedIndex: null,
+            jsonEditing: false,
+            jsonDraft: '',
+            jsonOriginal: '',
+            jsonEditError: '',
+            jsonSaveMessage: '',
             showMyData: false,
             showCart: false,
             cartItems: [],
@@ -452,6 +570,7 @@
             sourceProjectKey: '',
             _availableProjects: null,
             _targetContainer: null,
+            _storedCostSnapshot: null,
             currentProjectKey: null,
 
             projectKeys: [],
@@ -473,6 +592,7 @@
             },
 
             toggleDataPanel(panel) {
+                this.resetJsonEditor();
                 const isOpen = panel === 'cart' ? this.showCart : this.showMyData;
                 this.showMyData = panel === 'project' && !isOpen;
                 this.showCart = panel === 'cart' && !isOpen;
@@ -539,6 +659,25 @@
                 return t.includes('일위대가') || t.includes('건설기계');
             },
 
+            get jsonPreview() {
+                const row = this.rows[this.selectedIndex];
+                if (!row) return '';
+                if (row.type !== '건설기계') return JSON.stringify(row, null, 2);
+                const preview = JSON.parse(JSON.stringify(row));
+                const hideDetails = value => {
+                    if (!value || typeof value !== 'object') return;
+                    for (const key of Object.keys(value)) {
+                        if (key === 'detail' && typeof value[key] === 'string' && value[key]) {
+                            value[key] = '[...]';
+                        } else {
+                            hideDetails(value[key]);
+                        }
+                    }
+                };
+                hideDetails(preview.children);
+                return JSON.stringify(preview, null, 2);
+            },
+
             get nestingDepthNumber() {
                 if (!this.subItemKey || this.subItemKey === "") return "";
                 const depth = String(this.subItemKey).split('-').length;
@@ -553,7 +692,7 @@
                             key: 'type', title: 'TYPE', type: 'select', width: '60px', alignClass: 'text-left',
                             options: cycleTypes.map(typeName => ({ value: typeName, label: typeName }))
                         },
-                        { key: '품목', title: '품목', type: 'input-text', width: '180px', alignClass: 'text-left' },
+                        { key: '품명', title: '품명', type: 'input-text', width: '180px', alignClass: 'text-left' },
                         { key: '규격', title: '규격', type: 'input-text', width: '180px', alignClass: 'text-left' },
                         { key: '단위', title: '단위', type: 'input-text', width: '30px', alignClass: 'text-center' },
                         { key: '수량', title: '수량', type: 'input-num', width: '40px', alignClass: 'text-right' },
@@ -566,7 +705,7 @@
                             ),
                             totalFn: () => '-'
                         },
-                        { key: 'action', title: '-', type: 'action', width: '20px', alignClass: 'text-center' }
+                        { key: 'action', title: '-', type: 'action', width: '12px', alignClass: 'text-center' }
                     ]
                 },
                 view2: {
@@ -605,7 +744,7 @@
                             ),
                             totalFn: () => '-'
                         },
-                        { key: 'action', title: '-', type: 'action', width: '20px', alignClass: 'text-center' }
+                        { key: 'action', title: '-', type: 'action', width: '12px', alignClass: 'text-center' }
                     ]
                 },
             },
@@ -619,6 +758,31 @@
                 this.loadDataFromOption();
                 this.sourceProjectKey = this.currentProjectKey || '';
                 this.updateCurrentCycleItems();
+                if (typeof BroadcastChannel !== 'undefined' && globalThis.crypto?.randomUUID) {
+                    const targetId = crypto.randomUUID();
+                    const channel = new BroadcastChannel('cost-estimate-add');
+                    channel.onmessage = event => {
+                        const message = event.data;
+                        switch (message?.type) {
+                            case 'discover':
+                                if (this._targetContainer) {
+                                    channel.postMessage({ type: 'available', requestId: message.requestId, targetId });
+                                }
+                                break;
+                            case 'add':
+                                if (message.targetId === targetId) {
+                                    try {
+                                        this.addExternalEstimate(message.item);
+                                        channel.postMessage({ type: 'result', requestId: message.requestId, targetId, success: true });
+                                    } catch (error) {
+                                        console.error('내역서 항목 추가 실패:', error);
+                                        channel.postMessage({ type: 'result', requestId: message.requestId, targetId, success: false, error: error.message });
+                                    }
+                                }
+                                break;
+                        }
+                    };
+                }
             },
 
             loadProjectsList() {
@@ -631,6 +795,7 @@
             },
 
             onProjectChange() {
+                this.resetJsonEditor();
                 this.sourceProjectKey = this.selectedProjectKey || '';
                 this.selectedMyDataIndex = null;
                 this.selectedCategoryKey = '';
@@ -668,7 +833,7 @@
                         if (Array.isArray(group)) {
                             group.forEach((cat, cIdx) => {
                                 if (cat) {
-                                    let groupName = cat.품목 || cat.품명 || cat.name || cat.title || cat.공종 || cat.구분 || `공종그룹 ${gIdx}-${cIdx}`;
+                                    let groupName = cat.품명 || cat.name || cat.title || cat.공종 || cat.구분 || `공종그룹 ${gIdx}-${cIdx}`;
                                     list.push({
                                         key: `${gIdx}-${cIdx}`,
                                         label: `건축 / ${groupName}`
@@ -682,6 +847,7 @@
             },
 
             onCategoryChange() {
+                this.resetJsonEditor();
                 this.subItemKey = '';
                 this.parentItem = null;
                 try {
@@ -698,7 +864,8 @@
 
             loadDataFromOption() {
                 try {
-                    const projects = JSON.parse(localStorage.getItem("cost") || "{}");
+                    this._storedCostSnapshot = localStorage.getItem("cost");
+                    const projects = JSON.parse(this._storedCostSnapshot || "{}");
                     this._availableProjects = projects; // 👈 💡 [핵심 수정] 프로젝트 데이터를 함수 시작하자마자 무조건 담아줌!
 
                     const opt = JSON.parse(localStorage.getItem("option") || "{}")?.comboboxsave;
@@ -772,7 +939,9 @@
             saveCostData() {
                 try {
                     if (this._availableProjects) {
-                        localStorage.setItem("cost", JSON.stringify(this._availableProjects));
+                        const serialized = JSON.stringify(this._availableProjects);
+                        localStorage.setItem("cost", serialized);
+                        this._storedCostSnapshot = serialized;
                         this.updateCurrentCycleItems();
                     }
                 } catch (e) {
@@ -780,11 +949,140 @@
                 }
             },
 
+            selectRow(index) {
+                this.resetJsonEditor();
+                this.selectedIndex = this.selectedIndex === index ? null : index;
+                this.showMyData = false;
+                this.showCart = false;
+            },
+
+            resetJsonEditor() {
+                this.jsonEditing = false;
+                this.jsonDraft = '';
+                this.jsonOriginal = '';
+                this.jsonEditError = '';
+                this.jsonSaveMessage = '';
+            },
+
+            resizeJsonEditor(element) {
+                if (!element) return;
+                element.style.height = 'auto';
+                element.style.height = `${element.scrollHeight}px`;
+            },
+
+            startJsonEdit() {
+                if (this.selectedIndex === null || !this.rows[this.selectedIndex]) return;
+                if (this.rows[this.selectedIndex].type === '건설기계') {
+                    this.openMachineEditor();
+                    return;
+                }
+                this.jsonOriginal = JSON.stringify(this.rows[this.selectedIndex]);
+                this.jsonDraft = JSON.stringify(this.rows[this.selectedIndex], null, 2);
+                this.jsonEditError = '';
+                this.jsonSaveMessage = '';
+                this.jsonEditing = true;
+                this.$nextTick(() => this.resizeJsonEditor(this.$refs.jsonEditor));
+            },
+
+            openMachineEditor() {
+                this.jsonEditError = '';
+                try {
+                    if (!this._targetContainer || localStorage.getItem('cost') !== this._storedCostSnapshot) {
+                        throw new Error('내역서가 변경되었습니다. 새로고침 후 다시 수정해 주세요.');
+                    }
+                    const item = this._targetContainer[this.selectedIndex];
+                    if (!item || item.type !== '건설기계') {
+                        throw new Error('수정할 건설기계 항목을 찾을 수 없습니다.');
+                    }
+                    const option = JSON.parse(localStorage.getItem('option') || '{}');
+                    if (!option || typeof option !== 'object' || Array.isArray(option)) {
+                        throw new Error('option 데이터 형식이 올바르지 않습니다.');
+                    }
+                    const machineData = option.machineData ?? {};
+                    if (typeof machineData !== 'object' || Array.isArray(machineData)) {
+                        throw new Error('기계 데이터 형식이 올바르지 않습니다.');
+                    }
+                    option.machineData = {
+                        ...machineData,
+                        activeMode: 'edit-estimate',
+                        edit: { ...item },
+                        estimateEdit: {
+                            projectKey: this.selectedProjectKey,
+                            categoryKey: this.selectedCategoryKey,
+                            subItemKey: this.canGoBack ? this.subItemKey : '',
+                            rowIndex: this.selectedIndex,
+                            original: JSON.stringify(item)
+                        }
+                    };
+                    delete option.machineData.activeSource;
+                    delete option.machineData.editOriginPath;
+                    option.redirect = window.location.href;
+                    const editUrl = new URL('https://study-with-words.blogspot.com/2026/10/blog-post_12.html?group=group3&sub=sub3');
+                    editUrl.searchParams.set('edit', 'estimate');
+                    localStorage.setItem('option', JSON.stringify(option));
+                    window.location.href = editUrl.href;
+                } catch (error) {
+                    console.error('건설기계 수정 준비 실패:', error);
+                    this.jsonEditError = `수정 화면을 열지 못했습니다: ${error.message}`;
+                }
+            },
+
+            saveJsonEdit() {
+                this.jsonEditError = '';
+                this.jsonSaveMessage = '';
+                let edited;
+                try {
+                    edited = JSON.parse(this.jsonDraft);
+                } catch (error) {
+                    console.error('JSON 문법 오류:', error);
+                    this.jsonEditError = 'JSON 문법이 올바르지 않습니다. 따옴표, 쉼표, 콜론과 괄호를 확인해 주세요.';
+                    return;
+                }
+                if (!edited || typeof edited !== 'object' || Array.isArray(edited)) {
+                    this.jsonEditError = '항목은 JSON 객체여야 합니다.';
+                    return;
+                }
+                window.migrateItemNames(edited);
+
+                let projects, target, parents, serialized;
+                try {
+                    if (this.selectedIndex === null || !this._targetContainer ||
+                        JSON.stringify(this._targetContainer[this.selectedIndex]) !== this.jsonOriginal) {
+                        throw new Error('선택한 항목이 변경되었습니다. 다시 선택한 후 수정해 주세요.');
+                    }
+                    if (localStorage.getItem('cost') !== this._storedCostSnapshot) {
+                        throw new Error('다른 화면에서 내역서가 변경되었습니다. 새로고침 후 다시 수정해 주세요.');
+                    }
+                    projects = JSON.parse(JSON.stringify(this._availableProjects));
+                    ({ target, parents } = this.resolveCurrentTarget(projects));
+                    if (JSON.stringify(target[this.selectedIndex]) !== this.jsonOriginal) {
+                        throw new Error('선택한 항목이 변경되었습니다. 다시 선택한 후 수정해 주세요.');
+                    }
+                    target[this.selectedIndex] = edited;
+                    this.recalculateEstimateParents(parents);
+                    serialized = JSON.stringify(projects);
+                    localStorage.setItem('cost', serialized);
+                } catch (error) {
+                    console.error('JSON 항목 저장 실패:', error);
+                    this.jsonEditError = `항목을 저장하지 못했습니다: ${error.message}`;
+                    return;
+                }
+                this._storedCostSnapshot = serialized;
+                this._availableProjects = projects;
+                this._targetContainer = target;
+                this.rows = target;
+                this.parentItem = parents.length ? parents[parents.length - 1] : null;
+                this.updateCurrentCycleItems();
+                this.jsonEditing = false;
+                this.jsonSaveMessage = '저장했습니다.';
+            },
+
             addRow() {
                 if (!this._targetContainer) return;
+                this.resetJsonEditor();
                 this._targetContainer.push({
                     type: '자재',
-                    품목: '',
+                    품명: '',
                     규격: '',
                     단위: '',
                     수량: 0,
@@ -801,6 +1099,7 @@
 
             editSelected() {
                 if (!this.canEnterSelected) return;
+                this.resetJsonEditor();
                 const selectedRow = this.rows[this.selectedIndex];
                 selectedRow.children ??= [];
 
@@ -823,6 +1122,7 @@
             },
 
             goBack() {
+                this.resetJsonEditor();
                 try {
                     const optData = JSON.parse(localStorage.getItem("option") || "{}");
                     if (optData.comboboxsave && optData.comboboxsave.subItemKey) {
@@ -841,7 +1141,7 @@
             createItemFields(item, type) {
                 return {
                     type,
-                    품목: item.품목 || item.품명 || '',
+                    품명: item.품명 || '',
                     규격: item.규격 || '',
                     단위: item.단위 || '',
                     수량: 1,
@@ -860,12 +1160,72 @@
                 this.saveCostData();
             },
 
+            resolveCurrentTarget(projects) {
+                const [groupIndex, categoryIndex] = this.selectedCategoryKey.split('-').map(Number);
+                const category = projects[this.selectedProjectKey]?.공종별내역서?.[groupIndex]?.[categoryIndex];
+                if (!category || !Array.isArray(category.children)) {
+                    throw new Error('선택한 공종그룹을 찾을 수 없습니다.');
+                }
+                let target = category.children;
+                const parents = [];
+                if (this.canGoBack) {
+                    for (const index of this.subItemKey.split('-').map(Number)) {
+                        const parent = target[index];
+                        if (!parent || !Array.isArray(parent.children)) {
+                            throw new Error('선택한 세부항목을 찾을 수 없습니다.');
+                        }
+                        parents.push(parent);
+                        target = parent.children;
+                    }
+                }
+                return { target, parents };
+            },
+
+            recalculateEstimateParents(parents) {
+                for (let i = parents.length - 1; i >= 0; i--) {
+                    const parent = parents[i];
+                    for (const key of ['재료비단가', '노무비단가', '경비단가']) {
+                        parent[key] = parent.children.reduce((sum, child) =>
+                            sum + costNumber(child.수량) * costNumber(child[key]), 0);
+                    }
+                    this.updateRowCosts(parent);
+                }
+            },
+
+            addExternalEstimate(item) {
+                if (!this._targetContainer || !this._availableProjects) {
+                    throw new Error('항목추가 화면에서 프로젝트와 공종그룹을 선택해 주세요.');
+                }
+                if (!item || !['일위대가', '자재'].includes(item.type)) {
+                    throw new Error('추가할 항목 데이터가 올바르지 않습니다.');
+                }
+                if (localStorage.getItem('cost') !== this._storedCostSnapshot) {
+                    throw new Error('다른 화면에서 내역서가 변경되었습니다. 항목추가 화면을 새로고침한 후 다시 시도해 주세요.');
+                }
+
+                const projects = JSON.parse(JSON.stringify(this._availableProjects));
+                const { target, parents } = this.resolveCurrentTarget(projects);
+                const newItem = { ...item, ...this.createItemFields(item, item.type) };
+                this.updateRowCosts(newItem);
+                target.push(newItem);
+                this.recalculateEstimateParents(parents);
+                const serialized = JSON.stringify(projects);
+                localStorage.setItem('cost', serialized);
+                this._storedCostSnapshot = serialized;
+                this._availableProjects = projects;
+                this._targetContainer = target;
+                this.rows = target;
+                this.parentItem = parents.length ? parents[parents.length - 1] : null;
+                this.updateCurrentCycleItems();
+            },
+
             removeRow(index) {
                 if (!this._targetContainer) return;
                 const item = this._targetContainer[index];
-                const message = `'${item.품목 || '선택한 항목'}'을(를) 삭제하시겠습니까?` +
+                const message = `'${item.품명 || '선택한 항목'}'을(를) 삭제하시겠습니까?` +
                     (item.children?.length ? '\n하위 항목도 함께 삭제됩니다.' : '');
                 if (!confirm(message)) return;
+                if (this.selectedIndex === index) this.resetJsonEditor();
                 this._targetContainer.splice(index, 1);
                 this.rows = this._targetContainer;
                 if (this.selectedIndex === index) {
@@ -881,6 +1241,7 @@
                 const targetIndex = this.selectedIndex + direction;
                 if (targetIndex < 0 || targetIndex >= this.rows.length) return;
 
+                this.resetJsonEditor();
                 const item = this._targetContainer.splice(this.selectedIndex, 1)[0];
                 this._targetContainer.splice(targetIndex, 0, item);
                 this.rows = this._targetContainer;
@@ -911,7 +1272,7 @@
                 const traverseNet = (items, sourceProjectKey) => {
                     if (!Array.isArray(items)) return;
                     for (let item of items) {
-                        if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
+                        if (item && (item.품명 || item.규격 || item.수량 !== undefined)) {
                             let t = item.type || item.타입 || item.구분 || '자재';
                             t = String(t).trim();
 
@@ -946,7 +1307,7 @@
                     if (proj.일위대가 && Array.isArray(proj.일위대가)) {
                         if (!classified['일위대가']) classified['일위대가'] = [];
                         for (let item of proj.일위대가) {
-                            if (item && (item.품목 || item.품명 || item.규격 || item.수량 !== undefined || item.수량 !== undefined)) {
+                            if (item && (item.품명 || item.규격 || item.수량 !== undefined)) {
                                 classified['일위대가'].push({ data: item, type: '일위대가', sourceProjectKey });
                             }
                         }
@@ -1013,9 +1374,11 @@
                 return Number(val).toLocaleString();
             },
 
-            formatNum(val) {
+            formatNum(val, isTotal = false) {
                 if (val === '-' || isNaN(val)) return '-';
-                return Number(val || 0).toLocaleString();
+                return isTotal
+                    ? Number(val || 0).toLocaleString('ko-KR', { maximumFractionDigits: 2 })
+                    : Number(val || 0).toLocaleString();
             }
         };
     }
