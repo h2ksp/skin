@@ -1,10 +1,82 @@
+<script>
+    if (new URLSearchParams(window.location.search).get('costEstimatePopup') === '1') {
+        document.documentElement.classList.add('cost-estimate-popup');
+    }
+</script>
+
 <style>
+    html.cost-estimate-popup #sidebar-left,
+    html.cost-estimate-popup #sidebar,
+    html.cost-estimate-popup #header,
+    html.cost-estimate-popup .login-btn-area,
+    html.cost-estimate-popup .bottom-love-bar,
+    html.cost-estimate-popup .blogger-labels,
+    html.cost-estimate-popup .open-popup-button {
+        display: none !important;
+    }
+
+    html.cost-estimate-popup #content {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+    }
+
+    html.cost-estimate-popup #main {
+        float: none;
+        width: 100%;
+        margin: 0;
+    }
+
+    html.cost-estimate-popup .post {
+        margin: 0;
+        padding: 0;
+    }
+
+    html.cost-estimate-popup .cost-estimate {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    html.cost-estimate-popup .cost-estimate > br:first-child {
+        display: none;
+    }
+
+    html.cost-estimate-popup .toolbar {
+        margin-top: 0;
+    }
+
+    .cost-estimate-popup-nav {
+        display: none;
+    }
+
+    html.cost-estimate-popup .cost-estimate-popup-nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 0;
+        font-size: 0.85rem;
+    }
+
+    .cost-estimate-popup-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+    }
+
+    .cost-estimate {
+        position: relative;
+        z-index: 200;
+    }
+
     .my-table {
         border: 1px solid black;
         border-collapse: collapse;
         width: 100%;
         font-size: 0.85em;
         margin-bottom: 300px;
+        transform: scaleY(1.1);
+        transform-origin: top;
     }
 
     .my-table td {
@@ -16,10 +88,121 @@
     .my-table td.money {
         text-align: right;
         padding-right: 12px;
+        white-space: nowrap;
+    }
+
+    .tables-wrapper {
+        overflow-x: auto;
+    }
+
+    .my-table .item-name {
+        white-space: nowrap;
+    }
+
+    .bid-exclusion-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        flex: 0 0 auto;
+        position: relative;
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .selecting-bid-exclusions .bid-exclusion-checkbox {
+        box-sizing: border-box;
+        border: 1px solid currentColor;
+        border-radius: 2px;
+    }
+
+    .bid-exclusion-checkbox::after {
+        position: absolute;
+        top: 0;
+        left: 4px;
+        width: 5px;
+        height: 9px;
+        border: solid currentColor;
+        border-width: 0 2px 2px 0;
+        content: "";
+        opacity: 0;
+        transform: rotate(45deg);
+    }
+
+    .bid-exclusion-checkbox:checked::after {
+        opacity: 1;
+    }
+
+    .bid-exclusion-checkbox:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+
+    .bid-exclusion-cell {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .bid-exclusion-cell-label {
+        flex: 0 1 auto;
+        min-width: 0;
     }
 
     .toolbar {
-        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin: 12px 0;
+        background: #f9f9f9e7;
+        padding: 4px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.85rem;
+    }
+
+    .toolbar select {
+        min-width: 220px;
+        box-sizing: border-box;
+        padding: 4px 7px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #fff;
+        color: inherit;
+        font: inherit;
+    }
+
+    .toolbar-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 10px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .toolbar-option input {
+        margin: 0;
+    }
+
+    .toolbar .open-popup-button {
+        margin-left: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .toolbar .open-popup-button:hover {
+        background: transparent;
+        color: inherit;
+        text-decoration: underline;
     }
 
     .rateCell {
@@ -55,25 +238,87 @@
     .table-input:focus {
         background-color: #f0f7ff;
     }
+
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+
+        .cost-estimate {
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .toolbar,
+        .cost-estimate-popup-nav {
+            display: none !important;
+        }
+
+        #print-container {
+            position: static !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        .my-table {
+            width: 100% !important;
+            table-layout: fixed;
+            font-size: 9pt;
+        }
+
+        .my-table td {
+            padding: 1px 3px;
+            overflow-wrap: anywhere;
+        }
+    }
 </style>
 
 
-
 <div class="cost-estimate" x-data="costEstimate()" x-init="init()"
-    style="margin-left: -140px;width: calc(100% + 140px)">
+    :class="{ 'selecting-bid-exclusions': selectingBidExclusions }"
+    style="margin-left: -170px;width: calc(100% + 170px)">
     <br>
+    <nav class="cost-estimate-popup-nav" aria-label="단가 검색 페이지">
+        <a href="https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1"
+            :href="'https://study-with-words.blogspot.com/2026/11/blog-post.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('cost-estimate-popup') ? '&amp;estimatePopup=1' : '')">표준품셈</a>
+        <span aria-hidden="true">|</span>
+        <a href="https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1"
+            :href="'https://study-with-words.blogspot.com/2026/11/blog-post_10.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('cost-estimate-popup') ? '&amp;materialPopup=1' : '')">시설공통자재</a>
+        <span aria-hidden="true">|</span>
+        <a href="https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1"
+            :href="'https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('cost-estimate-popup') ? '&amp;marketPopup=1' : '')">시장시공가격</a>
+        <span class="cost-estimate-popup-nav-right">
+            <span aria-hidden="true">|</span>
+            <a href="https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&amp;sub=sub4&amp;costEstimatePopup=1"
+                aria-current="page">원가계산서</a>
+        </span>
+    </nav>
     <div class="toolbar">
-        <label for="costEstimateProject">프로젝트 선택:</label>
+        <label for="costEstimateProject">원가계산서: </label>
         <select id="costEstimateProject" x-model="activeProject" @change="saveActiveProject()">
             <option value="">프로젝트 선택</option>
             <template x-for="project in projectList" :key="project">
                 <option :value="project" x-text="project"></option>
             </template>
         </select>
+        <label class="toolbar-option">
+            <input type="checkbox" :checked="activeProject ? cost[activeProject].옵션.건설기계 === true : false"
+                :disabled="!activeProject" @change="setConstructionEquipment($event.target.checked)">
+            건설기계 경비로 산정
+        </label>
+        <button type="button" class="open-popup-button" @click="openPopup()">팝업으로 열기</button>
     </div>
 
 
-    <div class="tables-wrapper">
+    <div class="tables-wrapper" id="print-container">
 
         <table class="my-table">
             <thead style="text-align: center;">
@@ -81,16 +326,18 @@
                     <td colspan="3">비 목</td>
                     <td style="width: 100px;">금액</td>
                     <td style="width: 55px;">요율(%)</td>
-                    <td style="width: 360px;">구 성 비</td>
+                    <td style="width: 380px;">구 성 비</td>
                     <td>비고</td>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td :rowspan="24 + (showAdd ? getItemsByType('추가경비').length : 0)" style="width: 5px"></td>
-                    <td rowspan="4" style="width: 20px;">재<br>료<br>비</td>
+                    <td :rowspan="24 + (showAdd ? getItemsByType('추가경비').length : 0) + (showIndirectMaterial ? getItemsByType('간접재료비').length : 0) + (showByproduct ? getItemsByType('작업설, 부산물').length : 0)"
+                        style="width: 5px"></td>
+                    <td :rowspan="4 + (showIndirectMaterial ? getItemsByType('간접재료비').length : 0) + (showByproduct ? getItemsByType('작업설, 부산물').length : 0)"
+                        style="width: 20px;">재<br>료<br>비</td>
                     <td>직접재료비</td>
-                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).직접재료비)"></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).직접재료비)"></td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
@@ -98,26 +345,50 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>간접재료비</td>
-                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).간접재료비)"></td>
+                    <td @click="showIndirectMaterial = !showIndirectMaterial" class="rateCell"
+                        style="text-align: left !important;">간접재료비</td>
+                    <td class="money"
+                        x-text="showIndirectMaterial ? '-' : (v => v !== '0' ? `${v}` : '-')(total(activeProject).간접재료비)">
+                    </td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.간접재료비" class="table-input">
                     </td>
                 </tr>
+                <template x-for="(item, index) in getItemsByType('간접재료비')" :key="`indirect-material-${index}`">
+                    <tr x-show="showIndirectMaterial">
+                        <td class="item-name" x-text="`- ${item.품명 || ''}`"></td>
+                        <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
                 <tr>
-                    <td>작업설,부산물</td>
-                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).작업설부산물)" </td>
+                    <td @click="showByproduct = !showByproduct" class="rateCell" style="text-align: left !important;">
+                        작업설,부산물</td>
+                    <td class="money"
+                        x-text="showByproduct ? '-' : (v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).작업설부산물)">
+                    </td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.작업설부산물" class="table-input">
                     </td>
                 </tr>
+                <template x-for="(item, index) in getItemsByType('작업설, 부산물')" :key="`byproduct-${index}`">
+                    <tr x-show="showByproduct">
+                        <td class="item-name" x-text="`- ${item.품명 || ''}`"></td>
+                        <td class="money" x-text="`( ${toNum(item.합계).toLocaleString('ko-KR')} )`"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
                 <tr>
                     <td>[ 소계 ]</td>
-                    <td class="money" x-text="(v => v !== '0' ? `( ${v} )` : '-')(total(activeProject).재료비)"></td>
+                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).재료비)"></td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
@@ -139,7 +410,7 @@
                     <td>간접노무비</td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).간접노무비)"> </td>
                     <td @click="onRateClick('간접노무비')" class="rateCell">
-                        <span x-text="요율.간접노무비"></span>
+                        <span x-text="요율.간접노무비 || 0"></span>
                     </td>
                     <td> 직접노무비 × 율 </td>
                     <td class="table-input-cell">
@@ -176,7 +447,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>산재보험료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">산재보험료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('산재보험료')"
+                                :checked="isBidExclusionSelected('산재보험료')"
+                                @change="setBidExclusion('산재보험료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).산재보험료)"></td>
                     <td @click="onRateClick('산재보험료')" class="rateCell">
                         <span x-text="요율.산재보험료"></span>
@@ -187,7 +466,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>고용보험료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">고용보험료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('고용보험료')"
+                                :checked="isBidExclusionSelected('고용보험료')"
+                                @change="setBidExclusion('고용보험료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).고용보험료)"></td>
                     <td @click="onRateClick('고용보험료')" class="rateCell">
                         <span x-text="요율.고용보험료"></span>
@@ -198,7 +485,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>건강보험료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">건강보험료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('건강보험료')"
+                                :checked="isBidExclusionSelected('건강보험료')"
+                                @change="setBidExclusion('건강보험료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건강보험료)"></td>
                     <td @click="onRateClick('건강보험료')" class="rateCell">
                         <span x-text="요율.건강보험료"></span>
@@ -209,7 +504,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>연급보험료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">연급보험료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('연금보험료')"
+                                :checked="isBidExclusionSelected('연금보험료')"
+                                @change="setBidExclusion('연금보험료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).연금보험료)"></td>
                     <td @click="onRateClick('연금보험료')" class="rateCell">
                         <span x-text="요율.연금보험료"></span>
@@ -220,7 +523,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>노인장기요양보험료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">노인장기요양보험료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('노인장기요양보험료')"
+                                :checked="isBidExclusionSelected('노인장기요양보험료')"
+                                @change="setBidExclusion('노인장기요양보험료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).노인장기요양보험료)"></td>
                     <td @click="onRateClick('노인장기요양보험료')" class="rateCell">
                         <span x-text="요율.노인장기요양보험료"></span>
@@ -231,7 +542,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>퇴직공제부금비</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">퇴직공제부금비</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('퇴직공제부금비')"
+                                :checked="isBidExclusionSelected('퇴직공제부금비')"
+                                @change="setBidExclusion('퇴직공제부금비', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).퇴직공제부금비)"></td>
                     <td @click="onRateClick('퇴직공제부금비')" class="rateCell">
                         <span x-text="요율.퇴직공제부금비"></span>
@@ -242,7 +561,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>산업안전보건관리비</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">산업안전보건관리비</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('산업안전보건관리비')"
+                                :checked="isBidExclusionSelected('산업안전보건관리비')"
+                                @change="setBidExclusion('산업안전보건관리비', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).산업안전보건관리비)"></td>
                     <td @click="onRateClick('산업안전보건관리비')" class="rateCell">
                         <span x-text="요율.산업안전보건관리비"></span>
@@ -269,7 +596,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>환경보전비</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">환경보전비</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('환경보전비')"
+                                :checked="isBidExclusionSelected('환경보전비')"
+                                @change="setBidExclusion('환경보전비', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).환경보전비)"></td>
                     <td @click="onRateClick('환경보전비')" class="rateCell">
                         <span x-text="요율.환경보전비"></span>
@@ -280,7 +615,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>기타경비</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">기타경비</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('기타경비')"
+                                :checked="isBidExclusionSelected('기타경비')"
+                                @change="setBidExclusion('기타경비', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).기타경비)"></td>
                     <td @click="onRateClick('기타경비')" class="rateCell">
                         <span x-text="요율.기타경비"></span>
@@ -291,7 +634,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>건설하도급대금 발급수수료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">건설하도급대금 발급수수료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('건설하도급대금발급수수료')"
+                                :checked="isBidExclusionSelected('건설하도급대금발급수수료')"
+                                @change="setBidExclusion('건설하도급대금발급수수료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건설하도급대금발급수수료)">
                     </td>
                     <td @click="onRateClick('건설하도급대금발급수수료')" class="rateCell">
@@ -303,7 +654,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>건설기계대여대금 발급금액</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">건설기계대여대금 발급금액</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('건설기계대여금발급액')"
+                                :checked="isBidExclusionSelected('건설기계대여금발급액')"
+                                @change="setBidExclusion('건설기계대여금발급액', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).건설기계대여금발급액)">
                     </td>
                     <td @click="onRateClick('건설기계대여금발급액')" class="rateCell">
@@ -315,7 +674,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>공사이행보증수수료</td>
+                    <td>
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">공사이행보증수수료</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('공사이행보증수수료')"
+                                :checked="isBidExclusionSelected('공사이행보증수수료')"
+                                @change="setBidExclusion('공사이행보증수수료', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).공사이행보증수수료)"></td>
                     <td @click="onRateClick('공사이행보증수수료')" class="rateCell">
                         <span x-text="요율.공사이행보증수수료"></span>
@@ -326,7 +693,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td @click="showAdd = !showAdd" class="rateCell" style="text-align: left !important;">추가경비</td>
+                    <td @click="showAdd = !showAdd" class="rateCell" style="text-align: left !important;">
+                        <span class="bid-exclusion-cell">
+                            <span class="bid-exclusion-cell-label">추가경비</span>
+                            <input class="bid-exclusion-checkbox" type="checkbox"
+                                x-show="selectingBidExclusions || isBidExclusionSelected('추가경비')"
+                                :checked="isBidExclusionSelected('추가경비')" @click.stop
+                                @change="setBidExclusion('추가경비', $event.target.checked)">
+                        </span>
+                    </td>
                     <td class="money"
                         x-text="showAdd ? '-' : (v => v !== '0' ? `${v}` : '-')(total(activeProject).추가경비)"></td>
                     <td></td>
@@ -337,7 +712,7 @@
                 </tr>
                 <template x-for="(item, index) in getItemsByType('추가경비')" :key="index">
                     <tr x-show="showAdd">
-                        <td x-text="`—　${item.품명 || '추가경비'}`"></td>
+                        <td class="item-name" x-text="`- ${item.품명 || '추가경비'}`"></td>
                         <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
                         <td></td>
                         <td></td>
@@ -370,7 +745,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
+                    <td rowspan="2"></td>
                     <td colspan="2">직접 공사비</td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).직접공사비)"></td>
                     <td></td>
@@ -380,7 +755,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
                     <td colspan="2">간접 공사비</td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).간접공사비)"></td>
                     <td></td>
@@ -413,14 +787,26 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">부가세 미포함</td>
-                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세미포함)"></td>
+                    <td colspan="3" @click="showVatExcluded = !showVatExcluded" class="rateCell"
+                        style="text-align: left !important;">부가세 미포함</td>
+                    <td class="money"
+                        x-text="showVatExcluded ? '-' : (v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세미포함)">
+                    </td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.부가세미포함" class="table-input">
                     </td>
                 </tr>
+                <template x-for="(item, index) in getItemsByType('부가세 미포함')" :key="`vat-excluded-${index}`">
+                    <tr x-show="showVatExcluded">
+                        <td colspan="3" class="item-name" x-text="`- ${item.품명 || ''}`"></td>
+                        <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
                 <tr>
                     <td colspan="3">　</td>
                     <td></td>
@@ -436,10 +822,13 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td colspan="3">낙찰률 제외금액</td>
+                    <td colspan="3" @click="selectingBidExclusions = !selectingBidExclusions" class="rateCell"
+                        style="text-align: left !important;">
+                        낙찰률 제외금액
+                    </td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).낙찰률제외금액)"></td>
                     <td></td>
-                    <td></td>
+                    <td>금액고정</td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.낙찰률제외금액" class="table-input">
                     </td>
@@ -454,7 +843,9 @@
                 <tr>
                     <td colspan="3">낙찰률적용 공금가액</td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).낙찰률적용공급가액)"></td>
-                    <td></td>
+                    <td @click="onRateClick('낙찰률')" class="rateCell">
+                        <span x-text="요율.낙찰률"></span>
+                    </td>
                     <td>(공급가액 - 낙찰률 제외금액) × 낙찰률(%) + 낙찰률 제외금액</td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.낙찰률적용공급가액" class="table-input">
@@ -463,21 +854,35 @@
                 <tr>
                     <td colspan="3">부가가치세</td>
                     <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가가치세)"></td>
-                    <td></td>
+                    <td @click="onRateClick('부가가치세')" class="rateCell">
+                        <span x-text="요율.부가가치세"></span>
+                    </td>
                     <td>낙찰률 적용 금액 × 율</td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.부가가치세" class="table-input">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">부가세포함 항목</td>
-                    <td class="money" x-text="(v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세포함항목)"></td>
+                    <td colspan="3" @click="showVatIncluded = !showVatIncluded" class="rateCell"
+                        style="text-align: left !important;">부가세포함 항목</td>
+                    <td class="money"
+                        x-text="showVatIncluded ? '-' : (v => v !== '0' ? `${v}` : '-')(total(activeProject).부가세포함항목)">
+                    </td>
                     <td></td>
                     <td></td>
                     <td class="table-input-cell">
                         <input type="text" x-model="비고.부가세포함항목" class="table-input">
                     </td>
                 </tr>
+                <template x-for="(item, index) in getItemsByType('부가세 포함')" :key="`vat-included-${index}`">
+                    <tr x-show="showVatIncluded">
+                        <td colspan="3" class="item-name" x-text="`- ${item.품명 || ''}`"></td>
+                        <td class="money" x-text="toNum(item.합계).toLocaleString('ko-KR')"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
                 <tr>
                     <td colspan="3">　</td>
                     <td></td>
@@ -510,6 +915,11 @@
             isCapped: false,
             isCapped2: false,
             showAdd: false,
+            showIndirectMaterial: false,
+            showByproduct: false,
+            showVatExcluded: false,
+            showVatIncluded: false,
+            selectingBidExclusions: false,
             cost: JSON.parse(localStorage.getItem('cost') || '{}'),
             요율: {},
             비고: {},
@@ -535,6 +945,8 @@
                     project.옵션.요율 = project.옵션.요율 || {};
                     this.요율 = project.옵션.요율;
 
+                    project.옵션.낙찰률제외항목 = project.옵션.낙찰률제외항목 || {};
+
                     project.옵션.비고 = project.옵션.비고 || {};
                     this.비고 = project.옵션.비고;
                 } else {
@@ -559,6 +971,38 @@
             saveActiveProject() {
                 localStorage.setItem('activeProject', this.activeProject || '');
                 this.loadRates();
+                this.selectingBidExclusions = false;
+            },
+
+            openPopup() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('costEstimatePopup', '1');
+                const popup = window.open(url.href, '_blank', 'popup=yes,width=1200,height=800');
+                if (!popup) {
+                    alert('팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.');
+                    return;
+                }
+                popup.opener = null;
+            },
+
+            isBidExclusionSelected(key) {
+                const project = this.cost[this.activeProject];
+                return project?.옵션?.낙찰률제외항목?.[key] === true;
+            },
+
+            setBidExclusion(key, checked) {
+                const project = this.cost[this.activeProject];
+                if (!project) return;
+                project.옵션 = project.옵션 || {};
+                project.옵션.낙찰률제외항목 = project.옵션.낙찰률제외항목 || {};
+                project.옵션.낙찰률제외항목[key] = checked;
+            },
+
+            setConstructionEquipment(enabled) {
+                const project = this.cost[this.activeProject];
+                if (!project) return;
+                project.옵션 = project.옵션 || {};
+                project.옵션.건설기계 = enabled;
             },
 
             toNum(v) {
@@ -566,23 +1010,19 @@
             },
 
 
-            extractAllItems(data) {
+            extractCostItems(data) {
                 let items = [];
                 if (!data) return items;
-                // 1. 배열이면 안의 요소들을 하나씩 돌면서 재귀 호출
                 if (Array.isArray(data)) {
-                    for (let item of data) {
-                        items.push(...this.extractAllItems(item));
+                    for (const item of data) {
+                        items.push(...this.extractCostItems(item));
                     }
-                }
-                // 2. 객체면
-                else if (typeof data === 'object') {
-                    // 칠드런이 있으면? -> 안으로 들어가서 탐색
-                    if (Array.isArray(data.children) && data.children.length > 0) {
-                        items.push(...this.extractAllItems(data.children));
-                    }
-                    // 칠드런이 없으면? -> 여기가 말단이니까 가져옴!
-                    else {
+                } else if (typeof data === 'object') {
+                    if (data.type) {
+                        items.push(data);
+                    } else if (Array.isArray(data.children) && data.children.length > 0) {
+                        items.push(...this.extractCostItems(data.children));
+                    } else {
                         items.push(data);
                     }
                 }
@@ -595,14 +1035,37 @@
                 const project = this.cost[this.activeProject];
                 if (!project) return [];
 
-                return this.extractAllItems(project.공종별내역서)
-                    .filter(item => item?.type === targetType);
+                const normalizedTargetType = String(targetType || '').replace(/\s/g, '');
+                return this.extractCostItems(project.공종별내역서)
+                    .filter(item => String(item?.type || '').replace(/\s/g, '') === normalizedTargetType);
             },
+
+            applyMode(val, project) {
+                if (val === null || val === undefined || isNaN(val)) return 0;
+                const safe = Number(Number(val).toFixed(10));
+                const mode = project.옵션?.계산방식 || 'trunc';
+                switch (mode) {
+                    case 'trunc': return Math.trunc(safe);
+                    case 'round': return Math.round(safe);
+                    case 'ceil': return Math.ceil(safe);
+                    default: return Math.trunc(safe);
+                }
+            },
+
+            formatNum(num, project) {
+                const res = this.applyMode(num, project);
+                return res.toLocaleString('ko-KR');
+            },
+
 
             total(projectName) {
                 const project = this.cost[projectName];
-                const AllItems = this.extractAllItems(project.공종별내역서);
-                const excludeTypes = ['간접재료비', '작업설, 부산물', '추가경비', '부가세미포함', '부가세포함', '도급자관급', '관급자관급'];
+                const AllItems = this.extractCostItems(project.공종별내역서);
+                const excludeTypes = [
+                    '간접재료비', '작업설, 부산물', '추가경비',
+                    '부가세미포함', '부가세 미포함', '부가세포함', '부가세 포함',
+                    '도급자관급', '관급자관급'
+                ];
 
                 // 옵션에 따라 건설기계를 일반 항목에서 제외 목록에 추가
                 const isExcludeConstruct = project.옵션?.건설기계 === true;
@@ -631,13 +1094,13 @@
                 const a4 = a1 + a2 - a3;
 
                 const b1 = items.reduce((sum, c) => sum + this.toNum(c.노무비), 0);
-                // 간접노무비도 금액 항목이므로 계산 방식 적용 추천!
-                const b2 = applyMode(b1 * this.요율.간접노무비 / 100);
+                const indirectLaborRate = Number(this.요율.간접노무비 || 0);
+                const b2 = applyMode(b1 * indirectLaborRate / 100);
                 const b3 = b1 + b2;
 
                 const c1 = items.reduce((sum, c) => sum + this.toNum(c.경비), 0);
                 const c2 = isExcludeConstruct
-                    ? AllItems.filter(c => c?.type === '건설기계').reduce((sum, c) => sum + this.toNum(c.합계), 0)
+                    ? AllItems.filter(c => c?.type === '건설기계' || c?.type === '기계경비').reduce((sum, c) => sum + this.toNum(c.합계), 0)
                     : 0;
                 const c15 = AllItems.filter(c => c?.type === '추가경비').reduce((sum, c) => sum + this.toNum(c.합계), 0);
 
@@ -650,7 +1113,6 @@
                 const c6 = applyMode(b1 * this.요율.연금보험료 / 100);
                 const c7 = applyMode(c5 * this.요율.노인장기요양보험료 / 100);
                 const c8 = applyMode(c1 * this.요율.퇴직공제부금비 / 100);
-
                 const c9 = AllItems.filter(c => c?.type === '도급자관급').reduce((sum, c) => sum + this.toNum(c.합계), 0);
                 let c9_1 = 0;
                 let c9_2 = 0;
@@ -672,6 +1134,26 @@
                 const c12 = applyMode(d2 * this.요율.건설하도급대금발급수수료 / 100);
                 const c13 = applyMode(d2 * this.요율.건설기계대여금발급액 / 100);
                 const c14 = applyMode(b1 * this.요율.공사이행보증수수료 / 100);
+                const bidExclusionAmounts = {
+                    산재보험료: c3,
+                    고용보험료: c4,
+                    건강보험료: c5,
+                    연금보험료: c6,
+                    노인장기요양보험료: c7,
+                    퇴직공제부금비: c8,
+                    산업안전보건관리비: c9_3,
+                    환경보전비: c10,
+                    기타경비: c11,
+                    건설하도급대금발급수수료: c12,
+                    건설기계대여금발급액: c13,
+                    공사이행보증수수료: c14,
+                    추가경비: c15
+                };
+                const selectedBidExclusions = project.옵션?.낙찰률제외항목 || {};
+                const e2 = applyMode(Object.entries(bidExclusionAmounts).reduce(
+                    (sum, [key, amount]) => sum + (selectedBidExclusions[key] === true ? amount : 0),
+                    0
+                ));
 
                 //이제 개별 항목들이 이미 정수로 딱 떨어져 있기 때문에 더할 때 오차가 안 생김!
                 const c16 = c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9_3 + c10 + c11 + c12 + c13 + c14 + c15;
@@ -681,7 +1163,19 @@
 
                 const d4 = applyMode((a4 + b3 + c16) * (this.요율.일반관리비 / 100));
                 const d5 = applyMode((a4 + b3 + c16) * (this.요율.이윤 / 100));
-                const d6 = applyMode((a4 + b3 + c16) * (this.요율.부가세미포함 / 100));
+                const d6 = AllItems.filter(c => ['부가세미포함', '부가세 미포함'].includes(c?.type))
+                    .reduce((sum, c) => sum + this.toNum(c.합계), 0);
+
+                const e1 = d1 + d4 + d5 + d6;
+
+                const bidRate = Number(this.요율.낙찰률 || 0);
+                const f1 = (e1 - e2) * (bidRate / 100) + e2;
+                const f2 = f1 * (this.요율.부가가치세 / 100);
+                const f3 = AllItems.filter(c => ['부가세포함', '부가세 포함'].includes(c?.type))
+                    .reduce((sum, c) => sum + this.toNum(c.합계), 0);
+
+                const g1 = f1 + f2 + f3;
+
 
                 return {
                     직접재료비: this.formatNum(a1, project),
@@ -720,26 +1214,18 @@
                     이윤: this.formatNum(d5, project),
                     부가세미포함: this.formatNum(d6, project),
 
+                    공급가액: this.formatNum(e1, project),
+                    낙찰률제외금액: this.formatNum(e2, project),
+
+                    낙찰률적용공급가액: this.formatNum(f1, project),
+                    부가가치세: this.formatNum(f2, project),
+                    부가세포함항목: this.formatNum(f3, project),
+
+                    총공사비: this.formatNum(g1, project),
+
 
                 };
             },
-
-            applyMode(val, project) {
-                if (val === null || val === undefined || isNaN(val)) return 0;
-                const safe = Number(Number(val).toFixed(10));
-                const mode = project.옵션?.계산방식 || 'trunc';
-                switch (mode) {
-                    case 'trunc': return Math.trunc(safe);
-                    case 'round': return Math.round(safe);
-                    case 'ceil': return Math.ceil(safe);
-                    default: return Math.trunc(safe);
-                }
-            },
-
-            formatNum(num, project) {
-                const res = this.applyMode(num, project);
-                return res.toLocaleString('ko-KR');
-            }
 
 
         };

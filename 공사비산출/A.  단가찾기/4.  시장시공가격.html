@@ -87,6 +87,13 @@
         font-size: 0.85rem;
     }
 
+    .search-page-links .cost-estimate-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+    }
+
     .result-mode-bar {
         display: flex;
         align-items: center;
@@ -245,6 +252,11 @@
             <a href="https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1"
                 :href="'https://study-with-words.blogspot.com/2026/11/blog-post_25.html?group=group3&amp;sub=sub1' + (document.documentElement.classList.contains('market-search-popup') ? '&amp;marketPopup=1' : '')"
                 aria-current="page">시장시공가격</a>
+            <span class="cost-estimate-nav-right">
+                <span aria-hidden="true">|</span>
+                <a href="https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&amp;sub=sub4"
+                    :href="'https://study-with-words.blogspot.com/2026/10/blog-post_749.html?group=group3&amp;sub=sub4' + (document.documentElement.classList.contains('market-search-popup') ? '&amp;costEstimatePopup=1' : '')">원가계산서</a>
+            </span>
         </nav>
 
         <!-- 1) 상단 검색 툴바 영역 (조달청 가격정보 분류 선택 + 품명/규격 검색) -->

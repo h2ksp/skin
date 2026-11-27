@@ -109,3 +109,31 @@
   font-size: 16px;
   margin: 6px 0;
 }
+
+
+@media print {
+  #print-container {
+    overflow: visible !important;
+  }
+
+  .tbl thead,
+  .my-table thead {
+    display: table-header-group;
+  }
+
+  .tbl tr,
+  .my-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .my-table {
+    margin-bottom: 0 !important;
+    transform: none !important;
+  }
+
+  .my-table .item-name {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+  }
+}

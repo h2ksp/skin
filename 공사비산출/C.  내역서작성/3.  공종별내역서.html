@@ -1,4 +1,9 @@
 <style>
+    #print-container {
+        position: relative;
+        z-index: 200;
+    }
+
     .unit-price-list {
         color: #1e293b;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -16,6 +21,73 @@
         border-radius: 12px;
         padding: 5px 16px;
         margin: 16px 0;
+    }
+
+    .unit-price-list .major-group-totals {
+        margin-left: auto;
+        margin-right: 16px;
+        color: #475569;
+        font-size: 15px;
+        font-weight: 400;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .unit-price-list .amount-display-options {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0;
+    }
+
+    .unit-price-list .amount-display-options label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+
+    .unit-price-list .amount-display-options input {
+        margin: 0;
+    }
+
+    .unit-price-list .level1-amount-summary {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .unit-price-list .level1-amount-summary-move-spacer {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        font-size: 11px;
+        visibility: hidden;
+    }
+
+    .unit-price-list .level1-amount-summary-label {
+        flex: 0 0 63px;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .unit-price-list .level1-amount-summary-spacer {
+        flex: 0 0 auto;
+    }
+
+    #print-container .unit-price-list input.item-amount-display {
+        flex-shrink: 0;
+        width: 110px;
+        text-align: right;
+    }
+
+    #print-container .unit-price-list input.level1-amount-display {
+        flex-shrink: 0;
+        width: 110px;
+        text-align: right;
     }
 
     .unit-price-list .estimate-item-row:hover {
@@ -74,31 +146,6 @@
         font-style: italic;
         padding-left: 10px;
         text-align: left;
-    }
-
-    .money-box {
-        margin-top: 10px;
-    }
-
-    .mText2 {
-        border-collapse: collapse;
-        font-size: 0.85rem;
-    }
-
-    .mText2 td {
-        border: 1px solid #cbd5e1;
-        padding: 4px 8px;
-        line-height: 1.4;
-    }
-
-    .mText2 .align-right {
-        width: 100px;
-        text-align: right;
-    }
-
-    /* 마지막 합계 줄 위쪽 테두리랑 볼드 처리 */
-    .mText2 .sum-row td {
-        background: #f8fafc;
     }
 
     button {
@@ -205,15 +252,16 @@
 </style>
 
 
-<div id="print-container" x-data="appData()" x-init="init()">
+<div id="print-container" x-data="appData()" x-init="init()" style="margin-left: -190px;width: calc(100% + 190px)">
 
 
     <div class="unit-price-list" style="width: 100%; margin-bottom: 800px;">
-        <h1>공종별 내역서</h1>
+
         <!-- 최상단 컨트롤 영역 -->
         <div class="estimate-toolbar">
-
-            <select x-model="activeProject" @change="saveActiveProject()" style="width: 300px;">
+            <label for="costEstimateProject">공종별 내역서 :</label>
+            <select id="costEstimateProject" x-model="activeProject" @change="saveActiveProject()"
+                style="width: 300px;">
                 <option value="">프로젝트 선택</option>
                 <template x-for="proj in projectList" :key="proj">
                     <option :value="proj" x-text="proj" :selected="proj === activeProject"></option>
@@ -225,15 +273,23 @@
                     <option :value="idx" x-text="group"></option>
                 </template>
             </select>
+            <div class="amount-display-options" role="radiogroup" aria-label="항목 금액 표시">
+                <label><input type="radio" name="amountDisplayField" value="재료비"
+                        x-model="amountDisplayField">재료비</label>
+                <label><input type="radio" name="amountDisplayField" value="노무비"
+                        x-model="amountDisplayField">노무비</label>
+                <label><input type="radio" name="amountDisplayField" value="경비"
+                        x-model="amountDisplayField">경비</label>
+                <label><input type="radio" name="amountDisplayField" value="합계"
+                        x-model="amountDisplayField">합계</label>
+            </div>
             <div style="display: flex; gap: 8px; margin-left: auto;">
                 <button type="button" @click="editGroups()">그룹편집</button>
                 <button type="button" @click="showMoveButtons = !showMoveButtons"
                     :aria-pressed="showMoveButtons">이동</button>
-                <button type="button" @click="moneyView()">합계보기</button>
             </div>
 
         </div>
-
 
         <ul id="group-list" style="margin-left: 0; padding-left: 0; list-style: none;">
             <template x-for="(groupName, gIndex) in groupList" :key="gIndex">
@@ -241,9 +297,11 @@
 
                     <div style="display: flex; align-items: center;">
                         <div id="title" x-text="groupName"></div>
+                        <div class="major-group-totals" x-text="formatMajorGroupTotals(gIndex)"
+                            aria-label="대분류 합계"></div>
 
                         <!-- 우측 정렬 컨트롤 -->
-                        <div style="margin-left: auto; display: flex; align-items: center; gap: 11px; font-size: 13px;">
+                        <div style="display: flex; align-items: center; gap: 11px; font-size: 13px;">
                             <a href="#" class="move-arrow" x-show="showMoveButtons" aria-label="그룹 위로 이동"
                                 @click.prevent="if (gIndex > 0) moveUpGroup(gIndex)"
                                 :class="{ 'disabled': gIndex === 0 }">▲</a>
@@ -276,8 +334,7 @@
                                     :style="{ paddingLeft: showMoveButtons ? '16px' : '0' }">
 
                                     <template x-for="(lvl2, l2Index) in (lvl1.children || [])" :key="l2Index">
-                                        <div class="estimate-item-row"
-                                            :class="{ 'is-selected': lvl2.selected }">
+                                        <div class="estimate-item-row" :class="{ 'is-selected': lvl2.selected }">
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <div x-show="showMoveButtons"
                                                     style="display: flex; align-items: center; gap: 6px; font-size: 11px; flex-shrink: 0;">
@@ -300,15 +357,12 @@
                                                 <input type="text" class="text-center" x-model="lvl2.수량"
                                                     @input="calcItems(lvl2, '수량', $event)" style="width: 65px;"
                                                     placeholder="수량">
+                                                <input type="text" class="item-amount-display"
+                                                    :value="lvl2[amountDisplayField] || '0'" readonly
+                                                    :aria-label="amountDisplayField" :title="amountDisplayField">
 
                                                 <div
                                                     style="margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 12px; flex-shrink: 0;">
-                                                    <a href="#"
-                                                        @click.prevent="lvl2.showCost = !lvl2.showCost; saveToStore()"
-                                                        style="text-decoration: none; font-weight: 500;">
-                                                        금액 &nbsp;<span x-text="lvl2.showCost ? '▲' : '▼'"
-                                                            style="font-size: 11px;"></span>
-                                                    </a>
                                                     <select x-model="lvl2.type" @change="handleTypeChange(lvl2)"
                                                         style="width: 100px;">
                                                         <option value="자재">자재</option>
@@ -332,6 +386,12 @@
 
 
                                                     </select>
+                                                    <a href="#"
+                                                        @click.prevent="lvl2.showCost = !lvl2.showCost; saveToStore()"
+                                                        style="text-decoration: none; font-weight: 500;">
+                                                        상세 &nbsp;<span x-text="lvl2.showCost ? '▲' : '▼'"
+                                                            style="font-size: 11px;"></span>
+                                                    </a>
                                                     <a href="#"
                                                         @click.prevent="confirm('삭제하시겠습니까?') && deleteLevel2(gIndex, l1Index, l2Index)"
                                                         style="color: #dc2626; text-decoration: none; font-weight: 500;">x</a>
@@ -423,37 +483,20 @@
                                         </div>
                                     </template>
 
-                                    <div x-show="showMoney" class="money-box">
-                                        <table class="mText2">
-                                            <tbody>
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td>재료비:</td>
-                                                    <td x-text="lvl1.재료비" class="align-right"></td>
-                                                    <td>원</td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>노무비:</td>
-                                                    <td x-text="lvl1.노무비" class="align-right"></td>
-                                                    <td>원</td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>경　비:</td>
-                                                    <td x-text="lvl1.경비" class="align-right"></td>
-                                                    <td>원</td>
-                                                </tr>
-                                                <tr class="sum-row">
-                                                    <td></td>
-                                                    <td>합　계:</td>
-                                                    <td x-text="lvl1.합계" class="align-right"></td>
-                                                    <td>원</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="level1-amount-summary">
+                                        <div class="level1-amount-summary-move-spacer" x-show="showMoveButtons"
+                                            aria-hidden="true">
+                                            <a href="#" class="move-arrow" tabindex="-1">▲</a>
+                                            <a href="#" class="move-arrow" tabindex="-1">▼</a>
+                                        </div>
+                                        <span class="level1-amount-summary-spacer" style="width: 320px;"></span>
+                                        <span class="level1-amount-summary-spacer" style="width: 330px;"></span>
+                                        <span class="level1-amount-summary-spacer" style="width: 50px;"></span>
+                                        <span class="level1-amount-summary-label">합계 : </span>
+                                        <input type="text" class="level1-amount-display"
+                                            :value="getLevel1Amount(lvl1)" readonly
+                                            :aria-label="`${amountDisplayField} 합계`">
                                     </div>
-
 
                                 </ul>
 
@@ -506,48 +549,40 @@
             projectList: option?.projectList || [],
             store: store,
             showMoveButtons: false,
-            showMoney: false, // 처음에는 숨겨져 있게 시작
 
             // 현재 프로젝트의 그룹 목록 가져오기
             groupList: (activeProject && store[activeProject]?.옵션?.그룹명) || [],
             activeGroup: (activeProject && store[activeProject]?.옵션?.activeGroup !== undefined)
                 ? store[activeProject].옵션.activeGroup : '',
+            amountDisplayField: '합계',
 
             // 공종별 내역서 데이터 (없으면 빈 객체)
             subGroupList: (activeProject && store[activeProject]?.공종별내역서) || {},
 
-            // [역할] 금액 영역을 토글하면서 전체 공종 합계도 같이 싹 계산하는 함수
-            moneyView() {
-                this.showMoney = !this.showMoney;
-
+            getCostTotals(levels) {
                 const getNum = (val) => Number(String(val || 0).replace(/,/g, '')) || 0;
+                const totals = { 재료비: 0, 노무비: 0, 경비: 0 };
 
-                // 1단계: 대그룹 리스트 순회 (forEach)
-                this.subGroupList.forEach(groupList => {
-                    if (!groupList) return;
-
-                    // 2단계: 각 공종 그룹 순회
-                    groupList.forEach(group => {
-                        if (!group || !group.children) return;
-
-                        // 3단계: reduce로 자재들의 재료비, 노무비, 경비를 한 번에 싹 합산
-                        const totals = group.children.reduce((acc, c) => {
-                            acc.mtrl += getNum(c.재료비 || c.재료비단가 || c.prce);
-                            acc.lbr += getNum(c.노무비 || c.노무비단가);
-                            acc.exp += getNum(c.경비 || c.경비단가);
-                            return acc;
-                        }, { mtrl: 0, lbr: 0, exp: 0 });
-
-                        const sumTotal = totals.mtrl + totals.lbr + totals.exp;
-
-                        // 4단계: 포맷팅해서 공종 객체에 바로 꽂아넣기
-                        group.재료비 = totals.mtrl ? totals.mtrl.toLocaleString('ko-KR') : '0';
-                        group.노무비 = totals.lbr ? totals.lbr.toLocaleString('ko-KR') : '0';
-                        group.경비 = totals.exp ? totals.exp.toLocaleString('ko-KR') : '0';
-                        group.합계 = sumTotal ? sumTotal.toLocaleString('ko-KR') : '0';
+                levels.forEach(level => {
+                    (level?.children || []).forEach(item => {
+                        totals.재료비 += getNum(item.재료비 || item.재료비단가 || item.prce);
+                        totals.노무비 += getNum(item.노무비 || item.노무비단가);
+                        totals.경비 += getNum(item.경비 || item.경비단가);
                     });
                 });
-                this.saveToStore();
+
+                totals.합계 = totals.재료비 + totals.노무비 + totals.경비;
+                return totals;
+            },
+
+            formatMajorGroupTotals(gIndex) {
+                const format = value => value.toLocaleString('ko-KR');
+                const totals = this.getCostTotals(this.subGroupList[gIndex] || []);
+                return `재료비: ${format(totals.재료비)}　노무비: ${format(totals.노무비)}　경비: ${format(totals.경비)}　합계: ${format(totals.합계)}`;
+            },
+
+            getLevel1Amount(level1) {
+                return this.getCostTotals([level1])[this.amountDisplayField].toLocaleString('ko-KR');
             },
 
             saveActiveProject() {
@@ -620,7 +655,6 @@
             },
 
             calcItems(lvl2, field, event) {
-                this.showMoney = false;
                 // 1. 입력된 값에서 콤마 제거하고 숫자만 추출
                 let rawVal = String(event.target.value).replace(/,/g, '');
 

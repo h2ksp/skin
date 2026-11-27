@@ -3802,6 +3802,53 @@ const menuData = {
         ]
       },
 
+      // 샘플
+      sub6: {
+        name: "샘플",
+        categories: [
+          {
+            catTitle: "-",
+            sections: [
+
+              {
+                secTitle: "-",
+                items:
+                  [
+                    { text: "test", url: "https://study-with-words.blogspot.com/2026/10/blog-post_16.html?group=group3&sub=sub6", isNewWindow: true },
+                    { text: "test2", url: "https://study-with-words.blogspot.com/2026/09/blog-post_22.html?group=group3&sub=sub6", isNewWindow: true },
+                    { text: "test3", url: "https://study-with-words.blogspot.com/2026/10/blog-post_778.html?group=group3&sub=sub6", isNewWindow: true },
+                    { text: "test4", url: "https://study-with-words.blogspot.com/2026/10/blog-post_566.html?group=group3&sub=sub6", isNewWindow: true },
+                  ]
+              },
+              {
+                secTitle: "-",
+                items:
+                  [
+                    { text: "-", url: "#4-1" },
+                  ]
+              },
+
+            ]
+          },
+          {
+            catTitle: "-",
+            sections: [
+              {
+                secTitle: "-",
+                items:
+                  [
+                    { text: "-", url: "#4-1" },
+                  ]
+              },
+
+            ]
+          },
+
+
+
+
+        ]
+      },
     }
   },
 };
